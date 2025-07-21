@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from uuid import uuid4
 from sqlalchemy.dialects.postgresql import JSONB
 
+
 def generate_uuid() -> str:
     return str(uuid4())
 
