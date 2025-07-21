@@ -28,13 +28,17 @@ class RepositoryInterface[T](ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def hard_delete(self, conditions: T) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
     async def update(self, conditions: T, obj: T) -> int:
         raise NotImplementedError
 
     @abstractmethod
     async def filter(
         self,
-        conditions: T,
+        filter: T | None,
         limit: int,
         offset: int,
         sort_by: str,
