@@ -20,9 +20,14 @@ class UserModel(Base):
     uuid: Mapped[str] = mapped_column(
         primary_key=True, index=True, unique=True, default=generate_uuid
     )
-    name: Mapped[Optional[str]]
+
+    name: Mapped[Optional[str]] = mapped_column(index=True)
+
     password: Mapped[Optional[str]]
-    roll_number: Mapped[Optional[str]]
+
+    roll_number: Mapped[Optional[str]] = mapped_column(index=True)
+
     email: Mapped[Optional[str]]
     role: Mapped[UserRole] = mapped_column(default=UserRole.STUDENT)
     graduating_year: Mapped[Optional[str]]
+    image_url: Mapped[Optional[str]]

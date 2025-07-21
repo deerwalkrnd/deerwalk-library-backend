@@ -1,0 +1,21 @@
+name: Docker Compose for Deerwalk Library
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: dev_postgres
+    environment:
+      POSTGRES_DB: dev_db
+      POSTGRES_USER: dev-user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev-user -d dev_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+volumes:
+  postgres_data:
