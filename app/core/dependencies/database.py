@@ -17,4 +17,3 @@ async def get_db():
     finally: 
         await db.close()
 
-

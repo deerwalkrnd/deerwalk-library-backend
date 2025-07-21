@@ -1,9 +1,10 @@
 from enum import Enum
-from typing import Optional
+from typing import Any, Dict, Optional
+
 from .base import Base
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid import uuid4
-
+from sqlalchemy.dialects.postgresql import JSONB
 
 def generate_uuid() -> str:
     return str(uuid4())
@@ -31,3 +32,4 @@ class UserModel(Base):
     role: Mapped[UserRole] = mapped_column(default=UserRole.STUDENT)
     graduating_year: Mapped[Optional[str]]
     image_url: Mapped[Optional[str]]
+    user_metadata: Mapped[Dict[str, Any]] = mapped_column(JSONB)
