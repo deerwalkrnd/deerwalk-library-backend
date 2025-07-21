@@ -7,7 +7,6 @@ app = FastAPI(
 
 app.include_router(v1_router)
 
-
 @app.get("/")
 async def hello_world() -> dict[str, str]:
     return {"mesasge": "hello World"}
