@@ -32,3 +32,7 @@
 ```
 
 2. Run the run.sh command to run the application.
+
+
+### Conventions followed
+- Class and method docstring: [Google docstring](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings)
