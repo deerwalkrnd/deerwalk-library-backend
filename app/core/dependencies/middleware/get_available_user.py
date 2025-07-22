@@ -12,16 +12,17 @@ from app.modules.auth.infra.services.jwt_service import JWTService
 async def get_available_user(
     request: Request, db: AsyncSession = Depends(get_db)
 ) -> User | None:
-    token_header = request.headers.get("Authorization")
-    if not token_header:
+    auth_header = request.headers.get("Authorization")
+
+    if not auth_header:
         return None
 
-    splitted = token_header.split(" ")
+    split_auth_header = auth_header.split(" ")
 
-    if len(splitted) != 2 and splitted[0] != "Bearer":
+    if len(split_auth_header) != 2 and split_auth_header[0] != "Bearer":
         return None
 
-    jwt_token = splitted[1]
+    jwt_token = split_auth_header[1]
 
     token_service = JWTService()
 
