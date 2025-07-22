@@ -12,5 +12,5 @@ class LibraryException(HTTPException):
         fields: List[Any] = [],
         headers: Dict[str, str] | None = None,
     ) -> None:
-        detail = {"code": code, "msg": msg, "fields": fields} #type:ignore
+        detail = {"code": code, "msg": msg, "fields": fields}  # type:ignore
         super().__init__(status_code, detail, headers)

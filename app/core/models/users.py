@@ -33,4 +33,4 @@ class UserModel(Base):
     role: Mapped[UserRole] = mapped_column(default=UserRole.STUDENT)
     graduating_year: Mapped[Optional[str]]
     image_url: Mapped[Optional[str]]
-    user_metadata: Mapped[Dict[str, Any]] = mapped_column(JSONB)
+    user_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB)
