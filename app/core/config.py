@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     admin_password: str = "librarian!123#"
     default_pagination: int = 10
     default_fine_amount: int = 3
+    jtw_key: str = "hahahahahahayolobotsharu"
     database_url: str
 
     model_config = SettingsConfigDict(env_file=".env.dev")
