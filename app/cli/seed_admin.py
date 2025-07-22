@@ -1,6 +1,7 @@
 import asyncio
 from typing import Any, AsyncGenerator
 from app.core.dependencies.database import get_db
+from app.core.dependencies.get_settings import get_settings
 from app.core.domain.entities.user import UserWithPassword
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,10 +29,13 @@ async def seed_admin(user: UserWithPassword) -> UserWithPassword:
 
 
 if __name__ == "__main__":
+
+    settings = get_settings()
+
     admin = UserWithPassword(
         name="Deerwalk Library",
-        email="library@sifal.deerwalk.edu.np",
-        password="library_person",
+        email=settings.admin_email,
+        password=settings.admin_password,
         role=UserRole.LIBRARIAN,
     )
     asyncio.run(seed_admin(admin))
