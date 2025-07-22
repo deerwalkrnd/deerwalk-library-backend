@@ -9,7 +9,9 @@ from app.core.exc.library_exception import LibraryException
 from app.core.models.users import UserRole
 
 
-async def get_current_librarian(user: Annotated[User, Depends(get_current_user)]):
+async def get_current_librarian(
+    user: Annotated[User, Depends(get_current_user)],
+) -> User:
     if user.role != UserRole.LIBRARIAN:
         raise LibraryException(
             status_code=403,
