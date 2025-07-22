@@ -1,10 +1,11 @@
 import asyncio
 from typing import Any, AsyncGenerator
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_settings import get_settings
 from app.core.domain.entities.user import UserWithPassword
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.infra.repositories.user_repository import UserRepository
 from app.core.models.users import UserRole
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
@@ -29,7 +30,6 @@ async def seed_admin(user: UserWithPassword) -> UserWithPassword:
 
 
 if __name__ == "__main__":
-
     settings = get_settings()
 
     admin = UserWithPassword(

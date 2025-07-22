@@ -1,10 +1,11 @@
 from enum import Enum
 from typing import Any, Dict, Optional
+from uuid import uuid4
+
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from uuid import uuid4
-from sqlalchemy.dialects.postgresql import JSONB
 
 
 def generate_uuid() -> str:
