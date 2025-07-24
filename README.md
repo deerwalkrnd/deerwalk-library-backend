@@ -34,6 +34,7 @@
 - Class and method docstring: [Google docstring](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings)
 
 ## Aashutosh Tasks
-1. Seeder Implementation
-2. Auth Implementation
-3. User CRUD
+1. Seeder Implementation - DONE
+2. Auth Implementation ( Librarian and <7 ) - DONE
+3. User CRUD - DOING
+4. Celery Implementation

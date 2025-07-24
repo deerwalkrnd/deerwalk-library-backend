@@ -26,5 +26,8 @@ router.add_api_route(
     "/me",
     auth_controller.handle_me,
     methods=["GET"],
-    response_description="Returns the User Data",
+    response_description="Returns the User Data if logged in else, 403",
 )
+
+# TODO(forgot password)
+# We will do the forgot password feature after we've done the email service with celery
