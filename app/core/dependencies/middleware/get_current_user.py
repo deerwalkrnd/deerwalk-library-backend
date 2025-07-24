@@ -51,8 +51,6 @@ async def get_current_user(
             status_code=401,
         )
 
-
-
     uuid = data.get("sub")
 
     if not uuid:
