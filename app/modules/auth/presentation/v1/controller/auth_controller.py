@@ -1,6 +1,9 @@
 from fastapi import Depends, logger
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies.database import get_db
-from app.core.dependencies.middleware.get_available_user import get_available_user
+from app.core.dependencies.middleware.get_available_user import \
+    get_available_user
 from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
@@ -8,8 +11,6 @@ from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
 from app.modules.auth.domain.request.login_request import LoginRequest
 from app.modules.auth.domain.response.token_response import TokenResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.modules.auth.domain.usecases.login_use_case import LoginUseCase
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.auth.infra.services.jwt_service import JWTService

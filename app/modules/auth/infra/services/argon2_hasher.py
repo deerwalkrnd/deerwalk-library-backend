@@ -1,9 +1,8 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
-from app.modules.auth.domain.services.password_hasher_interface import (
-    PasswordHasherInterface,
-)
+from app.modules.auth.domain.services.password_hasher_interface import \
+    PasswordHasherInterface
 
 
 class Argon2PasswordHasher(PasswordHasherInterface):

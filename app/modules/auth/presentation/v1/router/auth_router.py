@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from app.modules.auth.presentation.v1.controller.auth_controller import AuthController
+from app.modules.auth.presentation.v1.controller.auth_controller import \
+    AuthController
 
 router = APIRouter(prefix="/auth", tags=["Auth Routes"])
 
