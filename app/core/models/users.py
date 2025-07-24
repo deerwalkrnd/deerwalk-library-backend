@@ -30,7 +30,8 @@ class UserModel(Base):
 
     roll_number: Mapped[Optional[str]] = mapped_column(index=True)
 
-    email: Mapped[Optional[str]]
+    email: Mapped[Optional[str]] = mapped_column(unique=True, index=True)
+
     role: Mapped[UserRole] = mapped_column(default=UserRole.STUDENT)
     graduating_year: Mapped[Optional[str]]
     image_url: Mapped[Optional[str]]
