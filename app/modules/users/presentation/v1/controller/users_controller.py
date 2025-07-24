@@ -8,5 +8,6 @@ class UsersController:
     async def get_all_with_search_pagination_and_filter(
         self, params: UserSearchRequest = Depends()
     ) -> List[User]:
+        print(params)
 
         return []

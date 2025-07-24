@@ -4,10 +4,10 @@ from app.modules.users.presentation.v1.controller.users_controller import (
     UsersController,
 )
 
-user_router = APIRouter(prefix="/users", tags=["Users API"])
+router = APIRouter(prefix="/users", tags=["Users API"])
 users_controller = UsersController()
 
-user_router.add_api_route(
+router.add_api_route(
     path="/",
     endpoint=users_controller.get_all_with_search_pagination_and_filter,
     methods=["GET"],
