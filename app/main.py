@@ -11,6 +11,7 @@ app = FastAPI(
 
 app.include_router(v1_router)
 
+
 # for missing fields
 @app.exception_handler(exc_class_or_status_code=RequestValidationError)
 async def validation_exception_handler(
