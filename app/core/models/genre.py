@@ -16,6 +16,7 @@ class GenreModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[GenreEnum] = mapped_column(Enum(GenreEnum))
+    image_url: Mapped[Optional[str]]
 
     books: Mapped[List["BookModel"]] = relationship(
         "BookModel",
