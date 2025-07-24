@@ -1,6 +1,7 @@
 from fastapi import Depends, logger
 from app.core.dependencies.database import get_db
 from app.core.dependencies.middleware.get_available_user import get_available_user
+from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
@@ -60,3 +61,6 @@ class AuthController:
     ) -> TokenResponse:
         # TODO(aashutosh): SSO Login
         raise NotImplementedError("Google Login will be implemented soon")
+
+    async def handle_me(self, user: User = Depends(get_current_user)) -> User:
+        return user

@@ -1,6 +1,6 @@
 from typing import Any
 
-from fastapi import Depends, Request
+from fastapi import Depends, Request, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
@@ -19,7 +19,7 @@ async def get_current_user(
         raise LibraryException(
             code=ErrorCode.INVALID_FIELDS,
             fields=["Authorization Header"],
-            msg="Missing Invalid Headers",
+            msg="Missing Authorization Headers",
             status_code=401,
         )
 
@@ -29,7 +29,7 @@ async def get_current_user(
         raise LibraryException(
             code=ErrorCode.INVALID_FIELDS,
             fields=["Authorization Header"],
-            msg="Missing Invalid Headers",
+            msg="Missing Authorization Headers",
             status_code=401,
         )
 
@@ -38,8 +38,20 @@ async def get_current_user(
     token_service = JWTService()
 
     user_repository = UserRepository(db=db)
+    data: dict[str, Any] = {}
 
-    data: dict[str, Any] = await token_service.decode(jwt_token)
+    try:
+        data = await token_service.decode(jwt_token)
+    except Exception as e:
+        logger.logger.error(e)
+        raise LibraryException(
+            code=ErrorCode.INVALID_FIELDS,
+            fields=["Authorization Header"],
+            msg="Invalid JWT Data",
+            status_code=401,
+        )
+
+
 
     uuid = data.get("sub")
 
@@ -47,7 +59,7 @@ async def get_current_user(
         raise LibraryException(
             code=ErrorCode.INVALID_FIELDS,
             fields=["Authorization Header"],
-            msg="Missing Invalid Headers",
+            msg="Missing Authorization Headers",
             status_code=401,
         )
 
@@ -59,7 +71,7 @@ async def get_current_user(
         raise LibraryException(
             code=ErrorCode.INVALID_FIELDS,
             fields=["Authorization Header"],
-            msg="Missing Invalid Headers",
+            msg="Missing Authorization Headers",
             status_code=401,
         )
 

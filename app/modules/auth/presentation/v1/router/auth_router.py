@@ -21,3 +21,10 @@ router.add_api_route(
     response_description="Returns the Token of the logged in user or throws an 403 if "
     "incorrect credentials",
 )
+
+router.add_api_route(
+    "/me",
+    auth_controller.handle_me,
+    methods=["GET"],
+    response_description="Returns the User Data",
+)
