@@ -27,7 +27,7 @@ class GetManyUsersUseCase:
             filter=None,
             start_date=starts,
             end_date=ends,
-            searchable_key="name",
+            searchable_key=searchable_field,
             searchable_value=searchable_value,
         )
 

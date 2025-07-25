@@ -13,3 +13,15 @@ router.add_api_route(
     methods=["GET"],
     response_description="Returns you the Users based on the many params passed",
 )
+router.add_api_route(
+    path="/{uuid}",
+    endpoint=users_controller.list_one_user,
+    methods=["GET"],
+    response_description="You will get user back with the passed uuid",
+)
+router.add_api_route(
+    path="/",
+    endpoint=users_controller.create_user,
+    methods=["POST"],
+    response_description="Creating a uaser entity",
+)
