@@ -7,3 +7,4 @@ class BookGenre(BaseModel):
     id: int
     book_id = Optional[int] = None
     genre_id = Optional[int] = None
+    image_url = Optional[str] = None

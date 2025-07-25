@@ -18,3 +18,4 @@ class Book(BaseModel):
     class_: Optional[str] = None
     genre: Optional[List[Genre]] = None
     units: Optional[List[BookUnit]] = None
+    book_code: Optional[str] = None

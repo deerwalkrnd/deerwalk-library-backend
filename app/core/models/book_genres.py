@@ -12,5 +12,5 @@ class BookGenresModel(Base):
     __tablename__ = "book_genres"
 
     id: Mapped['int'] = mapped_column(primary_key=True, index=True)
-    book_id: Mapped['int'] = mapped_column(ForeignKey("books.id"), primary_key=True)
-    genre_id: Mapped['int'] = mapped_column(ForeignKey("genres.id"), primary_key=True)
+    book_id: Mapped['int'] = mapped_column(ForeignKey("books.id"), primary_key=True, index=True)
+    genre_id: Mapped['int'] = mapped_column(ForeignKey("genres.id"), primary_key=True, index=True)

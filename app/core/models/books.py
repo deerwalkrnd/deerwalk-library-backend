@@ -21,6 +21,7 @@ class BookModel(Base):
     isbn: Mapped[Optional[str]]
     book_type: Mapped[BookType] = mapped_column(Enum(BookType), default=BookType.ACADEMIC)
     class_: Mapped[Optional[int]] = mapped_column("class")
+    book_code: Mapped[Optional[str]] = mapped_column(index=True)
 
 
     genres: Mapped[List["GenreModel"]] = relationship("GenreModel", secondary="book_genres", back_populates="books")
