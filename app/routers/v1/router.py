@@ -13,7 +13,6 @@ v1_router.include_router(books_router)
 v1_router.include_router(users_router)
 
 
-
 @v1_router.get("/")
 async def v1_hello_world(db: AsyncSession = Depends(get_db)) -> dict[str, str]:
     print(f"db is {db}")

@@ -9,7 +9,7 @@ users_controller = UsersController()
 
 router.add_api_route(
     path="/",
-    endpoint=users_controller.get_all_with_search_pagination_and_filter,
+    endpoint=users_controller.list_many_users,
     methods=["GET"],
     response_description="Returns you the Users based on the many params passed",
 )

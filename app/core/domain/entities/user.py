@@ -1,5 +1,5 @@
 from typing import Any, Dict, Optional
-
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 from app.core.models.users import UserRole
@@ -16,6 +16,8 @@ class User(BaseModel):
     graduating_year: Optional[str] = None
     image_url: Optional[str] = None
     user_metadata: Optional[Dict[str, Any]] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class UserWithPassword(User):

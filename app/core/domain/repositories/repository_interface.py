@@ -43,7 +43,9 @@ class RepositoryInterface[T](ABC):
         offset: int,
         sort_by: str,
         descending: bool,
-        start_date: datetime,
-        end_date: datetime,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
     ) -> List[T]:
         raise NotImplementedError
