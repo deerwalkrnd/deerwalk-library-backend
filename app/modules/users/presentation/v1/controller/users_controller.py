@@ -1,3 +1,4 @@
+from typing import Any
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
@@ -9,6 +10,9 @@ from app.core.infra.repositories.user_repository import UserRepository
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
 from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
+from app.modules.users.domain.usecases.delete_users_by_uuid_use_case import (
+    DeleteUsersByUUIDUseCase,
+)
 from app.modules.users.domain.usecases.get_many_users_use_case import (
     GetManyUsersUseCase,
 )
@@ -24,6 +28,8 @@ class UsersController:
     async def list_many_users(
         self, db: AsyncSession = Depends(get_db), params: UserSearchRequest = Depends()
     ) -> PaginatedResponseMany[User]:
+        # TODO(aashutosh): make the searchable field part of the request and verify that
+        # searchable exists on the users table.
         searchable_field = "name"
         user_repository = UserRepository(db=db)
         get_many_users_use_case = GetManyUsersUseCase(user_repository=user_repository)
@@ -99,3 +105,15 @@ class UsersController:
             raise LibraryException(
                 status_code=500, code=ErrorCode.UNKOWN_ERROR, msg="Error Creating user"
             )
+
+    async def delete_user(self, uuid: str, db: AsyncSession = Depends(get_db)) -> None:
+        user_repository = UserRepository(db=db)
+
+        delete_user_by_uuid_use_case = DeleteUsersByUUIDUseCase(
+            user_repository=user_repository
+        )
+        await delete_user_by_uuid_use_case.execute(uuid)
+
+    async def update_user(self, update_user_request: Any) -> None:
+        # Need to finish the file service stuff to implement this.
+        raise NotImplementedError

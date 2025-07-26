@@ -25,3 +25,9 @@ router.add_api_route(
     methods=["POST"],
     response_description="Creating a uaser entity",
 )
+router.add_api_route(
+    path="/{uuid}",
+    endpoint=users_controller.delete_user,
+    methods=["DELETE"],
+    response_description="Deletes the user and returns success status on deletion",
+)
