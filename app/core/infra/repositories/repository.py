@@ -3,13 +3,22 @@ from typing import Any, List, Sequence, Tuple, Type
 from venv import logger
 
 from pydantic import BaseModel
-from sqlalchemy import (CursorResult, Delete, Result, Select, Update, delete,
-                        desc, select, text, update)
+from sqlalchemy import (
+    CursorResult,
+    Delete,
+    Result,
+    Select,
+    Update,
+    delete,
+    desc,
+    select,
+    text,
+    update,
+)
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.domain.repositories.repository_interface import \
-    RepositoryInterface
+from app.core.domain.repositories.repository_interface import RepositoryInterface
 from app.core.models.base import Base
 
 
@@ -135,32 +144,51 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
         offset: int,
         sort_by: str,
         descending: bool,
-        start_date: datetime,
-        end_date: datetime,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
     ) -> List[T]:
-        query: Select[Tuple[Model]] = select(self.model).where(
-            self.model.deleted == False
-        )
+        if limit <= 0 or offset < 0:
+            raise ValueError("Invalid limit or offset")
+
+        if start_date and end_date and start_date > end_date:
+            raise ValueError("start_date cannot be after end_date")
+
+        if searchable_key and not searchable_value:
+            raise ValueError("searchable_value required when searchable_key provided")
+
+        query = select(self.model).where(self.model.deleted == False)
 
         if filter is not None:
-            conditions: dict[str, Any] = filter.model_dump(exclude_unset=True)
-
+            conditions = filter.model_dump(exclude_unset=True)
             for key, value in conditions.items():
+                if not hasattr(self.model, key):
+                    raise ValueError(f"Invalid filter key: {key}")
                 query = query.where(getattr(self.model, key) == value)
 
-        query = (
-            query.limit(limit=limit)
-            .offset(offset=offset)
-            .order_by(
-                desc(column=text(text=sort_by)) if descending else text(text=sort_by)
-            )
-            .where(
-                self.model.created_at >= start_date
-                and self.model.created_at <= end_date
-            )
-        )
+        date_column = getattr(self.model, "created_at", None)
+        if date_column is not None:
+            if start_date:
+                query = query.where(date_column >= start_date)
+            if end_date:
+                query = query.where(date_column <= end_date)
 
-        result: Result[Tuple[Model]] = await self.db.execute(statement=query)
-        data: Sequence[Model] = result.scalars().unique().all()
+        if searchable_key and searchable_value:
+            if not hasattr(self.model, searchable_key):
+                raise ValueError(f"Invalid searchable_key: {searchable_key}")
+            query = query.where(
+                getattr(self.model, searchable_key).like(f"{searchable_value}%")
+            )
 
+        if not hasattr(self.model, sort_by):
+            raise ValueError(f"Invalid sort_by column: {sort_by}")
+
+        sort_column = getattr(self.model, sort_by)
+        query = query.order_by(desc(sort_column) if descending else sort_column)
+
+        query = query.limit(limit).offset(offset)
+
+        result = await self.db.execute(query)
+        data = result.scalars().unique().all()
         return [self.entity.model_validate(obj=x) for x in data]

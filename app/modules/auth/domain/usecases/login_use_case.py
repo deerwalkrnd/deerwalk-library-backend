@@ -2,10 +2,12 @@ from datetime import datetime, timedelta
 
 from app.core.domain.entities.user import User
 from app.core.infra.repositories.user_repository import UserRepository
-from app.modules.auth.domain.services.password_hasher_interface import \
-    PasswordHasherInterface
-from app.modules.auth.domain.services.token_service_interface import \
-    TokenServiceInterface
+from app.modules.auth.domain.services.password_hasher_interface import (
+    PasswordHasherInterface,
+)
+from app.modules.auth.domain.services.token_service_interface import (
+    TokenServiceInterface,
+)
 
 
 class LoginUseCase:
