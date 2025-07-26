@@ -31,3 +31,10 @@ router.add_api_route(
     methods=["DELETE"],
     response_description="Deletes the user and returns success status on deletion",
 )
+router.add_api_route(
+    path="/{uuid}",
+    endpoint=users_controller.update_user,
+    methods=["PUT"],
+    response_description="Update a user based on the incoming field," \
+    " need to send a multipart/form-data",
+)
