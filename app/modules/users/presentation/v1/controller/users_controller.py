@@ -1,14 +1,15 @@
-from typing import Any
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
-from app.core.domain.entities.user import User
+from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
+from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
+from app.modules.users.domain.request.user_update_request import UpdateUserRequest
 from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
 from app.modules.users.domain.usecases.delete_users_by_uuid_use_case import (
     DeleteUsersByUUIDUseCase,
@@ -22,23 +23,31 @@ from app.modules.users.domain.usecases.get_user_by_email_use_case import (
 from app.modules.users.domain.usecases.get_user_by_uuid_use_case import (
     GetUserByUUIDUseCase,
 )
+from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
+    UpdateUsersByUUIDUseCase,
+)
 
 
 class UsersController:
     async def list_many_users(
         self, db: AsyncSession = Depends(get_db), params: UserSearchRequest = Depends()
     ) -> PaginatedResponseMany[User]:
-        # TODO(aashutosh): make the searchable field part of the request and verify that
-        # searchable exists on the users table.
-        searchable_field = "name"
+
+        if (
+            params.searchable_field not in User.model_fields.keys()
+            or not params.searchable_field
+        ):
+            params.searchable_field = None
+            params.searchable_value = None
+
         user_repository = UserRepository(db=db)
         get_many_users_use_case = GetManyUsersUseCase(user_repository=user_repository)
 
         users = await get_many_users_use_case.execute(
             page=params.page,
             limit=params.limit,
-            searchable_field=searchable_field if params.searchable else None,
-            searchable_value=params.searchable,
+            searchable_field=params.searchable_field,
+            searchable_value=params.searchable_value,
             starts=params.starts,
             ends=params.ends,
         )
@@ -114,6 +123,28 @@ class UsersController:
         )
         await delete_user_by_uuid_use_case.execute(uuid)
 
-    async def update_user(self, update_user_request: Any) -> None:
-        # Need to finish the file service stuff to implement this.
-        raise NotImplementedError
+    async def update_user(
+        self,
+        uuid: str,
+        update_user_request: UpdateUserRequest,
+        db: AsyncSession = Depends(get_db),
+    ) -> None:
+        user_repository = UserRepository(db=db)
+
+        if update_user_request.password:
+            pwd_service = Argon2PasswordHasher()
+            update_user_request.password = await pwd_service.hash_password(
+                update_user_request.password
+            )
+
+        new_data: UserWithPassword = UserWithPassword(
+            **update_user_request.model_dump(exclude_unset=True)
+        )
+
+        update_users_by_uuid_use_case = UpdateUsersByUUIDUseCase(
+            user_repository=user_repository
+        )
+
+        await update_users_by_uuid_use_case.execute(
+            conditions=UserWithPassword(uuid=uuid), new=new_data
+        )
