@@ -16,6 +16,7 @@ dependencies = [
     "pylint>=3.3.7",
     "ruff>=0.12.4",
     "sqlalchemy[asyncio]>=2.0.41",
+    "types-aiobotocore[essential]>=2.23.2",
     "uvicorn>=0.35.0",
 ]
 
