@@ -5,6 +5,7 @@ from app.core.infra.services.s3_file_service import S3FileService
 from app.modules.files.dependencies.get_s3_file_service import get_s3_file_service
 from string import Template
 
+from app.modules.files.domain.request.file_type_enum import LibraryFileType
 from app.modules.files.domain.response.file_response import FileResponse
 
 PROFILE_PATH = Template("profile-picture/$filename")
@@ -15,12 +16,13 @@ class FileController:
     async def upload(
         self,
         file: UploadFile,
+        type: LibraryFileType,
         file_service: S3FileService = Depends(get_s3_file_service),
     ) -> FileResponse:
         try:
             path = ""
 
-            if file.content_type and file.content_type.startswith("image/"):
+            if type == LibraryFileType.PROFILE_IMAGE:
                 path = PROFILE_PATH.safe_substitute({"filename": file.filename})
             else:
                 path = BOOK_COVER_PATH.safe_substitute({"filename": file.filename})

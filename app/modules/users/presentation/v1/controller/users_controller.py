@@ -32,7 +32,6 @@ class UsersController:
     async def list_many_users(
         self, db: AsyncSession = Depends(get_db), params: UserSearchRequest = Depends()
     ) -> PaginatedResponseMany[User]:
-
         if (
             params.searchable_field not in User.model_fields.keys()
             or not params.searchable_field
