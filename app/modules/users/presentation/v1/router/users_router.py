@@ -35,6 +35,6 @@ router.add_api_route(
     path="/{uuid}",
     endpoint=users_controller.update_user,
     methods=["PUT"],
-    response_description="Update a user based on the incoming field," \
+    response_description="Update a user based on the incoming field,"
     " need to send a multipart/form-data",
 )

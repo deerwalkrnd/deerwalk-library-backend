@@ -15,5 +15,4 @@ class Settings(BaseSettings):
     s3_bucket_name: str
     s3_region_name: str
 
-
-    model_config = SettingsConfigDict(env_file=".env.dev")
+    model_config = SettingsConfigDict(env_file=".env.dev.aws")
