@@ -27,6 +27,7 @@ from app.modules.users.domain.usecases.get_user_by_email_use_case import (
 from app.modules.users.domain.usecases.get_user_by_uuid_use_case import (
     GetUserByUUIDUseCase,
 )
+from app.modules.users.domain.usecases.update_users_by_uuid_use_case import UpdateUsersByUUIDUseCase
 
 
 class UsersController:
@@ -121,6 +122,7 @@ class UsersController:
 
     # have to do it without pydantic here cuz multipart-form is a not mature in fastapi.
     # something to look at in the future.
+    # the implementation will be changed here.
     async def update_user(
         self,
         uuid: str,
@@ -156,9 +158,14 @@ class UsersController:
             )
             new_data.image_url = uploaded_url
 
-        await user_repository.update(
-            conditions=UserWithPassword(uuid=uuid), obj=new_data
+        update_users_by_uuid_use_case = UpdateUsersByUUIDUseCase(
+            user_repository = user_repository
         )
 
-        return
+        await update_users_by_uuid_use_case.execute(
+            conditions=UserWithPassword(uuid=uuid),
+            new=new_data
+        )
+
+
 
