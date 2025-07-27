@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from aiobotocore.session import AioSession  # type:ignore
+from aiobotocore.session import AioSession
 from aiohttp import ClientError
 from fastapi.logger import logger
 from app.core.dependencies.get_settings import get_settings
