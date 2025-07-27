@@ -10,4 +10,9 @@ class Settings(BaseSettings):
     jtw_key: str = "hahahahahahayolobotsharu"
     database_url: str
 
-    model_config = SettingsConfigDict(env_file=".env.dev")
+    s3_access_key_id: str
+    s3_secret_access_key: str
+    s3_bucket_name: str
+    s3_region_name: str
+
+    model_config = SettingsConfigDict(env_file=".env.dev.aws")
