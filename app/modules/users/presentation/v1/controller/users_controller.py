@@ -1,15 +1,20 @@
-from typing import Any
-from fastapi import Depends, logger
+from typing import Union
+from fastapi import Depends, File, Form, UploadFile, logger
+from starlette.datastructures import UploadFile as StarletteUploadFile
+from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
-from app.core.domain.entities.user import User
+from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
+from app.core.infra.services.s3_file_service import S3FileService
+from app.core.models.users import UserRole
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
 from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
+from aiobotocore.session import AioSession
 from app.modules.users.domain.usecases.delete_users_by_uuid_use_case import (
     DeleteUsersByUUIDUseCase,
 )
@@ -114,6 +119,46 @@ class UsersController:
         )
         await delete_user_by_uuid_use_case.execute(uuid)
 
-    async def update_user(self, update_user_request: Any) -> None:
-        # Need to finish the file service stuff to implement this.
-        raise NotImplementedError
+    # have to do it without pydantic here cuz multipart-form is a not mature in fastapi.
+    # something to look at in the future.
+    async def update_user(
+        self,
+        uuid: str,
+        name: str | None = Form(None),
+        roll_number: str | None = Form(None),
+        email: EmailStr | None = Form(None),
+        password: str | None = Form(None),
+        graduating_year: str | None = Form(None),
+        role: UserRole | None = Form(None),
+        user_image: Union[UploadFile, str, None] = File(default=None),
+        db: AsyncSession = Depends(get_db),
+    ) -> None:
+        user_repository = UserRepository(db=db)
+
+        new_data = UserWithPassword(
+            name=name,
+            roll_number=roll_number,
+            email=email,
+            password=password,
+            graduating_year=graduating_year,
+            role=role,
+        )
+
+        # file upload is still not mature in fastapi man.
+        # using this hack for now
+        if isinstance(user_image, StarletteUploadFile) and user_image.filename:
+            session = AioSession()
+            file_service = S3FileService(session=session)
+            uploaded_url = await file_service.save(
+                f"profile-images/{user_image.filename}",
+                await user_image.read(),
+                user_image.content_type,
+            )
+            new_data.image_url = uploaded_url
+
+        await user_repository.update(
+            conditions=UserWithPassword(uuid=uuid), obj=new_data
+        )
+
+        return
+
