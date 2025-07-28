@@ -1,5 +1,5 @@
 from aiosmtplib import SMTP
-from fastapi import Depends, logger
+from fastapi import BackgroundTasks, Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_smtp import get_smtp
@@ -152,17 +152,19 @@ class UsersController:
             conditions=UserWithPassword(uuid=uuid), new=new_data
         )
 
+    # please use this code as an example to implement your email api service
     async def test_email(
         self,
+        background_tasks: BackgroundTasks,
         smtp: SMTP = Depends(get_smtp),
     ):
         email_notification_service = EmailNotificationService(smtp)
 
         email = await get_welcome_tempelate(
             name="Aashutosh",
-            to="aashutosh.pudasaini@deerwalk.edu.np",
+            to="aakancha.thapa@deerwalk.edu.np",
             subject="Welcome to the Library",
             _from="Aashutosh Pudasaini <nepalidude3@gmail.com>",
         )
 
-        await email_notification_service.send_email(email)
+        background_tasks.add_task(email_notification_service.send_email, email)
