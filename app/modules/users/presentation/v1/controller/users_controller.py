@@ -1,11 +1,15 @@
+from aiosmtplib import SMTP
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
+from app.core.dependencies.get_smtp import get_smtp
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
+from app.core.infra.services.email_notification_service import EmailNotificationService
+from app.modules.auth.domain.templates.welcome_template import get_welcome_tempelate
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
@@ -147,3 +151,18 @@ class UsersController:
         await update_users_by_uuid_use_case.execute(
             conditions=UserWithPassword(uuid=uuid), new=new_data
         )
+
+    async def test_email(
+        self,
+        smtp: SMTP = Depends(get_smtp),
+    ):
+        email_notification_service = EmailNotificationService(smtp)
+
+        email = await get_welcome_tempelate(
+            name="Aashutosh",
+            to="aashutosh.pudasaini@deerwalk.edu.np",
+            subject="Welcome to the Library",
+            _from="Aashutosh Pudasaini <nepalidude3@gmail.com>",
+        )
+
+        await email_notification_service.send_email(email)

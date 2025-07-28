@@ -15,4 +15,10 @@ class Settings(BaseSettings):
     s3_bucket_name: str
     s3_region_name: str
 
+    smtp_username: str
+    smtp_password: str
+    smtp_use_tls: bool = True
+    smtp_host: str
+    smtp_port: int
+
     model_config = SettingsConfigDict(env_file=".env.dev.aws")
