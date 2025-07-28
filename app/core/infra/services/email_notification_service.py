@@ -9,5 +9,4 @@ class EmailNotificationService(EmailServiceInterface):
 
     async def send_email(self, message: MIMEMultipart) -> None:
         async with self.smtp as smtp_client:
-            # await smtp_client.starttls()
             await smtp_client.send_message(message)
