@@ -1,5 +1,6 @@
-from typing import Any, Dict, Optional
 from datetime import datetime
+from typing import Any, Dict, Optional
+
 from pydantic import BaseModel, ConfigDict
 
 from app.core.models.users import UserRole

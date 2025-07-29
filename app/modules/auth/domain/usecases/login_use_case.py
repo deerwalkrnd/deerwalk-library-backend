@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 
-from app.core.domain.entities.user import User
-from app.core.infra.repositories.user_repository import UserRepository
+from app.core.domain.entities.user import UserWithPassword
+from app.core.domain.repositories.user_repository_interface import (
+    UserRepositoryInterface,
+)
 from app.modules.auth.domain.services.password_hasher_interface import (
     PasswordHasherInterface,
 )
@@ -13,7 +15,7 @@ from app.modules.auth.domain.services.token_service_interface import (
 class LoginUseCase:
     def __init__(
         self,
-        user_repository: UserRepository,
+        user_repository: UserRepositoryInterface,
         token_service: TokenServiceInterface,
         password_service: PasswordHasherInterface,
     ) -> None:
@@ -22,7 +24,7 @@ class LoginUseCase:
         self.password_service = password_service
 
     async def execute(self, email: str, password: str) -> str:
-        user = await self.user_repository.find_one(obj=User(email=email))
+        user = await self.user_repository.find_one(obj=UserWithPassword(email=email))
         if not user or not user.password:
             raise ValueError("user does not exist")
         is_correct = await self.password_service.compare_password(

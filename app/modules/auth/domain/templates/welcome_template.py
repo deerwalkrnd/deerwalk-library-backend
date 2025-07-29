@@ -1,7 +1,6 @@
 from email.mime.text import MIMEText
 from string import Template
 
-
 HTTP_TEMPLATE = Template("""
 <h1> Dear $name, </h1>
 <p> We wanted to take the time to welcome you to the Deerwalk Library Application.
