@@ -7,10 +7,10 @@ from app.modules.users.presentation.v1.controller.users_controller import (
 router = APIRouter(prefix="/users", tags=["Users API"])
 users_controller = UsersController()
 
-router.add_api_route(
-    path="/test",
-    endpoint=users_controller.test_email,
-)
+# router.add_api_route(
+#     path="/test",
+#     endpoint=users_controller.test_email,
+# )
 
 router.add_api_route(
     path="/",

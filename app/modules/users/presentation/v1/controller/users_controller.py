@@ -9,6 +9,7 @@ from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
 from app.core.infra.services.email_notification_service import EmailNotificationService
+from app.core.utils.make_email import create_email
 from app.modules.auth.domain.templates.welcome_template import get_welcome_tempelate
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
@@ -153,6 +154,8 @@ class UsersController:
         )
 
     # please use this code as an example to implement your email api service
+    # need to rethink and better implement this part, seperate the abstractions
+    # refactor the function get_welcome_tempelate such that it takes the template as well and returns the mime
     async def test_email(
         self,
         background_tasks: BackgroundTasks,
@@ -160,11 +163,15 @@ class UsersController:
     ):
         email_notification_service = EmailNotificationService(smtp)
 
-        email = await get_welcome_tempelate(
-            name="Aashutosh",
-            to="aakancha.thapa@deerwalk.edu.np",
-            subject="Welcome to the Library",
-            _from="Aashutosh Pudasaini <nepalidude3@gmail.com>",
+        html_content = await get_welcome_tempelate(
+            name="Aashutosh Pudasaini",
+        )
+
+        email = await create_email(
+            to="kesab.regmi@deerwalk.edu.np",
+            subject="Welcome to Deerwalk Library",
+            _from="Deerwalk Library <nepalidude3@gmail.com>",
+            html=html_content
         )
 
         background_tasks.add_task(email_notification_service.send_email, email)
