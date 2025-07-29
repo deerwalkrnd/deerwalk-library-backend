@@ -1,5 +1,6 @@
-from typing import List
 from datetime import datetime
+from typing import List
+
 from app.core.domain.entities.user import User
 from app.core.infra.repositories.user_repository import UserRepository
 

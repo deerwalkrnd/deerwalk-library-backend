@@ -1,5 +1,7 @@
 from email.mime.multipart import MIMEMultipart
+
 from aiosmtplib import SMTP
+
 from app.core.domain.services.email_service_interface import EmailServiceInterface
 
 

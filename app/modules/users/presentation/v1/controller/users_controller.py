@@ -1,6 +1,7 @@
 from aiosmtplib import SMTP
 from fastapi import BackgroundTasks, Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_smtp import get_smtp
 from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
@@ -131,7 +132,7 @@ class UsersController:
         self,
         uuid: str,
         db: AsyncSession = Depends(get_db),
-        librarian: User = Depends(get_current_librarian),
+        _ : User = Depends(get_current_librarian),
     ) -> None:
         user_repository = UserRepository(db=db)
 
@@ -176,7 +177,6 @@ class UsersController:
 
     # please use this code as an example to implement your email api service
     # need to rethink and better implement this part, seperate the abstractions
-    # refactor the function get_welcome_tempelate such that it takes the template as well and returns the mime
     async def test_email(
         self,
         background_tasks: BackgroundTasks,

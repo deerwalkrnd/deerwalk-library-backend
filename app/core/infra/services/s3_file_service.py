@@ -1,10 +1,12 @@
+from datetime import datetime
 from typing import Any, Dict
+
 from aiobotocore.session import AioSession
 from aiohttp import ClientError
 from fastapi.logger import logger
+
 from app.core.dependencies.get_settings import get_settings
 from app.core.domain.services.s3_file_service_interface import S3FileServiceInterface
-from datetime import datetime
 
 
 class S3FileService(S3FileServiceInterface):
