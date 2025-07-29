@@ -157,7 +157,6 @@ class UsersController:
 
     # please use this code as an example to implement your email api service
     # need to rethink and better implement this part, seperate the abstractions
-    # refactor the function get_welcome_tempelate such that it takes the template as well and returns the mime
     async def test_email(
         self,
         background_tasks: BackgroundTasks,
