@@ -13,7 +13,7 @@ from app.modules.auth.infra.services.jwt_service import JWTService
 
 async def get_current_user(
     request: Request, db: AsyncSession = Depends(get_db)
-) -> User | None:
+) -> User:
     token_header = request.headers.get("Authorization")
     if not token_header:
         raise LibraryException(

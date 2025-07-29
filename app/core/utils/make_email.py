@@ -1,14 +1,9 @@
-
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
 async def create_email(
-    to: str,
-    subject: str,
-    _from: str,
-    html: MIMEText
+    to: str, subject: str, _from: str, html: MIMEText
 ) -> MIMEMultipart:
     message = MIMEMultipart("alternative")
 
