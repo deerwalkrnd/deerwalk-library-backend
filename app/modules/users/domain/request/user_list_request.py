@@ -1,6 +1,7 @@
 from app.core.domain.entities.request.query.filter_request import FilterParams
 from app.core.domain.entities.request.query.pagination_request import PaginationParams
+from app.core.domain.entities.request.query.sortby_request import SortByRequest
 
 
-class UserSearchRequest(PaginationParams, FilterParams):
+class UserSearchRequest(PaginationParams, FilterParams, SortByRequest):
     pass

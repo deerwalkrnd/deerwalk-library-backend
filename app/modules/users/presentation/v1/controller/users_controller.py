@@ -54,6 +54,8 @@ class UsersController:
             searchable_value=params.searchable_value,
             starts=params.starts,
             ends=params.ends,
+            sort_by=params.sort_by,
+            descending=params.is_descending
         )
 
         return PaginatedResponseMany(

@@ -16,14 +16,16 @@ class GetManyUsersUseCase:
         searchable_value: str | None,
         starts: datetime | None,
         ends: datetime | None,
+        sort_by: str,
+        descending: bool,
     ) -> List[User]:
         offset = (page - 1) * limit
 
         items = await self.user_repository.filter(
             limit=limit,
             offset=offset,
-            descending=True,
-            sort_by="created_at",
+            descending=descending,
+            sort_by=sort_by,
             filter=None,
             start_date=starts,
             end_date=ends,
