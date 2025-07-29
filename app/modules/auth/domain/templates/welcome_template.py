@@ -18,7 +18,6 @@ Deerwalk Library
 async def get_welcome_tempelate(
     name: str,
 ) -> MIMEText:
-
     html_content = HTTP_TEMPLATE.safe_substitute({"name": name})
     html_mime = MIMEText(html_content, "html", "utf-8")
     return html_mime

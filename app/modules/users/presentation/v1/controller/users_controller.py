@@ -3,6 +3,8 @@ from fastapi import BackgroundTasks, Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_smtp import get_smtp
+from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
+from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
@@ -35,7 +37,10 @@ from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
 
 class UsersController:
     async def list_many_users(
-        self, db: AsyncSession = Depends(get_db), params: UserSearchRequest = Depends()
+        self,
+        db: AsyncSession = Depends(get_db),
+        params: UserSearchRequest = Depends(),
+        _: User = Depends(get_current_librarian),
     ) -> PaginatedResponseMany[User]:
         if (
             params.searchable_field not in User.model_fields.keys()
@@ -55,7 +60,7 @@ class UsersController:
             starts=params.starts,
             ends=params.ends,
             sort_by=params.sort_by,
-            descending=params.is_descending
+            descending=params.is_descending,
         )
 
         return PaginatedResponseMany(
@@ -86,6 +91,7 @@ class UsersController:
         self,
         user_creation_request: UserCreationRequest,
         db: AsyncSession = Depends(get_db),
+        _: User = Depends(get_current_librarian),
     ) -> User:
         user_repository = UserRepository(db=db)
 
@@ -121,7 +127,12 @@ class UsersController:
                 status_code=500, code=ErrorCode.UNKOWN_ERROR, msg="Error Creating user"
             )
 
-    async def delete_user(self, uuid: str, db: AsyncSession = Depends(get_db)) -> None:
+    async def delete_user(
+        self,
+        uuid: str,
+        db: AsyncSession = Depends(get_db),
+        librarian: User = Depends(get_current_librarian),
+    ) -> None:
         user_repository = UserRepository(db=db)
 
         delete_user_by_uuid_use_case = DeleteUsersByUUIDUseCase(
@@ -133,8 +144,16 @@ class UsersController:
         self,
         uuid: str,
         update_user_request: UpdateUserRequest,
+        user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
     ) -> None:
+        if user.role.value != "LIBRARIAN" or user.uuid != uuid:  # type: ignore
+            raise LibraryException(
+                status_code=403,
+                code=ErrorCode.INSUFFICIENT_PERMISSION,
+                msg="You do not have permission to do this action",
+            )
+
         user_repository = UserRepository(db=db)
 
         if update_user_request.password:
@@ -173,7 +192,7 @@ class UsersController:
             to="kesab.regmi@deerwalk.edu.np",
             subject="Welcome to Deerwalk Library",
             _from="Deerwalk Library <nepalidude3@gmail.com>",
-            html=html_content
+            html=html_content,
         )
 
         background_tasks.add_task(email_notification_service.send_email, email)

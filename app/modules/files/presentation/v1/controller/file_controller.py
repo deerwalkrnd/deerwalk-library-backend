@@ -1,4 +1,6 @@
 from fastapi import Depends, UploadFile, logger
+from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
+from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.services.s3_file_service import S3FileService
@@ -17,6 +19,7 @@ class FileController:
         self,
         file: UploadFile,
         type: LibraryFileType,
+        _: User = Depends(get_current_librarian),
         file_service: S3FileService = Depends(get_s3_file_service),
     ) -> FileResponse:
         try:
