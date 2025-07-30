@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 from uuid import uuid4
 
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -36,3 +36,5 @@ class UserModel(Base):
     graduating_year: Mapped[Optional[str]]
     image_url: Mapped[Optional[str]]
     user_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB)
+
+    feedbacks = relationship("FeedbackModel", back_populates="user")

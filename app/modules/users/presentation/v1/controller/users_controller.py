@@ -132,7 +132,7 @@ class UsersController:
         self,
         uuid: str,
         db: AsyncSession = Depends(get_db),
-        _ : User = Depends(get_current_librarian),
+        _: User = Depends(get_current_librarian),
     ) -> None:
         user_repository = UserRepository(db=db)
 

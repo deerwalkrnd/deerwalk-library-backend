@@ -106,9 +106,7 @@ class QuotesController:
 
         await update_quote_by_id_use_case.execute(
             conditions=Quote(id=id),
-            new=Quote(
-                **quote_update_request.model_dump(exclude_unset=True)
-            ),
+            new=Quote(**quote_update_request.model_dump(exclude_unset=True)),
         )
 
         return None
