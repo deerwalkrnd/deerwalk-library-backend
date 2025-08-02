@@ -1,5 +1,5 @@
 from fastapi import Depends
-from fastapi.logger import logger
+from fastapi import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
@@ -51,7 +51,7 @@ class QuotesController:
                 page=params.page, total=len(quotes), next=params.page + 1, items=quotes
             )
         except Exception as e:
-            logger.error(e)
+            logger.logger.error(e)
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
@@ -74,7 +74,7 @@ class QuotesController:
             )
             return new_quote
         except ValueError as e:
-            logger.error(e)
+            logger.logger.error(e)
             raise LibraryException(
                 status_code=409,
                 code=ErrorCode.DUPLICATE_ENTRY,
