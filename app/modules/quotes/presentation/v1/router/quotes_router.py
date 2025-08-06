@@ -34,3 +34,10 @@ router.add_api_route(
     endpoint=quotes_controller.delete_quote,
     description="Delete a quote",
 )
+
+router.add_api_route(
+    path="/random-quote",
+    methods=["POST"],
+    endpoint=quotes_controller.get_random_quote,
+    description="returns a random quote.",
+)
