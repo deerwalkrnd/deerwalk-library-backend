@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     default_fine_amount: int = 3
     jtw_key: str = "hahahahahahayolobotsharu"
     database_url: str
+    frontend_url: str
 
     s3_access_key_id: str
     s3_secret_access_key: str
