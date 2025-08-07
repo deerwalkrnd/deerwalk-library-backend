@@ -40,5 +40,12 @@ router.add_api_route(
     response_description="Returns a token to be used in url.",
 )
 
+router.add_api_route(
+    "/reset-password",
+    forgot_password_controller.reset_password,
+    methods=["POST"],
+    response_description="Resets the password to new password.",
+)
+
 # TODO(forgot password)
 # We will do the forgot password feature after we've done the email service with celery
