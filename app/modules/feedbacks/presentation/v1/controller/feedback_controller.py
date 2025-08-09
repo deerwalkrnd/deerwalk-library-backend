@@ -87,7 +87,7 @@ class FeedbackController:
                 searchable_value=params.searchable_value,
                 starts=params.starts,
                 ends=params.ends,
-                is_ack=params.is_ack
+                is_ack=params.is_ack,
             )
 
             return PaginatedResponseMany(
