@@ -1,5 +1,4 @@
-from venv import logger
-from fastapi import Depends
+from fastapi import Depends, logger
 from app.core.dependencies.database import get_db
 from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
@@ -63,7 +62,7 @@ class FeedbackController:
 
             return new_feedback
         except ValueError as e:
-            logger.error(e)
+            logger.logger.error(e)
             raise LibraryException(
                 status_code=409,
                 code=ErrorCode.DUPLICATE_ENTRY,
@@ -98,7 +97,7 @@ class FeedbackController:
             )
 
         except Exception as e:
-            logger.error(e)
+            logger.logger.error(e)
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
