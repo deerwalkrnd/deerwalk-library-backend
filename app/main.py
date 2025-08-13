@@ -7,6 +7,7 @@ from app.routers.v1.router import v1_router
 
 app = FastAPI(
     title="Deerwalk Library Backend API",
+    description="The API built for Deerwalk College's Library System. Open Souce and build for all libraries across Nepal",
 )
 
 app.include_router(v1_router)

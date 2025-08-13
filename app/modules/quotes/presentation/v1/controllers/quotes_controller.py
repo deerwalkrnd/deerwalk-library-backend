@@ -1,5 +1,5 @@
 from fastapi import Depends
-from fastapi.logger import logger
+from fastapi import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
@@ -19,6 +19,9 @@ from app.modules.quotes.domain.usecase.get_many_quotes_use_case import (
 )
 from app.modules.quotes.domain.usecase.get_quote_by_id_use_case import (
     GetQuoteByIdUseCase,
+)
+from app.modules.quotes.domain.usecase.get_random_quote_use_case import (
+    GetRandomQuoteUseCase,
 )
 from app.modules.quotes.domain.usecase.update_quote_by_id_use_case import (
     UpdateQuoteByIdUseCase,
@@ -51,7 +54,7 @@ class QuotesController:
                 page=params.page, total=len(quotes), next=params.page + 1, items=quotes
             )
         except Exception as e:
-            logger.error(e)
+            logger.logger.error(e)
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
@@ -74,7 +77,7 @@ class QuotesController:
             )
             return new_quote
         except ValueError as e:
-            logger.error(e)
+            logger.logger.error(e)
             raise LibraryException(
                 status_code=409,
                 code=ErrorCode.DUPLICATE_ENTRY,
@@ -130,3 +133,19 @@ class QuotesController:
             quote_repository=quote_repository
         )
         return await delete_quote_by_id_use_case.execute(id=id)
+
+    async def get_random_quote(self, db: AsyncSession = Depends(get_db)) -> Quote:
+        quote_repository = QuoteRepository(db=db)
+
+        get_random_quote_use_case = GetRandomQuoteUseCase(
+            quote_repository=quote_repository
+        )
+
+        quote = await get_random_quote_use_case.execute()
+
+        if not quote:
+            raise LibraryException(
+                status_code=404, code=ErrorCode.NOT_FOUND, msg="no quotes found."
+            )
+
+        return quote
