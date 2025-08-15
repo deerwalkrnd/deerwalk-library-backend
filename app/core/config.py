@@ -21,4 +21,8 @@ class Settings(BaseSettings):
     smtp_host: str
     smtp_port: int
 
+    google_client_id: str
+    google_client_secret: str
+    google_redirect_url: str
+
     model_config = SettingsConfigDict(env_file=".env.dev.aws")

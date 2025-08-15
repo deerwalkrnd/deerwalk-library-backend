@@ -29,5 +29,12 @@ router.add_api_route(
     response_description="Returns the User Data if logged in else, 403",
 )
 
+router.add_api_route(
+    "/sso",
+    auth_controller.handle_sso_login,
+    methods=["GET"],
+    response_description="Returns the URL to redirect the user to after generating with google sso"
+)
+
 # TODO(forgot password)
 # We will do the forgot password feature after we've done the email service with celery

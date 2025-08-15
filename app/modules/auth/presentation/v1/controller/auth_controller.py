@@ -9,7 +9,12 @@ from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
 from app.modules.auth.domain.request.login_request import LoginRequest
+from app.modules.auth.domain.request.sso_url_request import SSOURLRequest
 from app.modules.auth.domain.response.token_response import TokenResponse
+from app.modules.auth.domain.response.url_response import URLResponse
+from app.modules.auth.domain.usecases.get_sso_login_url_use_case import (
+    GetSSOLoginURLUseCase,
+)
 from app.modules.auth.domain.usecases.login_use_case import LoginUseCase
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.auth.infra.services.jwt_service import JWTService
@@ -60,7 +65,20 @@ class AuthController:
         self,
     ) -> TokenResponse:
         # TODO(aashutosh): SSO Login
+        # Should I handle the callback here or in the frontend?
         raise NotImplementedError("Google Login will be implemented soon")
 
     async def handle_me(self, user: User = Depends(get_current_user)) -> User:
         return user
+
+    async def handle_sso_login(self, sso: SSOURLRequest = Depends()) -> URLResponse:
+        try:
+            sso_url_use_case = GetSSOLoginURLUseCase()
+            url = await sso_url_use_case.execute(sso.provider)
+            return URLResponse(url=url)
+        except ValueError:
+            raise LibraryException(
+                status_code=404,
+                code=ErrorCode.NOT_FOUND,
+                msg="such sso login not found",
+            )
