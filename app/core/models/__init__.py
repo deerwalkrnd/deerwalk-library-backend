@@ -5,4 +5,12 @@ from .feedback import FeedbackModel as FeedbackModel
 from .genre import GenreModel as GenreModel
 from .event import EventModel as EventModel
 
-_all_ = ["UserModel", "Base", "QuoteModel", "FeedbackModel", "GenreModel", "GenreModel", "EventModel"]
+_all_ = [
+    "UserModel",
+    "Base",
+    "QuoteModel",
+    "FeedbackModel",
+    "GenreModel",
+    "GenreModel",
+    "EventModel",
+]
