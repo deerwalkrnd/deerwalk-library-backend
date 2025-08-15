@@ -154,5 +154,3 @@ class EventsController:
                 code=ErrorCode.NOT_FOUND,
                 msg="event not found " + str(e),
             )
-
-        pass
