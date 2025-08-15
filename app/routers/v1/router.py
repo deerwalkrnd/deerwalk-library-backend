@@ -16,6 +16,10 @@ from app.modules.genres.presentation.v1.router.genre_router import (
     router as genre_router,
 )
 
+from app.modules.events.presentation.v1.router.events_router import (
+    router as event_router,
+)
+
 v1_router = APIRouter(prefix="/v1")
 
 v1_router.include_router(auth_router)
@@ -25,6 +29,7 @@ v1_router.include_router(files_router)
 v1_router.include_router(quotes_router)
 v1_router.include_router(feedbacks_router)
 v1_router.include_router(genre_router)
+v1_router.include_router(event_router)
 
 
 # remove at production
