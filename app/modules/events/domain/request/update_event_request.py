@@ -1,13 +1,8 @@
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from pydantic import BaseModel
 
 
-class Event(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
-
-    id: int | None = None
+class UpdateEventRequest(BaseModel):
     name: str | None = None
     event_date: datetime | None = None
     image_url: str | None = None
