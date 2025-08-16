@@ -19,6 +19,7 @@ from app.modules.events.domain.usecase.delete_event_by_id_use_case import (
 from app.modules.events.domain.usecase.get_event_by_id_use_case import (
     GetEventByIdUseCase,
 )
+from app.modules.events.domain.usecase.get_latest_event_use_case import GetLatestEventUseCase
 from app.modules.events.domain.usecase.get_many_events_use_case import (
     GetManyEventsUseCase,
 )
@@ -154,3 +155,19 @@ class EventsController:
                 code=ErrorCode.NOT_FOUND,
                 msg="event not found " + str(e),
             )
+    
+    async def get_latest_event(self, db: AsyncSession = Depends(get_db) ) -> Event:
+        event_repository = EventRepository(db)
+
+        get_latest_event_use_case = GetLatestEventUseCase(
+            event_repository=event_repository
+        )
+
+        latest_event = await get_latest_event_use_case.execute()
+        
+        if not latest_event:
+            raise LibraryException(status_code=404,code=ErrorCode.NOT_FOUND,msg="no events found")
+        
+        return latest_event
+
+

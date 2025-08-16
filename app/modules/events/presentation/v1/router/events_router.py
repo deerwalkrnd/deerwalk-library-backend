@@ -15,11 +15,19 @@ router.add_api_route(
 )
 
 router.add_api_route(
+    path="/latest",
+    methods=["GET"],
+    endpoint=events_controller.get_latest_event,
+    response_description="get latest event or not found error"
+)
+
+router.add_api_route(
     path="/{id}",
     methods=["GET"],
     endpoint=events_controller.get_one_event,
     response_description="gets one events, specified by the id",
 )
+
 
 router.add_api_route(
     path="/{id}",
