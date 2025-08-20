@@ -1,4 +1,5 @@
 from celery import Celery
+
 from app.core.dependencies.get_settings import get_settings
 
 settings = get_settings()

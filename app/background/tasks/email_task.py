@@ -1,11 +1,12 @@
+import asyncio
 from email.mime.text import MIMEText
 from typing import Any
+
 from celery import Task
-from app.background.celery_app import celery_app
-from app.core.dependencies.get_smtp import get_smtp
-import asyncio
 from fastapi.logger import logger
 
+from app.background.celery_app import celery_app
+from app.core.dependencies.get_smtp import get_smtp
 from app.core.infra.services.email_notification_service import EmailNotificationService
 from app.core.utils.make_email import create_email
 from app.modules.auth.domain.templates.welcome_template import get_welcome_template
@@ -76,5 +77,4 @@ def send_custom_email_task(
         self.retry(exc=e, countdown=60 * (2**self.request.retries), max_retries=3)
 
 
-#TODO(aashutosh): create a bulk email sending class which sends email in bulk for upcoming book returns
-
+# TODO(aashutosh): create a bulk email sending class which sends email in bulk for upcoming book returns

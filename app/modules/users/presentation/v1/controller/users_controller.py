@@ -2,6 +2,7 @@ from aiosmtplib import SMTP
 from fastapi import BackgroundTasks, Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.background.tasks.email_task import send_welcome_email_task
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_smtp import get_smtp
 from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
@@ -34,8 +35,6 @@ from app.modules.users.domain.usecases.get_user_by_uuid_use_case import (
 from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
     UpdateUsersByUUIDUseCase,
 )
-
-from app.background.tasks.email_task import send_welcome_email_task
 
 
 class UsersController:
@@ -123,10 +122,7 @@ class UsersController:
             new_user = await create_user_use_case.execute(
                 user_creation_request=user_creation_request
             )
-            send_welcome_email_task.delay(
-                name=new_user.name,
-                email=new_user.email
-            )
+            send_welcome_email_task.delay(name=new_user.name, email=new_user.email)
 
             return new_user
         except ValueError as e:
