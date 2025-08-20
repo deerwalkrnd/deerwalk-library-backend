@@ -1,4 +1,6 @@
 from typing import Tuple
+
+from sqlalchemy import Result, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.infra.repositories.repository import Repository
@@ -7,7 +9,6 @@ from app.modules.quotes.domain.entities.quote import Quote
 from app.modules.quotes.domain.repositories.quote_repository_interface import (
     QuoteRepositoryInterface,
 )
-from sqlalchemy import Result, select, func
 
 
 class QuoteRepository(Repository[QuoteModel, Quote], QuoteRepositoryInterface):

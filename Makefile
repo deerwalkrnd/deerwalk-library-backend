@@ -9,3 +9,6 @@ ruff:
 
 isort:
 	uv run isort .
+
+celery:
+	uv run celery -A app.background.celery_app worker --loglevel=debug --concurrency=2
