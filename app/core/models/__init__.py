@@ -13,4 +13,5 @@ _all_ = [
     "GenreModel",
     "GenreModel",
     "EventModel",
+    "PasswordResetTokenModel",
 ]

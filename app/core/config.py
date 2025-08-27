@@ -22,5 +22,6 @@ class Settings(BaseSettings):
     smtp_port: int
 
     redis_url: str
+    frontend_url: str
 
     model_config = SettingsConfigDict(env_file=".env.dev.aws")
