@@ -3,8 +3,8 @@ from pydantic import BaseModel
 
 
 class TeacherRecommendationUpdateRequest(BaseModel):
-    name: str
-    designation: str
-    note: str
-    book_title: str
+    name: Optional[str] = None
+    designation: Optional[str] = None
+    note: Optional[str] = None
+    book_title: Optional[str] = None
     cover_image_url: Optional[str] | None = None

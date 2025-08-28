@@ -1,8 +1,10 @@
 from fastapi import APIRouter
 
-from app.modules.teacher_recommendations.presentation.v1.controllers.teacher_recommendation_controller import TeacherRecommendationController
+from app.modules.teacher_recommendations.presentation.v1.controllers.teacher_recommendation_controller import (
+    TeacherRecommendationController,
+)
 
-router = APIRouter(prefix = "/teacher-recommendations",tags=["teacher-recommendations"])
+router = APIRouter(prefix="/teacher-recommendations", tags=["teacher-recommendations"])
 
 teacher_recommendation_controller = TeacherRecommendationController()
 
@@ -11,14 +13,14 @@ router.add_api_route(
     endpoint=teacher_recommendation_controller.list_teacher_recommendations,
     methods=["GET"],
     description="This method is used to get all teacher recommendations.",
-    status_code= 200,
+    status_code=200,
 )
 router.add_api_route(
     path="/",
     endpoint=teacher_recommendation_controller.create_teacher_recommendation,
     methods=["POST"],
     description="This method is used to create a teacher recommendation.",
-    status_code= 201,
+    status_code=201,
 )
 router.add_api_route(
     path="/{id}",

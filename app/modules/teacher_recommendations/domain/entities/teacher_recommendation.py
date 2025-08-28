@@ -6,9 +6,9 @@ class TeacherRecommendation(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
     )
-    id: int
-    name: str
-    designation: str
-    note: str
-    book_title: str
+    id: Optional[int] = None
+    name: Optional[str] = None
+    designation: Optional[str] = None
+    note: Optional[str] = None
+    book_title: Optional[str] = None
     cover_image_url: Optional[str] | None = None
