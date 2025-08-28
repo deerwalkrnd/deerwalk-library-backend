@@ -29,9 +29,11 @@ from app.modules.auth.infra.password_reset_token_repository import (
 )
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 
-from app.modules.auth.utils.generate_password_reset_token import (
-    generate_password_reset_token,
+from app.modules.auth.utils.generate_url_safe_token_expiry import (
+    generate_url_safe_token_expiry,
 )
+
+from app.modules.auth.utils.generate_url_safe_token import generate_url_safe_token
 from app.modules.auth.utils.validate_password_reset_token import (
     validate_password_reset_token,
 )
@@ -71,13 +73,14 @@ class PasswordResetController:
         )
 
         if user and user.uuid and user.name:
-            token, expires_at = await generate_password_reset_token()
+            token = await generate_url_safe_token()
+            expires_at = await generate_url_safe_token_expiry()
 
             _ = await create_password_reset_token_use_case.execute(
                 user_id=user.uuid, token=token, token_expiry=expires_at
             )
 
-            password_reset_link = f"{settings.frontend_url}?token={token}"
+            password_reset_link = f"{settings.frontend_url}/reset-password?token={token}"
 
             send_reset_password_email_task.delay(
                 to=user.email, password_reset_url=password_reset_link, name=user.name

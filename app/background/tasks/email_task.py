@@ -50,6 +50,7 @@ def send_welcome_email_task(self: EmailTask, email: str, name: str = "User") -> 
         logger.error(e)
         self.retry(exc=e, countdown=60 * (2**self.request.retries), max_retries=3)
 
+
 @celery_app.task(bind=True, base=EmailTask, name="send_reset_password_email")
 def send_reset_password_email_task(
     self: EmailTask,

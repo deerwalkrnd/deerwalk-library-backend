@@ -16,7 +16,7 @@ class CreatePasswordResetTokenUseCase:
     ) -> PasswordResetToken | None:
         password_reset_token = await self.password_reset_token_repository.create(
             obj=PasswordResetToken(
-                user_id=user_id, token=token, token_expiry=token_expiry
+                user_id=user_id, token=token, expires_at=token_expiry
             )
         )
         return password_reset_token

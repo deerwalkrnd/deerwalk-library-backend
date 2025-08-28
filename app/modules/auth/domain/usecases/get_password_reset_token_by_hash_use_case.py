@@ -15,7 +15,4 @@ class GetPasswordResetTokenByHashUseCase:
             obj=PasswordResetToken(token=token)
         )
 
-        if password_reset_token:
-            return password_reset_token
-
-        return None
+        return password_reset_token

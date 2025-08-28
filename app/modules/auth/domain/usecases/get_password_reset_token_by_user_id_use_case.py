@@ -4,19 +4,13 @@ from app.modules.auth.domain.repository.password_reset_token_repository_interfac
 )
 
 
-class GetPassworResetTokenByUserIdUseCase:
+class GetPasswordResetTokenByUserIdUseCase:
     def __init__(
         self, password_reset_token_repository: PasswordResetTokenRepositoryInterface
     ):
         self.password_reset_token_repository = password_reset_token_repository
 
     async def execute(self, user_id: str) -> PasswordResetToken | None:
-        password_reset_token = (
-            await self.password_reset_token_repository.find_one_by_user_id(
-                user_id=user_id
-            )
+        return await self.password_reset_token_repository.find_one_by_user_id(
+            user_id=user_id
         )
-        if password_reset_token:
-            return password_reset_token
-
-        return None

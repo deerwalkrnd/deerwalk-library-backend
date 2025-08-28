@@ -22,7 +22,7 @@ async def validate_password_reset_token(
             msg="Invalid password reset token.",
         )
 
-    if token_entity.token_expiry and token_entity.token_expiry < datetime.now():
+    if token_entity.expires_at and token_entity.expires_at < datetime.now():
         raise LibraryException(
             status_code=401,
             code=ErrorCode.TOKEN_EXPIRED,

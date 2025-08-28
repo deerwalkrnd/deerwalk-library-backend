@@ -11,4 +11,4 @@ class PasswordResetToken(BaseModel):
     id: int | None = None
     user_id: str | None = None
     token: str | None = None
-    token_expiry: datetime | None = None
+    expires_at: datetime | None = None

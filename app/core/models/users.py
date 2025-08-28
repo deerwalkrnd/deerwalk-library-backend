@@ -38,6 +38,6 @@ class UserModel(Base):
     user_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB)
 
     feedbacks = relationship("FeedbackModel", back_populates="user")
-    password_reset_token = relationship(
+    password_reset_tokens = relationship(
         "PasswordResetTokenModel", back_populates="user"
     )
