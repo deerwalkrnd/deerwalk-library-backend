@@ -1,0 +1,10 @@
+from app.core.domain.repositories.repository_interface import RepositoryInterface
+from app.modules.teacher_recommendations.domain.entities.teacher_recommendation import (
+    TeacherRecommendation,
+)
+
+
+class TeacherRecommendationRepositoryInterface(
+    RepositoryInterface[TeacherRecommendation]
+):
+    pass
