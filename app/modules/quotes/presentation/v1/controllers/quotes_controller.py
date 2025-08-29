@@ -1,5 +1,4 @@
-from fastapi import Depends
-from fastapi import logger
+from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db

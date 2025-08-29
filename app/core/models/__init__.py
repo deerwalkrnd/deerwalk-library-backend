@@ -1,9 +1,12 @@
 from .base import Base as Base
-from .quote import QuoteModel as QuoteModel
-from .users import UserModel as UserModel
+from .event import EventModel as EventModel
 from .feedback import FeedbackModel as FeedbackModel
 from .genre import GenreModel as GenreModel
-from .event import EventModel as EventModel
+from .quote import QuoteModel as QuoteModel
+from .users import UserModel as UserModel
+from .teacher_recommendation import (
+    TeacherRecommendationModel as TeacherRecommendationModel,
+)
 
 _all_ = [
     "UserModel",
@@ -13,4 +16,5 @@ _all_ = [
     "GenreModel",
     "GenreModel",
     "EventModel",
+    "TeacherRecommendationModel",
 ]

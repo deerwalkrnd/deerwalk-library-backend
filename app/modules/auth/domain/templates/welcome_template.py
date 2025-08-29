@@ -14,7 +14,7 @@ Deerwalk Library
 """)
 
 
-async def get_welcome_tempelate(
+async def get_welcome_template(
     name: str,
 ) -> MIMEText:
     html_content = HTTP_TEMPLATE.safe_substitute({"name": name})

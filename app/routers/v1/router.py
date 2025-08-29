@@ -4,21 +4,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
 from app.modules.auth.presentation.v1.router.auth_router import router as auth_router
 from app.modules.books.presentation.v1.router.books_router import router as books_router
-from app.modules.files.presentation.v1.router.files_router import router as files_router
-from app.modules.quotes.presentation.v1.router.quotes_router import (
-    router as quotes_router,
-)
-from app.modules.users.presentation.v1.router.users_router import router as users_router
-from app.modules.feedbacks.presentation.v1.router.feedback_router import (
-    router as feedbacks_router,
-)
-from app.modules.genres.presentation.v1.router.genre_router import (
-    router as genre_router,
-)
-
 from app.modules.events.presentation.v1.router.events_router import (
     router as event_router,
 )
+from app.modules.feedbacks.presentation.v1.router.feedback_router import (
+    router as feedbacks_router,
+)
+from app.modules.files.presentation.v1.router.files_router import router as files_router
+from app.modules.genres.presentation.v1.router.genre_router import (
+    router as genre_router,
+)
+from app.modules.quotes.presentation.v1.router.quotes_router import (
+    router as quotes_router,
+)
+from app.modules.teacher_recommendations.presentation.v1.router.teacher_recommendation_router import (
+    router as teacher_recommendation_router,
+)
+
+from app.modules.users.presentation.v1.router.users_router import router as users_router
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -30,6 +33,7 @@ v1_router.include_router(quotes_router)
 v1_router.include_router(feedbacks_router)
 v1_router.include_router(genre_router)
 v1_router.include_router(event_router)
+v1_router.include_router(teacher_recommendation_router)
 
 
 # remove at production

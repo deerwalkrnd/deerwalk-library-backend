@@ -1,0 +1,80 @@
+import asyncio
+from email.mime.text import MIMEText
+from typing import Any
+
+from celery import Task
+from fastapi.logger import logger
+
+from app.background.celery_app import celery_app
+from app.core.dependencies.get_smtp import get_smtp
+from app.core.infra.services.email_notification_service import EmailNotificationService
+from app.core.utils.make_email import create_email
+from app.modules.auth.domain.templates.welcome_template import get_welcome_template
+
+
+class EmailTask(Task):  # type: ignore
+    """Base Task to deal with email things
+    The implementations need both smtp object and the email_service to work.
+    """
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return self.run(*args, **kwds)  # type:ignore
+
+    def get_email_service(self):
+        smtp = asyncio.run(get_smtp())
+        return EmailNotificationService(smtp=smtp)
+
+
+@celery_app.task(bind=True, base=EmailTask, name="send_welcome_email")
+def send_welcome_email_task(self: EmailTask, email: str, name: str = "User") -> None:
+    try:
+        email_service: EmailNotificationService = self.get_email_service()
+
+        html_content = asyncio.run(get_welcome_template(name=name))
+
+        email_obj = asyncio.run(
+            create_email(
+                html=html_content,
+                subject="Welcome to Deerwalk Library",
+                _from="Deerwalk Library <library@deerwalk.edu.np>",
+                to=email,
+            )
+        )
+
+        asyncio.run(email_service.send_email(email_obj))
+
+        return None
+    except Exception as e:
+        logger.error(e)
+        self.retry(exc=e, countdown=60 * (2**self.request.retries), max_retries=3)
+
+
+@celery_app.task(bind=True, base=EmailTask, name="send_custom_email")
+def send_custom_email_task(
+    self: EmailTask,
+    to: str,
+    subject: str,
+    html_content: MIMEText,
+    from_email: str = "Deerwalk Library <library@deerwalk.edu.np>",
+):
+    """Send custom email task"""
+    try:
+        email_service = self.get_email_service()
+
+        email_obj = asyncio.run(
+            create_email(
+                to=to,
+                subject=subject,
+                _from=from_email,
+                html=html_content,
+            )
+        )
+
+        asyncio.run(email_service.send_email(email_obj))
+
+    except Exception as e:
+        print(f"Failed to send email to {to}: {str(e)}")
+        self.retry(exc=e, countdown=60 * (2**self.request.retries), max_retries=3)
+
+
+# TODO(aashutosh): create a bulk email sending class which sends email in bulk for upcoming book returns

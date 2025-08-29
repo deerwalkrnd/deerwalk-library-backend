@@ -1,7 +1,9 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
+
 from fastapi import Depends
 from fastapi.logger import logger
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies.database import get_db
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
@@ -19,7 +21,9 @@ from app.modules.events.domain.usecase.delete_event_by_id_use_case import (
 from app.modules.events.domain.usecase.get_event_by_id_use_case import (
     GetEventByIdUseCase,
 )
-from app.modules.events.domain.usecase.get_latest_event_use_case import GetLatestEventUseCase
+from app.modules.events.domain.usecase.get_latest_event_use_case import (
+    GetLatestEventUseCase,
+)
 from app.modules.events.domain.usecase.get_many_events_use_case import (
     GetManyEventsUseCase,
 )
@@ -115,7 +119,6 @@ class EventsController:
             params.starts = datetime.now() - timedelta(days=30)
             params.ends = datetime.now() + timedelta(days=5)
 
-
         events = await get_many_events_use_case.execute(
             params.page,
             params.limit,
@@ -155,8 +158,8 @@ class EventsController:
                 code=ErrorCode.NOT_FOUND,
                 msg="event not found " + str(e),
             )
-    
-    async def get_latest_event(self, db: AsyncSession = Depends(get_db) ) -> Event:
+
+    async def get_latest_event(self, db: AsyncSession = Depends(get_db)) -> Event:
         event_repository = EventRepository(db)
 
         get_latest_event_use_case = GetLatestEventUseCase(
@@ -164,10 +167,10 @@ class EventsController:
         )
 
         latest_event = await get_latest_event_use_case.execute()
-        
+
         if not latest_event:
-            raise LibraryException(status_code=404,code=ErrorCode.NOT_FOUND,msg="no events found")
-        
+            raise LibraryException(
+                status_code=404, code=ErrorCode.NOT_FOUND, msg="no events found"
+            )
+
         return latest_event
-
-

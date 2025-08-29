@@ -1,6 +1,8 @@
-from .base import Base
 from typing import Optional
+
 from sqlalchemy.orm import Mapped, mapped_column
+
+from .base import Base
 
 
 class GenreModel(Base):

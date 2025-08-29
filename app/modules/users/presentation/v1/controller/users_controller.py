@@ -2,6 +2,7 @@ from aiosmtplib import SMTP
 from fastapi import BackgroundTasks, Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.background.tasks.email_task import send_welcome_email_task
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_smtp import get_smtp
 from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
@@ -13,7 +14,7 @@ from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
 from app.core.infra.services.email_notification_service import EmailNotificationService
 from app.core.utils.make_email import create_email
-from app.modules.auth.domain.templates.welcome_template import get_welcome_tempelate
+from app.modules.auth.domain.templates.welcome_template import get_welcome_template
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
@@ -92,7 +93,7 @@ class UsersController:
         self,
         user_creation_request: UserCreationRequest,
         db: AsyncSession = Depends(get_db),
-        _: User = Depends(get_current_librarian),
+        # _: User = Depends(get_current_librarian),
     ) -> User:
         user_repository = UserRepository(db=db)
 
@@ -121,6 +122,8 @@ class UsersController:
             new_user = await create_user_use_case.execute(
                 user_creation_request=user_creation_request
             )
+            send_welcome_email_task.delay(name=new_user.name, email=new_user.email)
+
             return new_user
         except ValueError as e:
             logger.logger.error(e)
@@ -184,7 +187,7 @@ class UsersController:
     ):
         email_notification_service = EmailNotificationService(smtp)
 
-        html_content = await get_welcome_tempelate(
+        html_content = await get_welcome_template(
             name="Aashutosh Pudasaini",
         )
 
