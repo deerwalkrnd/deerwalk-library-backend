@@ -8,7 +8,7 @@ from .teacher_recommendation import (
     TeacherRecommendationModel as TeacherRecommendationModel,
 )
 from .book import BookModel as BookModel
-from .dss_book import DssBookModel as DssBookModel
+from .book_copy import BookCopyModel as BookCopyModel
 
 _all_ = [
     "UserModel",
@@ -19,5 +19,6 @@ _all_ = [
     "GenreModel",
     "EventModel",
     "TeacherRecommendationModel",
-    "BookModelDssBookModel",
+    "BookModel",
+    "BookCopyModel",
 ]
