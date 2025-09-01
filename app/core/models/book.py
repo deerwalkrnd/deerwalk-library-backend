@@ -1,7 +1,5 @@
 from enum import Enum
 from typing import Optional
-
-from sqlalchemy import ForeignKey
 from app.core.models.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -18,13 +16,14 @@ class BookModel(Base):
     title: Mapped[Optional[str]] = mapped_column(index=True)
     author: Mapped[Optional[str]] = mapped_column(index=True)
     publication: Mapped[Optional[str]] = mapped_column(index=True)
-    ISBN: Mapped[Optional[str]] = mapped_column(index=True)
+    isbn: Mapped[Optional[str]] = mapped_column(index=True)
     category: Mapped[BookCategoryType] = mapped_column(
         default=BookCategoryType.NON_ACADEMIC
     )
     genre: Mapped[Optional[str]] = mapped_column(index=True)
-    dss_book_id: Mapped[Optional[int]] = mapped_column(ForeignKey("dss_books.id"))
     grade: Mapped[Optional[str]] = mapped_column(index=True)
     cover_image_url: Mapped[Optional[str]] = mapped_column(index=True)
 
-    dss_books = relationship("DssBookModel", back_populates="book")
+    copies= relationship(
+        "BookCopyModel", back_populates="book", cascade="all, delete-orphan"
+    )
