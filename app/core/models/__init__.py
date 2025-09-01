@@ -7,6 +7,8 @@ from .users import UserModel as UserModel
 from .teacher_recommendation import (
     TeacherRecommendationModel as TeacherRecommendationModel,
 )
+from .book import BookModel as BookModel
+from .book_copy import BookCopyModel as BookCopyModel
 
 _all_ = [
     "UserModel",
@@ -17,4 +19,6 @@ _all_ = [
     "GenreModel",
     "EventModel",
     "TeacherRecommendationModel",
+    "BookModel",
+    "BookCopyModel",
 ]
