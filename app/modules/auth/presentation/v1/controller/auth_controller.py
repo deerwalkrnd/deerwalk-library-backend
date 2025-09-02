@@ -101,7 +101,6 @@ class AuthController:
                     msg="underlying google api timed out ;" + str(e),
                 )
 
-        print(user_information)
 
         if user_information.email and not user_information.email.endswith(
             "@deerwalk.edu.np"
@@ -159,10 +158,6 @@ class AuthController:
             }
 
             token = await generate_jwt_use_case.execute(payload=data)
-
-            # create_user_use_case.execute(user_creation_request=UserCreationRequest(
-
-            # ))
 
             return TokenResponse(token=token)
 

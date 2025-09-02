@@ -11,7 +11,7 @@ auth_controller = AuthController()
 password_reset_controller = PasswordResetController()
 
 router.add_api_route(
-    "/login-google",
+    "/google-callback",
     auth_controller.handle_google_callback,
     methods=["POST"],
     response_description="Here the `token` field in the response contains the url "
@@ -55,5 +55,3 @@ router.add_api_route(
 )
 
 
-# TODO(forgot password)
-# We will do the forgot password feature after we've done the email service with celery
