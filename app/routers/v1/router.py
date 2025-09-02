@@ -17,6 +17,10 @@ from app.modules.genres.presentation.v1.router.genre_router import (
 from app.modules.quotes.presentation.v1.router.quotes_router import (
     router as quotes_router,
 )
+from app.modules.teacher_recommendations.presentation.v1.router.teacher_recommendation_router import (
+    router as teacher_recommendation_router,
+)
+
 from app.modules.users.presentation.v1.router.users_router import router as users_router
 
 v1_router = APIRouter(prefix="/v1")
@@ -29,6 +33,7 @@ v1_router.include_router(quotes_router)
 v1_router.include_router(feedbacks_router)
 v1_router.include_router(genre_router)
 v1_router.include_router(event_router)
+v1_router.include_router(teacher_recommendation_router)
 
 
 # remove at production
