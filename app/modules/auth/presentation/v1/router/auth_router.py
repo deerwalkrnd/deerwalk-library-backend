@@ -8,7 +8,7 @@ auth_controller = AuthController()
 
 router.add_api_route(
     "/login-google",
-    auth_controller.google_login,
+    auth_controller.handle_google_callback,
     methods=["POST"],
     response_description="Here the `token` field in the response contains the url "
     "instead of the jwt token",
@@ -33,7 +33,7 @@ router.add_api_route(
     "/sso",
     auth_controller.handle_sso_login,
     methods=["GET"],
-    response_description="Returns the URL to redirect the user to after generating with google sso"
+    response_description="Returns the URL to redirect the user to after generating with google sso",
 )
 
 # TODO(forgot password)

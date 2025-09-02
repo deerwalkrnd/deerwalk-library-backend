@@ -1,10 +1,14 @@
+from typing import Dict
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
+import httpx
+from datetime import datetime, timedelta
 
 from app.core.dependencies.database import get_db
+from app.core.dependencies.get_settings import get_settings
 from app.core.dependencies.middleware.get_available_user import get_available_user
 from app.core.dependencies.middleware.get_current_user import get_current_user
-from app.core.domain.entities.user import User
+from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
@@ -12,12 +16,26 @@ from app.modules.auth.domain.request.login_request import LoginRequest
 from app.modules.auth.domain.request.sso_url_request import SSOURLRequest
 from app.modules.auth.domain.response.token_response import TokenResponse
 from app.modules.auth.domain.response.url_response import URLResponse
+from app.modules.auth.domain.usecases.generate_jwt_token_use_case import (
+    GenerateJWTTokenUseCase,
+)
 from app.modules.auth.domain.usecases.get_sso_login_url_use_case import (
     GetSSOLoginURLUseCase,
+)
+from app.modules.auth.domain.usecases.get_user_information_from_code_use_case import (
+    GetUserInformationFromCodeUseCase,
 )
 from app.modules.auth.domain.usecases.login_use_case import LoginUseCase
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.auth.infra.services.jwt_service import JWTService
+from app.modules.users.domain.request.user_creation_request import UserCreationRequest
+from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
+from app.modules.users.domain.usecases.get_user_by_email_use_case import (
+    GetUserByEmailUseCase,
+)
+from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
+    UpdateUsersByUUIDUseCase,
+)
 
 
 class AuthController:
@@ -61,12 +79,80 @@ class AuthController:
                 fields=["email", "password"],
             )
 
-    async def google_login(
-        self,
+    async def handle_google_callback(
+        self, code: str, db: AsyncSession = Depends(get_db)
     ) -> TokenResponse:
-        # TODO(aashutosh): SSO Login
-        # Should I handle the callback here or in the frontend?
-        raise NotImplementedError("Google Login will be implemented soon")
+        config = get_settings()
+
+        async with httpx.AsyncClient() as client:
+            get_user_information_from_code_use_case = GetUserInformationFromCodeUseCase(
+                client=client,
+                client_id=config.google_client_id,
+                redirect_url=config.google_redirect_url,
+                client_secret=config.google_client_secret,
+            )
+            try:
+                user_information = (
+                    await get_user_information_from_code_use_case.execute(code)
+                )
+            except ValueError as e:
+                raise LibraryException(
+                    status_code=408,
+                    code=ErrorCode.TOKEN_EXPIRED,
+                    msg="underlying google api timed out ;" + str(e),
+                )
+
+        print(user_information)
+
+        if user_information.email and not user_information.email.endswith(
+            "@deerwalk.edu.np"
+        ):
+            raise LibraryException(
+                status_code=403,
+                code=ErrorCode.INSUFFICIENT_PERMISSION,
+                msg="only deerwalk students can use this api",
+            )
+
+        user_repository = UserRepository(db=db)
+
+        get_user_by_email_use_case = GetUserByEmailUseCase(
+            user_repository=user_repository
+        )
+
+        if not user_information.email:
+            raise ValueError("never reaching here")
+
+        try:
+            user = await get_user_by_email_use_case.execute(user_information.email)
+
+            update_user_by_uuid_use_case = UpdateUsersByUUIDUseCase(
+                user_repository=user_repository
+            )
+            await update_user_by_uuid_use_case.execute(
+                conditions=UserWithPassword(uuid=user.uuid),
+                new=UserWithPassword.model_validate(user),
+            )
+            token_service = JWTService()
+
+            generate_jwt_use_case = GenerateJWTTokenUseCase(token_service=token_service)
+
+            data: Dict[str, datetime | str | None] = {
+                "sub": user.uuid,
+                "exp": datetime.now() + timedelta(days=2),
+            }
+
+            token: str = await generate_jwt_use_case.execute(payload=data)
+
+            return TokenResponse(token=token)
+
+            # user exists in the db, update new data and send back token
+        except ValueError as e:
+            # user does not exist in the db, create new entity and create a token and send back
+            # TODO(aashutosh): implement this
+
+            create_user_use_case = CreateUserUseCase(user_repository=user_repository)
+
+            return TokenResponse(token="abc")
 
     async def handle_me(self, user: User = Depends(get_current_user)) -> User:
         return user
