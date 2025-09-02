@@ -103,7 +103,7 @@ class AuthController:
 
 
         if user_information.email and not user_information.email.endswith(
-            "@deerwalk.edu.np"
+            ".deerwalk.edu.np"
         ):
             raise LibraryException(
                 status_code=403,
