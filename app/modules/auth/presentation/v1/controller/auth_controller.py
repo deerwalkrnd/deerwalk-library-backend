@@ -28,8 +28,7 @@ from app.modules.auth.domain.usecases.get_user_information_from_code_use_case im
 from app.modules.auth.domain.usecases.login_use_case import LoginUseCase
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.auth.infra.services.jwt_service import JWTService
-from app.modules.users.domain.request.user_creation_request import UserCreationRequest
-from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
+from app.modules.users.domain.usecases.create_user_from_google_use_case import CreateUserFromGoogleUseCase
 from app.modules.users.domain.usecases.get_user_by_email_use_case import (
     GetUserByEmailUseCase,
 )
@@ -122,6 +121,9 @@ class AuthController:
         if not user_information.email:
             raise ValueError("never reaching here")
 
+        token_service = JWTService()
+        generate_jwt_use_case = GenerateJWTTokenUseCase(token_service=token_service)
+
         try:
             user = await get_user_by_email_use_case.execute(user_information.email)
 
@@ -132,9 +134,7 @@ class AuthController:
                 conditions=UserWithPassword(uuid=user.uuid),
                 new=UserWithPassword.model_validate(user),
             )
-            token_service = JWTService()
 
-            generate_jwt_use_case = GenerateJWTTokenUseCase(token_service=token_service)
 
             data: Dict[str, datetime | str | None] = {
                 "sub": user.uuid,
@@ -148,15 +148,23 @@ class AuthController:
             # user exists in the db, update new data and send back token
         except ValueError as e:
             # user does not exist in the db, create new entity and create a token and send back
-            # TODO(aashutosh): implement this
 
-            create_user_use_case = CreateUserUseCase(user_repository=user_repository)
+            create_user_use_case = CreateUserFromGoogleUseCase(user_repository=user_repository)
 
-            create_user_use_case.execute(user_creation_request=UserCreationRequest(
+            created = await create_user_use_case.execute(user_information)
 
-            ))
+            data : Dict[str, datetime | str | None] = {
+                "sub": created.uuid,
+                "exp": datetime.now() + timedelta(days=2)
+            }
 
-            return TokenResponse(token="abc")
+            token = await generate_jwt_use_case.execute(payload=data)
+
+            # create_user_use_case.execute(user_creation_request=UserCreationRequest(
+
+            # ))
+
+            return TokenResponse(token=token)
 
     async def handle_me(self, user: User = Depends(get_current_user)) -> User:
         return user
