@@ -28,7 +28,6 @@ from app.modules.auth.domain.usecases.get_user_information_from_code_use_case im
 from app.modules.auth.domain.usecases.login_use_case import LoginUseCase
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.auth.infra.services.jwt_service import JWTService
-from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
 from app.modules.users.domain.usecases.get_user_by_email_use_case import (
     GetUserByEmailUseCase,
