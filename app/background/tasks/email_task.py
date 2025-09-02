@@ -1,5 +1,4 @@
 import asyncio
-from email.mime.text import MIMEText
 from typing import Any
 
 from celery import Task
@@ -9,6 +8,9 @@ from app.background.celery_app import celery_app
 from app.core.dependencies.get_smtp import get_smtp
 from app.core.infra.services.email_notification_service import EmailNotificationService
 from app.core.utils.make_email import create_email
+from app.modules.auth.domain.templates.password_reset_template import (
+    get_password_reset_template,
+)
 from app.modules.auth.domain.templates.welcome_template import get_welcome_template
 
 
@@ -49,29 +51,34 @@ def send_welcome_email_task(self: EmailTask, email: str, name: str = "User") -> 
         self.retry(exc=e, countdown=60 * (2**self.request.retries), max_retries=3)
 
 
-@celery_app.task(bind=True, base=EmailTask, name="send_custom_email")
-def send_custom_email_task(
+@celery_app.task(bind=True, base=EmailTask, name="send_reset_password_email")
+def send_reset_password_email_task(
     self: EmailTask,
     to: str,
-    subject: str,
-    html_content: MIMEText,
+    password_reset_url: str,
+    name: str,
     from_email: str = "Deerwalk Library <library@deerwalk.edu.np>",
-):
-    """Send custom email task"""
+) -> None:
     try:
         email_service = self.get_email_service()
 
-        email_obj = asyncio.run(
-            create_email(
-                to=to,
-                subject=subject,
-                _from=from_email,
-                html=html_content,
+        password_reset_template = asyncio.run(
+            get_password_reset_template(
+                name=name,
+                password_reset_link=password_reset_url,
             )
         )
 
-        asyncio.run(email_service.send_email(email_obj))
+        email_object = asyncio.run(
+            create_email(
+                to=to,
+                html=password_reset_template,
+                subject="Reset Your Password",
+                _from=from_email,
+            )
+        )
 
+        asyncio.run(email_service.send_email(email_object))
     except Exception as e:
         print(f"Failed to send email to {to}: {str(e)}")
         self.retry(exc=e, countdown=60 * (2**self.request.retries), max_retries=3)

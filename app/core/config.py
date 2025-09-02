@@ -26,5 +26,6 @@ class Settings(BaseSettings):
     google_redirect_url: str
 
     redis_url: str
+    frontend_url: str
 
     model_config = SettingsConfigDict(env_file=".env.dev.aws")

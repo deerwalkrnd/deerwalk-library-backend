@@ -24,6 +24,6 @@ class BookModel(Base):
     grade: Mapped[Optional[str]] = mapped_column(index=True)
     cover_image_url: Mapped[Optional[str]] = mapped_column(index=True)
 
-    copies= relationship(
+    copies = relationship(
         "BookCopyModel", back_populates="book", cascade="all, delete-orphan"
     )

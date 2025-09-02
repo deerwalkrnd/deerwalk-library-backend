@@ -116,6 +116,12 @@ class UsersController:
             # this is the success path here
             pass
 
+        argon2_hasher = Argon2PasswordHasher()
+
+        user_creation_request.password = await argon2_hasher.hash_password(
+            password=user_creation_request.password
+        )
+
         create_user_use_case = CreateUserUseCase(user_repository=user_repository)
 
         try:
