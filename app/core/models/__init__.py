@@ -7,6 +7,7 @@ from .users import UserModel as UserModel
 from .book import BookModel as BookModel
 from .book_copy import BookCopyModel as BookCopyModel
 from .recommendation import RecommendationModel as RecommendationModel
+from .password_reset_token import PasswordResetTokenModel as PasswordResetTokenModel
 
 _all_ = [
     "UserModel",
