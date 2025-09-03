@@ -2,5 +2,5 @@ from app.core.domain.entities.request.query.filter_request import FilterParams
 from app.core.domain.entities.request.query.pagination_request import PaginationParams
 
 
-class TeacherRecommendationListParams(PaginationParams, FilterParams):
+class RecommendationListParams(PaginationParams, FilterParams):
     pass
