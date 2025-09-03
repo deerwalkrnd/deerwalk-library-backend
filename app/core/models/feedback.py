@@ -14,4 +14,4 @@ class FeedbackModel(Base):
     feedback: Mapped[Optional[str]] = mapped_column(index=True)
     is_acknowledged: Mapped[Optional[bool]] = mapped_column(index=True, default=False)
 
-    user = relationship("UserModel", back_populates="feedbacks")
+    user = relationship("UserModel", back_populates="feedbacks", lazy="joined")
