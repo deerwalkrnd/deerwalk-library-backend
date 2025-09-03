@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class CreateTeacherRecommendationRequest(BaseModel):
+class CreateRecommendationRequest(BaseModel):
     name: str
     designation: str
     note: str

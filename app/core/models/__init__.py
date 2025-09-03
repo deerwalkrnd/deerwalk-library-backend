@@ -4,11 +4,9 @@ from .feedback import FeedbackModel as FeedbackModel
 from .genre import GenreModel as GenreModel
 from .quote import QuoteModel as QuoteModel
 from .users import UserModel as UserModel
-from .teacher_recommendation import (
-    TeacherRecommendationModel as TeacherRecommendationModel,
-)
 from .book import BookModel as BookModel
 from .book_copy import BookCopyModel as BookCopyModel
+from .recommendation import RecommendationModel as RecommendationModel
 
 _all_ = [
     "UserModel",
@@ -19,7 +17,7 @@ _all_ = [
     "GenreModel",
     "EventModel",
     "PasswordResetTokenModel",
-    "TeacherRecommendationModel",
     "BookModel",
     "BookCopyModel",
+    "RecommendationModel",
 ]
