@@ -53,5 +53,3 @@ router.add_api_route(
     methods=["POST"],
     response_description="Updates the password if token is valid",
 )
-
-

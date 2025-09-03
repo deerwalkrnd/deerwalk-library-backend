@@ -28,13 +28,16 @@ from app.modules.auth.domain.usecases.get_user_information_from_code_use_case im
 from app.modules.auth.domain.usecases.login_use_case import LoginUseCase
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.auth.infra.services.jwt_service import JWTService
-from app.modules.users.domain.usecases.create_user_from_google_use_case import CreateUserFromGoogleUseCase
+from app.modules.users.domain.usecases.create_user_from_google_use_case import (
+    CreateUserFromGoogleUseCase,
+)
 from app.modules.users.domain.usecases.get_user_by_email_use_case import (
     GetUserByEmailUseCase,
 )
 from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
     UpdateUsersByUUIDUseCase,
 )
+from urllib.parse import unquote as url_decode
 
 
 class AuthController:
@@ -83,6 +86,8 @@ class AuthController:
     ) -> TokenResponse:
         config = get_settings()
 
+        code = url_decode(code)
+
         async with httpx.AsyncClient() as client:
             get_user_information_from_code_use_case = GetUserInformationFromCodeUseCase(
                 client=client,
@@ -98,12 +103,11 @@ class AuthController:
                 raise LibraryException(
                     status_code=408,
                     code=ErrorCode.TOKEN_EXPIRED,
-                    msg="underlying google api timed out ;" + str(e),
+                    msg="underlying google api errored : " + str(e),
                 )
 
-
         if user_information.email and not user_information.email.endswith(
-            ".deerwalk.edu.np"
+            "deerwalk.edu.np"
         ):
             raise LibraryException(
                 status_code=403,
@@ -134,7 +138,6 @@ class AuthController:
                 new=UserWithPassword.model_validate(user),
             )
 
-
             data: Dict[str, datetime | str | None] = {
                 "sub": user.uuid,
                 "exp": datetime.now() + timedelta(days=2),
@@ -148,13 +151,15 @@ class AuthController:
         except ValueError as e:
             # user does not exist in the db, create new entity and create a token and send back
 
-            create_user_use_case = CreateUserFromGoogleUseCase(user_repository=user_repository)
+            create_user_use_case = CreateUserFromGoogleUseCase(
+                user_repository=user_repository
+            )
 
             created = await create_user_use_case.execute(user_information)
 
-            data : Dict[str, datetime | str | None] = {
+            data: Dict[str, datetime | str | None] = {
                 "sub": created.uuid,
-                "exp": datetime.now() + timedelta(days=2)
+                "exp": datetime.now() + timedelta(days=2),
             }
 
             token = await generate_jwt_use_case.execute(payload=data)

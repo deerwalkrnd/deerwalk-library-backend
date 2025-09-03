@@ -31,22 +31,24 @@ class GetUserInformationFromCodeUseCase:
 
         try:
             response = await self.client.post(token_url, data=data, timeout=30)
-        except httpx.TimeoutException:
-            raise ValueError("timed out")
+            response.raise_for_status()
+        except (httpx.TimeoutException, httpx.HTTPStatusError) as e:
+            raise ValueError(str(e))
 
-        response.raise_for_status()
         return response.json().get("access_token")
 
     async def get_user_info(self, access_token: str) -> Dict[str, Any]:
         user_info_url = "https://www.googleapis.com/oauth2/v1/userinfo"
 
-        response = await self.client.get(
-            url=user_info_url,
-            headers={"Authorization": f"Bearer {access_token}"},
-            timeout=30,
-        )
-
-        response.raise_for_status()
+        try:
+            response = await self.client.get(
+                url=user_info_url,
+                headers={"Authorization": f"Bearer {access_token}"},
+                timeout=30,
+            )
+            response.raise_for_status()
+        except (httpx.TimeoutException, httpx.HTTPStatusError) as e:
+            raise ValueError(str(e))
 
         return response.json()
 
@@ -63,7 +65,6 @@ class GetUserInformationFromCodeUseCase:
     async def execute(self, code: str) -> User:
         access_token = await self.exchange_code_for_token(code=code)
         user_info = await self.get_user_info(access_token=access_token)
-        print(user_info)
         return User(
             email=user_info.get("email"),
             name=user_info.get("name"),
