@@ -80,7 +80,9 @@ class PasswordResetController:
                 user_id=user.uuid, token=token, token_expiry=expires_at
             )
 
-            password_reset_link = f"{settings.frontend_url}/reset-password?token={token}"
+            password_reset_link = (
+                f"{settings.frontend_url}/reset-password?token={token}"
+            )
 
             send_reset_password_email_task.delay(
                 to=user.email, password_reset_url=password_reset_link, name=user.name

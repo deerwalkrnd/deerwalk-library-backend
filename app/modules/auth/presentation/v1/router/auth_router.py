@@ -11,8 +11,8 @@ auth_controller = AuthController()
 password_reset_controller = PasswordResetController()
 
 router.add_api_route(
-    "/login-google",
-    auth_controller.google_login,
+    "/google-callback",
+    auth_controller.handle_google_callback,
     methods=["POST"],
     response_description="Here the `token` field in the response contains the url "
     "instead of the jwt token",
@@ -34,6 +34,13 @@ router.add_api_route(
 )
 
 router.add_api_route(
+    "/sso",
+    auth_controller.handle_sso_login,
+    methods=["GET"],
+    response_description="Returns the URL to redirect the user to after generating with google sso",
+)
+
+router.add_api_route(
     "/forgot-password",
     password_reset_controller.forgot_password,
     methods=["POST"],
@@ -46,7 +53,3 @@ router.add_api_route(
     methods=["POST"],
     response_description="Updates the password if token is valid",
 )
-
-
-# TODO(forgot password)
-# We will do the forgot password feature after we've done the email service with celery
