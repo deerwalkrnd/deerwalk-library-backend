@@ -7,7 +7,9 @@ from app.modules.recommendations.domain.repository.recommendation_repository_int
 
 
 class UpdateRecommendationByIdUseCase:
-    def __init__(self, recommendation_repository: RecommendationRepositoryInterface) -> None:
+    def __init__(
+        self, recommendation_repository: RecommendationRepositoryInterface
+    ) -> None:
         self.recommendation_repository = recommendation_repository
 
     async def execute(self, conditions: Recommendation, new: Recommendation) -> None:

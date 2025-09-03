@@ -36,4 +36,3 @@ router.add_api_route(
     description="This method is used to delete a recommendation",
     status_code=204,
 )
-
