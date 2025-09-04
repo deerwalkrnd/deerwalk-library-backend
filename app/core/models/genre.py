@@ -12,6 +12,6 @@ class GenreModel(Base):
     title: Mapped[Optional[str]]
     image_url: Mapped[Optional[str]]
 
-    books: Mapped[List["BooksGenreModel"]] = relationship( #type: ignore
+    books: Mapped[List["BooksGenreModel"]] = relationship(  # type: ignore
         "BooksGenreModel", back_populates="genre"
-    )  
+    )

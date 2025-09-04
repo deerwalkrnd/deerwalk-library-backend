@@ -8,6 +8,13 @@ from app.modules.books.domain.entities.book import Book
 from app.modules.books.domain.request.book_create_request import CreateBookRequest
 from app.modules.books.domain.request.book_request_list_params import BookListParams
 from app.modules.books.domain.request.book_update_request import BookUpdateRequest
+from app.modules.books.domain.usecase.create_book_copy_use_case import (
+    CreateBookCopyUseCase,
+)
+from app.modules.books.domain.usecase.create_book_use_case import CreateBookUseCase
+from app.modules.books.domain.usecase.get_books_based_on_conditions_use_case import (
+    GetBooksBasedOnConditionsUseCase,
+)
 from app.modules.books.domain.usecase.delete_book_by_id_use_case import (
     DeleteBookByIdUseCase,
 )
@@ -55,7 +62,59 @@ class BookController:
         self, create_book_request: CreateBookRequest, db: AsyncSession = Depends(get_db)
     ) -> Book | None:
         book_repository = BookRepository(db=db)
-        book_copy_repository = BookCopyRepository(db=db)
+
+        get_books_based_on_conditions_use_case = GetBooksBasedOnConditionsUseCase(
+            book_repository=book_repository
+        )
+
+        book = await get_books_based_on_conditions_use_case.execute(
+            conditions=Book(
+                isbn=create_book_request.isbn,
+                publication=create_book_request.publication,
+            )
+        )
+
+        if book:
+            raise LibraryException(
+                status_code=409,
+                code=ErrorCode.DUPLICATE_ENTRY,
+                msg="book with same publication and isbn already exists",
+            )
+
+        create_book_use_case = CreateBookUseCase(book_repository=book_repository)
+
+        created_book: Book | None = await create_book_use_case.execute(
+            **create_book_request.model_dump(exclude_unset=True)
+        )
+
+        if not created_book:
+            raise LibraryException(
+                status_code=500, code=ErrorCode.UNKOWN_ERROR, msg="failed to create book"
+            )
+        
+        if not created_book.id:
+            raise LibraryException(status_code=500, code=ErrorCode.UNKOWN_ERROR, msg="could not insert book into the db")
+        
+
+        if create_book_request.copies and len(create_book_request.copies) >= 1:
+            book_copy_repository = BookCopyRepository(db=db)
+            for book_copy in create_book_request.copies:
+
+                create_book_copy_use_case = CreateBookCopyUseCase(
+                    book_copy_repository=book_copy_repository
+                )
+
+
+                if not book_copy.unique_identifer:
+                    raise LibraryException(
+                        status_code=400, code=ErrorCode.INVALID_FIELDS, msg="all book copies need a unique_identifier"
+                    )
+
+                await create_book_copy_use_case.execute(
+                    book_id=created_book.id,
+                    unique_identifier=book_copy.unique_identifer,
+                    condition=book_copy.condition,
+                )
 
         try:
             pass

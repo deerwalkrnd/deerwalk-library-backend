@@ -25,7 +25,7 @@ class BookModel(Base):
     grade: Mapped[Optional[str]] = mapped_column(index=True)
     cover_image_url: Mapped[Optional[str]] = mapped_column(index=True)
 
-    genres: Mapped[List["BooksGenreModel"]] = relationship( #type: ignore
+    genres: Mapped[List["BooksGenreModel"]] = relationship(  # type: ignore
         "BooksGenreModel", back_populates="book", cascade="all, delete-orphan"
     )
 

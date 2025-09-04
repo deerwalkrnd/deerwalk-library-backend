@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class CreateBookCopy(BaseModel):
     unique_identifer: str
+    condition: Optional[str] = None
 
 
 class CreateBookRequest(BaseModel):
@@ -15,4 +16,4 @@ class CreateBookRequest(BaseModel):
     genres: List[int]
     grade: str
     cover_image_url: str | None = None
-    copies: Optional[List[CreateBookCopy]] = []
+    copies: List[CreateBookCopy] = []
