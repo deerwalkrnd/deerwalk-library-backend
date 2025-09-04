@@ -11,4 +11,4 @@ class BookCopyModel(Base):
     unique_identifier: Mapped[Optional[str]] = mapped_column(index=True)
     book_id: Mapped[int] = mapped_column(ForeignKey("books.id"))
 
-    book = relationship("BookModel", back_populates="copies")
+    book: Mapped["BookModel"] = relationship("BookModel", back_populates="copies")

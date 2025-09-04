@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
 from app.core.models.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,6 +24,6 @@ class BookModel(Base):
     grade: Mapped[Optional[str]] = mapped_column(index=True)
     cover_image_url: Mapped[Optional[str]] = mapped_column(index=True)
 
-    copies = relationship(
+    copies : Mapped[List["BookCopyModel"]] = relationship(
         "BookCopyModel", back_populates="book", cascade="all, delete-orphan"
     )
