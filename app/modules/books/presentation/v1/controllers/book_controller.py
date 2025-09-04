@@ -15,7 +15,8 @@ from app.modules.books.domain.usecase.get_book_by_id_use_case import GetBookById
 from app.modules.books.domain.usecase.update_book_by_id_use_case import (
     UpdateBookByIdUseCase,
 )
-from app.modules.books.infra.book_repository import BookRepository
+from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
+from app.modules.books.infra.repositories.book_repository import BookRepository
 from app.modules.books.domain.usecase.get_many_book_use_case import GetManyBookUseCase
 
 
@@ -53,7 +54,9 @@ class BookController:
     async def create_book(
         self, create_book_request: CreateBookRequest, db: AsyncSession = Depends(get_db)
     ) -> Book | None:
-        # book_repository = BookRepository(db=db)
+        book_repository = BookRepository(db=db)
+        book_copy_repository = BookCopyRepository(db=db)
+
         try:
             pass
 

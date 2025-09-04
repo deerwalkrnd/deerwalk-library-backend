@@ -8,6 +8,7 @@ from .book import BookModel as BookModel
 from .book_copy import BookCopyModel as BookCopyModel
 from .recommendation import RecommendationModel as RecommendationModel
 from .password_reset_token import PasswordResetTokenModel as PasswordResetTokenModel
+from .books_genre import BooksGenreModel as BooksGenreModel
 
 _all_ = [
     "UserModel",
@@ -21,4 +22,5 @@ _all_ = [
     "BookModel",
     "BookCopyModel",
     "RecommendationModel",
+    "BooksGenreModel"
 ]
