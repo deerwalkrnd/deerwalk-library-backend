@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.models.base import Base
 
@@ -10,5 +10,9 @@ class BookCopyModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, unique=True)
     unique_identifier: Mapped[Optional[str]] = mapped_column(index=True)
     book_id: Mapped[int] = mapped_column(ForeignKey("books.id"))
+    is_available: Mapped[Optional[bool]] = mapped_column(default=True)
+    condition: Mapped[Optional[str]]
 
-    book = relationship("BookModel", back_populates="copies")
+    book: Mapped["BookModel"] = relationship("BookModel", back_populates="copies")  # type:ignore
+
+    __table_args__ = (Index("idx_book_copy_availability", "book_id", "is_available"),)
