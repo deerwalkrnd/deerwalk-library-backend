@@ -8,6 +8,9 @@ from app.modules.books.domain.entities.book import Book
 from app.modules.books.domain.request.book_create_request import CreateBookRequest
 from app.modules.books.domain.request.book_request_list_params import BookListParams
 from app.modules.books.domain.request.book_update_request import BookUpdateRequest
+from app.modules.books.domain.usecase.associate_book_with_genre_use_case import (
+    AssociateBookWithGenreUseCase,
+)
 from app.modules.books.domain.usecase.create_book_copy_use_case import (
     CreateBookCopyUseCase,
 )
@@ -25,6 +28,9 @@ from app.modules.books.domain.usecase.update_book_by_id_use_case import (
 from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
 from app.modules.books.infra.repositories.book_repository import BookRepository
 from app.modules.books.domain.usecase.get_many_book_use_case import GetManyBookUseCase
+from app.modules.books.infra.repositories.books_genre_repository import (
+    BooksGenreRepository,
+)
 
 
 class BookController:
@@ -63,6 +69,13 @@ class BookController:
     ) -> Book | None:
         book_repository = BookRepository(db=db)
 
+        if not create_book_request.genres or len(create_book_request.genres) < 1:
+            raise LibraryException(
+                status_code=400,
+                code=ErrorCode.INVALID_FIELDS,
+                msg="All Book Creation Requests must have atleast one genre",
+            )
+
         get_books_based_on_conditions_use_case = GetBooksBasedOnConditionsUseCase(
             book_repository=book_repository
         )
@@ -89,25 +102,30 @@ class BookController:
 
         if not created_book:
             raise LibraryException(
-                status_code=500, code=ErrorCode.UNKOWN_ERROR, msg="failed to create book"
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg="failed to create book",
             )
-        
+
         if not created_book.id:
-            raise LibraryException(status_code=500, code=ErrorCode.UNKOWN_ERROR, msg="could not insert book into the db")
-        
+            raise LibraryException(
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg="could not insert book into the db",
+            )
 
         if create_book_request.copies and len(create_book_request.copies) >= 1:
             book_copy_repository = BookCopyRepository(db=db)
             for book_copy in create_book_request.copies:
-
                 create_book_copy_use_case = CreateBookCopyUseCase(
                     book_copy_repository=book_copy_repository
                 )
 
-
                 if not book_copy.unique_identifer:
                     raise LibraryException(
-                        status_code=400, code=ErrorCode.INVALID_FIELDS, msg="all book copies need a unique_identifier"
+                        status_code=400,
+                        code=ErrorCode.INVALID_FIELDS,
+                        msg="all book copies need a unique_identifier",
                     )
 
                 await create_book_copy_use_case.execute(
@@ -116,16 +134,16 @@ class BookController:
                     condition=book_copy.condition,
                 )
 
-        try:
-            pass
-
-        except Exception as e:
-            logger.logger.error(e)
-            raise LibraryException(
-                status_code=500,
-                code=ErrorCode.UNKOWN_ERROR,
-                msg="could not create Book",
+        for genre_id in create_book_request.genres:
+            books_genre_repository = BooksGenreRepository(db=db)
+            associate_book_with_genre_use_case = AssociateBookWithGenreUseCase(
+                books_genre_repository=books_genre_repository
             )
+            await associate_book_with_genre_use_case.execute(
+                genre_id=genre_id, book_id=created_book.id
+            )
+
+        return created_book
 
     async def update_book(
         self,
