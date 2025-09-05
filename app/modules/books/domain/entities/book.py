@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel, ConfigDict
-from app.modules.books.domain.entities.book_copy import BookCopy
+from app.core.models.book import BookCategoryType
 
 
 class Book(BaseModel):
@@ -12,8 +12,6 @@ class Book(BaseModel):
     author: Optional[str] = None
     publication: Optional[str] = None
     isbn: Optional[str] = None
-    category: Optional[str] = None
-    genres: Optional[List[int]] = None
+    category: Optional[BookCategoryType] = None
     grade: Optional[str] = None
     cover_image_url: Optional[str] | None = None
-    copies: Optional[List[BookCopy]] = None

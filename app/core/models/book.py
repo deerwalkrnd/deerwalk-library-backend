@@ -26,14 +26,17 @@ class BookModel(Base):
     cover_image_url: Mapped[Optional[str]] = mapped_column(index=True)
 
     genres: Mapped[List["BooksGenreModel"]] = relationship(  # type: ignore
-        "BooksGenreModel", back_populates="book", cascade="all, delete-orphan"
+        "BooksGenreModel",
+        back_populates="book",
+        cascade="all, delete-orphan",
+        lazy="noload",
     )
 
     copies: Mapped[List["BookCopyModel"]] = relationship(  # type: ignore
         "BookCopyModel",
         back_populates="book",
         cascade="all, delete-orphan",
-        lazy="select",
+        lazy="noload",
     )
 
     __table_args__ = (

@@ -1,9 +1,11 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
+from app.core.models.book import BookCategoryType
+
 
 class CreateBookCopy(BaseModel):
-    unique_identifer: str
+    unique_identifier: str
     condition: Optional[str] = None
 
 
@@ -12,8 +14,8 @@ class CreateBookRequest(BaseModel):
     author: str
     publication: str
     isbn: str
-    category: str
+    category: BookCategoryType
     genres: List[int]
-    grade: str
+    grade: Optional[str]
     cover_image_url: str | None = None
     copies: List[CreateBookCopy] = []

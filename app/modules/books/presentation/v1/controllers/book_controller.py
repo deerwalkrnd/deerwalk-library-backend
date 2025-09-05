@@ -69,6 +69,8 @@ class BookController:
     ) -> Book | None:
         book_repository = BookRepository(db=db)
 
+        # non academic books have genre, academic books have grade
+
         if not create_book_request.genres or len(create_book_request.genres) < 1:
             raise LibraryException(
                 status_code=400,
@@ -97,7 +99,13 @@ class BookController:
         create_book_use_case = CreateBookUseCase(book_repository=book_repository)
 
         created_book: Book | None = await create_book_use_case.execute(
-            **create_book_request.model_dump(exclude_unset=True)
+            publication=create_book_request.publication,
+            author=create_book_request.author,
+            category=create_book_request.category,
+            cover_image_url=create_book_request.cover_image_url,
+            grade=create_book_request.grade,
+            isbn=create_book_request.isbn,
+            title=create_book_request.title,
         )
 
         if not created_book:
@@ -114,14 +122,15 @@ class BookController:
                 msg="could not insert book into the db",
             )
 
+        book_copy_repository = BookCopyRepository(db=db)
+
         if create_book_request.copies and len(create_book_request.copies) >= 1:
-            book_copy_repository = BookCopyRepository(db=db)
             for book_copy in create_book_request.copies:
                 create_book_copy_use_case = CreateBookCopyUseCase(
                     book_copy_repository=book_copy_repository
                 )
 
-                if not book_copy.unique_identifer:
+                if not book_copy.unique_identifier:
                     raise LibraryException(
                         status_code=400,
                         code=ErrorCode.INVALID_FIELDS,
@@ -130,12 +139,13 @@ class BookController:
 
                 await create_book_copy_use_case.execute(
                     book_id=created_book.id,
-                    unique_identifier=book_copy.unique_identifer,
+                    unique_identifier=book_copy.unique_identifier,
                     condition=book_copy.condition,
                 )
 
+        books_genre_repository = BooksGenreRepository(db=db)
+
         for genre_id in create_book_request.genres:
-            books_genre_repository = BooksGenreRepository(db=db)
             associate_book_with_genre_use_case = AssociateBookWithGenreUseCase(
                 books_genre_repository=books_genre_repository
             )
