@@ -39,6 +39,13 @@ class BookModel(Base):
         lazy="noload",
     )
 
+    reviews: Mapped[List["BookReviewModel"]] = relationship(  # type: ignore
+        "BookReviewModel",
+        back_populates="book",
+        cascade="all, delete-orphan",
+        lazy="noload",
+    )
+
     __table_args__ = (
         Index("idx_book_title_author", "title", "author"),
         Index("idx_book_category_grade", "category", "grade"),

@@ -1,8 +1,8 @@
-"""init
+"""book review modal
 
-Revision ID: 579346267baa
+Revision ID: 33c188fc148a
 Revises:
-Create Date: 2025-09-03 23:29:44.083388
+Create Date: 2025-09-08 12:37:44.846807
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = "579346267baa"
+revision: str = "33c188fc148a"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,7 +34,6 @@ def upgrade() -> None:
             sa.Enum("ACADEMIC", "NON_ACADEMIC", "REFERENCE", name="bookcategorytype"),
             nullable=False,
         ),
-        sa.Column("genre", sa.String(), nullable=True),
         sa.Column("grade", sa.String(), nullable=True),
         sa.Column("cover_image_url", sa.String(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
@@ -43,13 +42,16 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("id"),
     )
+    op.create_index(
+        "idx_book_category_grade", "books", ["category", "grade"], unique=False
+    )
+    op.create_index("idx_book_title_author", "books", ["title", "author"], unique=False)
     op.create_index(op.f("ix_books_author"), "books", ["author"], unique=False)
     op.create_index(
         op.f("ix_books_cover_image_url"), "books", ["cover_image_url"], unique=False
     )
-    op.create_index(op.f("ix_books_genre"), "books", ["genre"], unique=False)
     op.create_index(op.f("ix_books_grade"), "books", ["grade"], unique=False)
-    op.create_index(op.f("ix_books_isbn"), "books", ["isbn"], unique=False)
+    op.create_index(op.f("ix_books_isbn"), "books", ["isbn"], unique=True)
     op.create_index(
         op.f("ix_books_publication"), "books", ["publication"], unique=False
     )
@@ -138,6 +140,8 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("unique_identifier", sa.String(), nullable=True),
         sa.Column("book_id", sa.Integer(), nullable=False),
+        sa.Column("is_available", sa.Boolean(), nullable=True),
+        sa.Column("condition", sa.String(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.Column("deleted", sa.Boolean(), nullable=False),
@@ -149,10 +153,69 @@ def upgrade() -> None:
         sa.UniqueConstraint("id"),
     )
     op.create_index(
+        "idx_book_copy_availability",
+        "book_copies",
+        ["book_id", "is_available"],
+        unique=False,
+    )
+    op.create_index(
         op.f("ix_book_copies_unique_identifier"),
         "book_copies",
         ["unique_identifier"],
         unique=False,
+    )
+    op.create_table(
+        "book_reviews",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("book_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.String(), nullable=False),
+        sa.Column("review_text", sa.String(), nullable=True),
+        sa.Column("is_spam", sa.Boolean(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.Column("deleted", sa.Boolean(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["book_id"],
+            ["books.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.uuid"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("id"),
+    )
+    op.create_index(
+        "idx_unique_book_user", "book_reviews", ["book_id", "user_id"], unique=True
+    )
+    op.create_index(
+        op.f("ix_book_reviews_book_id"), "book_reviews", ["book_id"], unique=False
+    )
+    op.create_index(
+        op.f("ix_book_reviews_review_text"),
+        "book_reviews",
+        ["review_text"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_book_reviews_user_id"), "book_reviews", ["user_id"], unique=False
+    )
+    op.create_table(
+        "books_genre",
+        sa.Column("book_id", sa.Integer(), nullable=False),
+        sa.Column("genre_id", sa.Integer(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.Column("deleted", sa.Boolean(), nullable=False),
+        sa.ForeignKeyConstraint(["book_id"], ["books.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(["genre_id"], ["genres.id"], ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("book_id", "genre_id"),
+    )
+    op.create_index(
+        op.f("ix_books_genre_book_id"), "books_genre", ["book_id"], unique=False
+    )
+    op.create_index(
+        op.f("ix_books_genre_genre_id"), "books_genre", ["genre_id"], unique=False
     )
     op.create_table(
         "feedbacks",
@@ -183,17 +246,51 @@ def upgrade() -> None:
     op.create_index(
         op.f("ix_feedbacks_subject"), "feedbacks", ["subject"], unique=False
     )
+    op.create_table(
+        "password_reset_tokens",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.String(), nullable=True),
+        sa.Column("token", sa.String(), nullable=True),
+        sa.Column("expires_at", sa.DateTime(), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.Column("deleted", sa.Boolean(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.uuid"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(
+        op.f("ix_password_reset_tokens_id"),
+        "password_reset_tokens",
+        ["id"],
+        unique=True,
+    )
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_index(
+        op.f("ix_password_reset_tokens_id"), table_name="password_reset_tokens"
+    )
+    op.drop_table("password_reset_tokens")
     op.drop_index(op.f("ix_feedbacks_subject"), table_name="feedbacks")
     op.drop_index(op.f("ix_feedbacks_is_acknowledged"), table_name="feedbacks")
     op.drop_index(op.f("ix_feedbacks_feedback"), table_name="feedbacks")
     op.drop_table("feedbacks")
+    op.drop_index(op.f("ix_books_genre_genre_id"), table_name="books_genre")
+    op.drop_index(op.f("ix_books_genre_book_id"), table_name="books_genre")
+    op.drop_table("books_genre")
+    op.drop_index(op.f("ix_book_reviews_user_id"), table_name="book_reviews")
+    op.drop_index(op.f("ix_book_reviews_review_text"), table_name="book_reviews")
+    op.drop_index(op.f("ix_book_reviews_book_id"), table_name="book_reviews")
+    op.drop_index("idx_unique_book_user", table_name="book_reviews")
+    op.drop_table("book_reviews")
     op.drop_index(op.f("ix_book_copies_unique_identifier"), table_name="book_copies")
+    op.drop_index("idx_book_copy_availability", table_name="book_copies")
     op.drop_table("book_copies")
     op.drop_index(op.f("ix_users_uuid"), table_name="users")
     op.drop_index(op.f("ix_users_roll_number"), table_name="users")
@@ -214,8 +311,9 @@ def downgrade() -> None:
     op.drop_index(op.f("ix_books_publication"), table_name="books")
     op.drop_index(op.f("ix_books_isbn"), table_name="books")
     op.drop_index(op.f("ix_books_grade"), table_name="books")
-    op.drop_index(op.f("ix_books_genre"), table_name="books")
     op.drop_index(op.f("ix_books_cover_image_url"), table_name="books")
     op.drop_index(op.f("ix_books_author"), table_name="books")
+    op.drop_index("idx_book_title_author", table_name="books")
+    op.drop_index("idx_book_category_grade", table_name="books")
     op.drop_table("books")
     # ### end Alembic commands ###
