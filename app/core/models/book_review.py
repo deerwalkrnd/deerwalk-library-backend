@@ -17,4 +17,4 @@ class BookReviewModel(Base):
     book: Mapped["BookModel"] = relationship("BookModel", back_populates="reviews")  # type:ignore
     user: Mapped["UserModel"] = relationship("UserModel", back_populates="reviews")  # type:ignore
 
-    __table_args__ = (Index("idx_unique_book_user", "book_id", "user_id", unique=True),)
+    __table_args__ = (Index("idx_unique_book_user", "book_id", "user_id"),)
