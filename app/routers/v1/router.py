@@ -22,6 +22,7 @@ from app.modules.recommendations.presentation.v1.router.recommendation_router im
 )
 
 from app.modules.users.presentation.v1.router.users_router import router as users_router
+from app.modules.books_reviews.presentation.v1.router.books_reviews_router import (router as books_reviews_router)
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -34,6 +35,7 @@ v1_router.include_router(feedbacks_router)
 v1_router.include_router(genre_router)
 v1_router.include_router(event_router)
 v1_router.include_router(recommendation_router)
+v1_router.include_router(books_reviews_router)
 
 
 # remove at production
