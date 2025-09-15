@@ -50,6 +50,12 @@ class BookController:
             books = await get_many_book_use_case.execute(
                 page=params.page,
                 limit=params.limit,
+                sort_by=params.sort_by,
+                is_descending=params.is_descending,
+                searchable_field=params.searchable_field,
+                searchable_value=params.searchable_value,
+                start_date=params.starts,
+                end_date=params.ends,
             )
 
             return PaginatedResponseMany(

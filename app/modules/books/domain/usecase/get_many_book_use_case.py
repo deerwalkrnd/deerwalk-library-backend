@@ -3,6 +3,7 @@ from app.modules.books.domain.repository.book_repository_interface import (
     BookRepositoryInterface,
 )
 from typing import List
+from datetime import datetime
 
 
 class GetManyBookUseCase:
@@ -13,17 +14,23 @@ class GetManyBookUseCase:
         self,
         page: int,
         limit: int,
+        sort_by: str,
+        is_descending: bool,
+        searchable_field: str | None,
+        searchable_value: str | None,
+        start_date: datetime | None,
+        end_date: datetime | None,
     ) -> List[Book]:
         offset = (page - 1) * limit
         books = await self.book_repository.filter(
             offset=offset,
             limit=limit,
-            descending=True,
-            sort_by="created_at",
+            descending=is_descending,
+            sort_by=sort_by,
             filter=None,
-            start_date=None,
-            end_date=None,
-            searchable_value=None,
-            searchable_key=None,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_value=searchable_value,
+            searchable_key=searchable_field,
         )
         return books
