@@ -39,6 +39,8 @@ class BookModel(Base):
         lazy="noload",
     )
 
+    bookmarks = relationship("BookmarkModel", back_populates="book")
+
     __table_args__ = (
         Index("idx_book_title_author", "title", "author"),
         Index("idx_book_category_grade", "category", "grade"),

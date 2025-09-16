@@ -41,3 +41,5 @@ class UserModel(Base):
     password_reset_tokens = relationship(
         "PasswordResetTokenModel", back_populates="user"
     )
+
+    bookmarks = relationship("BookmarkModel", back_populates="user")
