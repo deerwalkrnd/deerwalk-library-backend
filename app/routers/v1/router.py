@@ -25,6 +25,7 @@ from app.modules.users.presentation.v1.router.users_router import router as user
 from app.modules.bookmarks.presentation.v1.router.bookmark_router import (
     router as bookmark_router,
 )
+from app.modules.books_reviews.presentation.v1.router.books_reviews_router import (router as books_reviews_router)
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -38,6 +39,7 @@ v1_router.include_router(genre_router)
 v1_router.include_router(event_router)
 v1_router.include_router(recommendation_router)
 v1_router.include_router(bookmark_router)
+v1_router.include_router(books_reviews_router)
 
 
 # remove at production

@@ -43,3 +43,9 @@ class UserModel(Base):
     )
 
     bookmarks = relationship("BookmarkModel", back_populates="user")
+    reviews = relationship(
+        "BookReviewModel",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="noload",
+    )
