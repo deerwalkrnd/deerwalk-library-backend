@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from datetime import datetime
 from typing import List
 from pydantic import BaseModel
@@ -6,6 +7,8 @@ from app.modules.bookmarks.domain.entities.bookmark import Bookmark
 
 
 class BookmarkRepositoryInterface(RepositoryInterface[Bookmark]):
+
+    @abstractmethod
     async def filter_bookmark(
         self,
         filter: BaseModel | None,
@@ -19,3 +22,4 @@ class BookmarkRepositoryInterface(RepositoryInterface[Bookmark]):
         searchable_value: str | None,
     ) -> List[Bookmark]:
         raise NotImplementedError
+    
