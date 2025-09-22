@@ -14,12 +14,12 @@ class BookReviewModel(Base):
     review_text: Mapped[Optional[str]] = mapped_column(index=True)
     is_spam: Mapped[bool] = mapped_column(default=False)
 
-    book: Mapped["BookModel"] = relationship( # type:ignore
+    book: Mapped["BookModel"] = relationship(  # type:ignore
         "BookModel", back_populates="reviews", lazy="selectin"
-    )  
-    
+    )
+
     user: Mapped["UserModel"] = relationship(  # type:ignore
         "UserModel", back_populates="reviews", lazy="selectin"
-    ) 
+    )
 
     __table_args__ = (Index("idx_unique_book_user", "book_id", "user_id"),)

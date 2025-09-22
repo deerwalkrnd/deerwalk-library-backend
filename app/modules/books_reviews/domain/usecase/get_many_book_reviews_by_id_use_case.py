@@ -9,10 +9,11 @@ class GetManyBookReviewsByIdUseCase:
     def __init__(self, book_review_repository: BookReviewRepositoryInterface) -> None:
         self.book_review_repository = book_review_repository
 
-    async def execute(self, book_id: int) -> List[BookReview]:
+    async def execute(self, book_id: int, page: int, limit: int) -> List[BookReview]:
+        offset = (page - 1) * limit
         book_reviews = await self.book_review_repository.filter(
-            offset=0,
-            limit=100,
+            offset=offset,
+            limit=limit,
             descending=True,
             sort_by="created_at",
             filter=BookReview(book_id=book_id),

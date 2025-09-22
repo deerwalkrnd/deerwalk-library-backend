@@ -8,14 +8,6 @@ router = APIRouter(prefix="/books-reviews", tags=["books-reviews"])
 
 books_reviews_controller = BooksReviewsController()
 
-router.add_api_route(
-    path="/",
-    endpoint=books_reviews_controller.create_book_review,
-    methods=["POST"],
-    description="This method is used to create a book review.",
-    status_code=201,
-)
-
 
 router.add_api_route(
     path="/{id}",
@@ -26,10 +18,18 @@ router.add_api_route(
 )
 
 router.add_api_route(
+    path="/",
+    endpoint=books_reviews_controller.create_book_review,
+    methods=["POST"],
+    description="This method is used to create a book review.",
+    status_code=201,
+)
+
+router.add_api_route(
     path="/spam/{id}",
     endpoint=books_reviews_controller.is_book_review_spam,
     methods=["PUT"],
-    description="This method is used to check if a book review is spam.",
+    description="This method is used to check if a book review is spam by Librarian role.",
     status_code=200,
 )
 

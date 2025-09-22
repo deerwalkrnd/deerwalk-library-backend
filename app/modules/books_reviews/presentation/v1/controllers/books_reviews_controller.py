@@ -3,12 +3,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
 from app.core.dependencies.middleware.get_current_user import get_current_user
+from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.domain.entities.user import User, UserRole
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.books_reviews.domain.entities.book_review import BookReview
 from app.modules.books_reviews.domain.request.book_review_create_request import (
     BookReviewCreateRequest,
+)
+from app.modules.books_reviews.domain.request.book_review_list_params import (
+    BookReviewListParams,
 )
 from app.modules.books_reviews.domain.request.book_review_spam_request import (
     BookReviewSpamRequest,
@@ -67,14 +71,28 @@ class BooksReviewsController:
             )
 
     async def get_book_reviews_by_id(
-        self, id: int, db: AsyncSession = Depends(get_db)
-    ) -> list[BookReview] | None:
+        self,
+        id: int,
+        params: BookReviewListParams = Depends(),
+        db: AsyncSession = Depends(get_db),
+    ) -> PaginatedResponseMany[BookReview] | None:
         book_review_repository = BookReviewRepository(db=db)
         try:
             get_many_book_reviews_by_id_use_case = GetManyBookReviewsByIdUseCase(
                 book_review_repository
             )
-            return await get_many_book_reviews_by_id_use_case.execute(book_id=id)
+            book_reviews = await get_many_book_reviews_by_id_use_case.execute(
+                book_id=id,
+                page=params.page,
+                limit=params.limit,
+            )
+            return PaginatedResponseMany(
+                page=params.page,
+                total=len(book_reviews),
+                next=params.page + 1,
+                items=book_reviews,
+            )
+
         except Exception as e:
             logger.logger.error(e)
             raise LibraryException(
