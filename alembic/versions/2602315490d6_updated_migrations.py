@@ -1,8 +1,8 @@
-"""book review modal
+"""updated migrations
 
-Revision ID: 33c188fc148a
+Revision ID: 2602315490d6
 Revises:
-Create Date: 2025-09-08 12:37:44.846807
+Create Date: 2025-09-18 16:10:45.822853
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = "33c188fc148a"
+revision: str = "2602315490d6"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -186,7 +186,7 @@ def upgrade() -> None:
         sa.UniqueConstraint("id"),
     )
     op.create_index(
-        "idx_unique_book_user", "book_reviews", ["book_id", "user_id"], unique=True
+        "idx_unique_book_user", "book_reviews", ["book_id", "user_id"], unique=False
     )
     op.create_index(
         op.f("ix_book_reviews_book_id"), "book_reviews", ["book_id"], unique=False

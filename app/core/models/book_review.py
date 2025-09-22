@@ -10,11 +10,16 @@ class BookReviewModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, unique=True)
     book_id: Mapped[int] = mapped_column(ForeignKey("books.id"), index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.uuid"), index=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.uuid"), index=True)
     review_text: Mapped[Optional[str]] = mapped_column(index=True)
     is_spam: Mapped[bool] = mapped_column(default=False)
 
-    book: Mapped["BookModel"] = relationship("BookModel", back_populates="reviews")  # type:ignore
-    user: Mapped["UserModel"] = relationship("UserModel", back_populates="reviews")  # type:ignore
+    book: Mapped["BookModel"] = relationship(  # type:ignore
+        "BookModel", back_populates="reviews", lazy="selectin"
+    )
+
+    user: Mapped["UserModel"] = relationship(  # type:ignore
+        "UserModel", back_populates="reviews", lazy="selectin"
+    )
 
     __table_args__ = (Index("idx_unique_book_user", "book_id", "user_id"),)
