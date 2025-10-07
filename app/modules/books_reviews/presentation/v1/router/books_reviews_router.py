@@ -11,7 +11,7 @@ books_reviews_controller = BooksReviewsController()
 
 router.add_api_route(
     path="/{id}",
-    endpoint=books_reviews_controller.get_book_reviews_by_id,
+    endpoint=books_reviews_controller.get_book_reviews_by_book_id,
     methods=["GET"],
     description="This method is used to get book reviews by book id.",
     status_code=200,
@@ -27,14 +27,14 @@ router.add_api_route(
 
 router.add_api_route(
     path="/spam/{id}",
-    endpoint=books_reviews_controller.is_book_review_spam,
+    endpoint=books_reviews_controller.mark_spam,
     methods=["PUT"],
     description="This method is used to check if a book review is spam by Librarian role.",
     status_code=200,
 )
 
 router.add_api_route(
-    path="/count/",
+    path="/count",
     endpoint=books_reviews_controller.count_book_reviews,
     methods=["GET"],
     description="This method is used to count the book reviews by book id.",
