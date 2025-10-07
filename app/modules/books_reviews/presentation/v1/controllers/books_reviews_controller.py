@@ -70,9 +70,9 @@ class BooksReviewsController:
                 msg=str(e),
             )
 
-    async def get_book_reviews_by_id(
+    async def get_book_reviews_by_book_id(
         self,
-        id: int,
+        book_id: int,
         params: BookReviewListParams = Depends(),
         db: AsyncSession = Depends(get_db),
     ) -> PaginatedResponseMany[BookReview] | None:
@@ -82,9 +82,11 @@ class BooksReviewsController:
                 book_review_repository
             )
             book_reviews = await get_many_book_reviews_by_id_use_case.execute(
-                book_id=id,
+                book_id=book_id,
                 page=params.page,
                 limit=params.limit,
+                descending=params.is_descending,
+                sort_by=params.sort_by,
             )
             return PaginatedResponseMany(
                 page=params.page,
@@ -101,7 +103,7 @@ class BooksReviewsController:
                 msg=str(e),
             )
 
-    async def is_book_review_spam(
+    async def mark_spam(
         self,
         id: int,
         book_review_spam_request: BookReviewSpamRequest,
@@ -125,8 +127,7 @@ class BooksReviewsController:
                 conditions=BookReview(book_id=id),
                 new=BookReview(is_spam=book_review_spam_request.is_spam),
             )
-            review = await book_review_repository.find_one(BookReview(book_id=id))
-            return review
+            return None
 
         except Exception as e:
             logger.logger.error(e)
