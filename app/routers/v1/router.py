@@ -26,6 +26,9 @@ from app.modules.bookmarks.presentation.v1.router.bookmark_router import (
     router as bookmark_router,
 )
 from app.modules.books_reviews.presentation.v1.router.books_reviews_router import (router as books_reviews_router)
+from app.modules.books_reviews.presentation.v1.router.books_reviews_router import (
+    router as books_reviews_router,
+)
 
 v1_router = APIRouter(prefix="/v1")
 
