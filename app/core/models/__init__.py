@@ -9,6 +9,7 @@ from .book_copy import BookCopyModel as BookCopyModel
 from .recommendation import RecommendationModel as RecommendationModel
 from .password_reset_token import PasswordResetTokenModel as PasswordResetTokenModel
 from .books_genre import BooksGenreModel as BooksGenreModel
+from .bookmark import BookmarkModel as BookmarkModel
 from .book_review import BookReviewModel as BookReviewModel
 
 _all_ = [
@@ -24,5 +25,6 @@ _all_ = [
     "BookCopyModel",
     "RecommendationModel",
     "BooksGenreModel",
+    "BookmarkModel",
     "BookReviewModel",
 ]

@@ -39,6 +39,7 @@ class BookModel(Base):
         lazy="noload",
     )
 
+    bookmarks = relationship("BookmarkModel", back_populates="book")
     reviews: Mapped[List["BookReviewModel"]] = relationship(  # type: ignore
         "BookReviewModel",
         back_populates="book",
