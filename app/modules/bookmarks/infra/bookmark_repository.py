@@ -14,7 +14,6 @@ from sqlalchemy import (
 )
 
 
-
 class BookmarkRepository(
     Repository[BookmarkModel, Bookmark], BookmarkRepositoryInterface
 ):
@@ -43,7 +42,10 @@ class BookmarkRepository(
             raise ValueError("searchable_value required when searchable_key provided")
 
         query = (
-            select(self.model).join(self.model.user).join(self.model.book).where(self.model.deleted == False)
+            select(self.model)
+            .join(self.model.user)
+            .join(self.model.book)
+            .where(self.model.deleted == False)
         )
 
         print(query)

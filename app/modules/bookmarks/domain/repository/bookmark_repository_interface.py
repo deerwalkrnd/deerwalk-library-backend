@@ -7,7 +7,6 @@ from app.modules.bookmarks.domain.entities.bookmark import Bookmark
 
 
 class BookmarkRepositoryInterface(RepositoryInterface[Bookmark]):
-
     @abstractmethod
     async def filter_bookmark(
         self,
@@ -22,4 +21,3 @@ class BookmarkRepositoryInterface(RepositoryInterface[Bookmark]):
         searchable_value: str | None,
     ) -> List[Bookmark]:
         raise NotImplementedError
-    
