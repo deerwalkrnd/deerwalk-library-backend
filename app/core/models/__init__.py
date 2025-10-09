@@ -28,5 +28,5 @@ _all_ = [
     "BooksGenreModel",
     "BookmarkModel",
     "BookReviewModel",
-    "BookBorrowModel"
+    "BookBorrowModel",
 ]
