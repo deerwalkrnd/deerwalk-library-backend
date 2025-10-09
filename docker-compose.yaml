@@ -1,4 +1,4 @@
-name: Docker Compose for Deerwalk Library
+name: Deerwalk Library
 
 services:
   postgres:

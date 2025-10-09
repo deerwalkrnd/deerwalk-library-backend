@@ -49,3 +49,9 @@ class UserModel(Base):
         cascade="all, delete-orphan",
         lazy="noload",
     )
+    borrows = relationship(
+        "BookBorrowModel",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="noload",
+    )

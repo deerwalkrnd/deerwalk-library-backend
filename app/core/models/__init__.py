@@ -11,6 +11,7 @@ from .password_reset_token import PasswordResetTokenModel as PasswordResetTokenM
 from .books_genre import BooksGenreModel as BooksGenreModel
 from .bookmark import BookmarkModel as BookmarkModel
 from .book_review import BookReviewModel as BookReviewModel
+from .book_borrow import BookBorrowModel as BookBorrowModel
 
 _all_ = [
     "UserModel",
@@ -27,4 +28,5 @@ _all_ = [
     "BooksGenreModel",
     "BookmarkModel",
     "BookReviewModel",
+    "BookBorrowModel"
 ]
