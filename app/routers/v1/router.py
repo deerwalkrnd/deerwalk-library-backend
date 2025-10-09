@@ -32,6 +32,8 @@ from app.modules.books_reviews.presentation.v1.router.books_reviews_router impor
     router as books_reviews_router,
 )
 
+from app.modules.book_borrow.presentation.v1.router.book_borrow_router import router as book_borrow_router
+
 v1_router = APIRouter(prefix="/v1")
 
 v1_router.include_router(auth_router)
@@ -45,6 +47,7 @@ v1_router.include_router(event_router)
 v1_router.include_router(recommendation_router)
 v1_router.include_router(bookmark_router)
 v1_router.include_router(books_reviews_router)
+v1_router.include_router(book_borrow_router)
 
 
 # remove at production
