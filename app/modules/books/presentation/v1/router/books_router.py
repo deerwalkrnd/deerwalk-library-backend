@@ -37,3 +37,11 @@ router.add_api_route(
     description="This method is used to delete a book",
     status_code=204,
 )
+
+router.add_api_route(
+    path="{id}/genres",
+    endpoint=book_controller.get_genres_by_book_id,
+    methods=["GET"],
+    description="Returns the genres of a book provided in the id field",
+    status_code=200,
+)
