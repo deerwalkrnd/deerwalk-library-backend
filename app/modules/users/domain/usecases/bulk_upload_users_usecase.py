@@ -31,7 +31,7 @@ class BulkUploadUsersUseCase:
                 code=ErrorCode.INVALID_FIELDS,
                 msg="CSV headers do not match!",
             )
-        
+
         password_hased_csv = await csv_password_hasher(rows=csv_reader)
         processed_csv = await csv_metadata_parser(rows=password_hased_csv)
 
