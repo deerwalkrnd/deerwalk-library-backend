@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
@@ -15,6 +16,9 @@ from app.modules.books.domain.usecase.create_book_copy_use_case import (
     CreateBookCopyUseCase,
 )
 from app.modules.books.domain.usecase.create_book_use_case import CreateBookUseCase
+from app.modules.books.domain.usecase.get_book_genre_by_book_id_use_case import (
+    GetBookGenreByBookIdUseCase,
+)
 from app.modules.books.domain.usecase.get_books_based_on_conditions_use_case import (
     GetBooksBasedOnConditionsUseCase,
 )
@@ -31,6 +35,7 @@ from app.modules.books.domain.usecase.get_many_book_use_case import GetManyBookU
 from app.modules.books.infra.repositories.books_genre_repository import (
     BooksGenreRepository,
 )
+from app.modules.genres.domain.entity.genre import Genre
 
 
 class BookController:
@@ -221,3 +226,16 @@ class BookController:
                 code=ErrorCode.UNKOWN_ERROR,
                 msg="could not delete Book",
             )
+
+    async def get_genres_by_book_id(
+        self, id: int, db: AsyncSession = Depends(get_db)
+    ) -> List[Genre]:
+        books_genre_repository = BooksGenreRepository(db=db)
+
+        get_book_genre_use_case = GetBookGenreByBookIdUseCase(
+            book_genre_repository=books_genre_repository
+        )
+
+        genres = await get_book_genre_use_case.execute(book_id=id)
+
+        return genres
