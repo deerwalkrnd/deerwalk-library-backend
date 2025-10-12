@@ -37,7 +37,7 @@ router.add_api_route(
 
 router.add_api_route(
     path="/random-quote",
-    methods=["POST"],
+    methods=["GET"],
     endpoint=quotes_controller.get_random_quote,
     description="returns a random quote.",
 )

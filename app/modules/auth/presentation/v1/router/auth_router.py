@@ -5,7 +5,7 @@ from app.modules.auth.presentation.v1.controller.password_reset_token_controller
     PasswordResetController,
 )
 
-router = APIRouter(prefix="/auth", tags=["Auth Routes"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 auth_controller = AuthController()
 password_reset_controller = PasswordResetController()

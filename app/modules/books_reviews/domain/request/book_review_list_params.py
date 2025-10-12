@@ -4,4 +4,4 @@ from app.core.domain.entities.request.query.sortby_request import SortByRequest
 
 
 class BookReviewListParams(PaginationParams, FilterParams, SortByRequest):
-    pass
+    is_spam: bool
