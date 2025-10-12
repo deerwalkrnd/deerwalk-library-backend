@@ -3,6 +3,11 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from app.core.models.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+from enum import Enum
+
+class FineStatus(Enum):
+    UNPAID= "UNPAID"
+    PAID = "PAID"
 
 
 class BookBorrowModel(Base):
@@ -17,6 +22,7 @@ class BookBorrowModel(Base):
         index=True,
     )
     fine_accumulated: Mapped[Optional[int]]
+    fine_status: Mapped[FineStatus] = mapped_column(default=FineStatus.UNPAID)
     times_renewable: Mapped[Optional[int]]
     times_renewed: Mapped[Optional[int]]
     due_date: Mapped[Optional[datetime]]

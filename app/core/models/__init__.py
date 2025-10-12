@@ -14,8 +14,8 @@ from .book_review import BookReviewModel as BookReviewModel
 from .book_borrow import BookBorrowModel as BookBorrowModel
 
 _all_ = [
-    "UserModel",
     "Base",
+    "UserModel",
     "QuoteModel",
     "FeedbackModel",
     "GenreModel",
