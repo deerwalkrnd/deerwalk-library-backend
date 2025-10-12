@@ -74,9 +74,14 @@ class BooksReviewsController:
         self,
         book_id: int,
         params: BookReviewListParams = Depends(),
+        user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
     ) -> PaginatedResponseMany[BookReview] | None:
         book_review_repository = BookReviewRepository(db=db)
+
+        if user.role and user.role.value == "STUDENT":
+            params.is_spam = False
+
         try:
             get_many_book_reviews_by_id_use_case = GetManyBookReviewsByIdUseCase(
                 book_review_repository
@@ -87,6 +92,7 @@ class BooksReviewsController:
                 limit=params.limit,
                 descending=params.is_descending,
                 sort_by=params.sort_by,
+                is_spam=params.is_spam,
             )
             return PaginatedResponseMany(
                 page=params.page,

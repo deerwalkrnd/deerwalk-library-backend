@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.modules.books.presentation.v1.controllers.book_controller import BookController
 
-router = APIRouter(prefix="/books", tags=["Books"])
+router = APIRouter(prefix="/books", tags=["books"])
 
 book_controller = BookController()
 
@@ -39,7 +39,7 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    path="{id}/genres",
+    path="/{id}/genres",
     endpoint=book_controller.get_genres_by_book_id,
     methods=["GET"],
     description="Returns the genres of a book provided in the id field",
