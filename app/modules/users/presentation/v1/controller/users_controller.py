@@ -1,5 +1,5 @@
 from aiosmtplib import SMTP
-from fastapi import BackgroundTasks, Depends, logger
+from fastapi import BackgroundTasks, Depends, logger, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.background.tasks.email_task import send_welcome_email_task
@@ -19,6 +19,12 @@ from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
 from app.modules.users.domain.request.user_update_request import UpdateUserRequest
+from app.modules.users.domain.response.bulk_upload_users_reponse import (
+    BulkUploadUsersResponse,
+)
+from app.modules.users.domain.usecases.bulk_upload_users_usecase import (
+    BulkUploadUsersUseCase,
+)
 from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
 from app.modules.users.domain.usecases.delete_users_by_uuid_use_case import (
     DeleteUsersByUUIDUseCase,
@@ -182,6 +188,26 @@ class UsersController:
 
         await update_users_by_uuid_use_case.execute(
             conditions=UserWithPassword(uuid=uuid), new=new_data
+        )
+
+    async def bulk_upload_users(
+        self, file: UploadFile = File(...), db: AsyncSession = Depends(get_db)
+    ) -> BulkUploadUsersResponse:
+        if file.filename and not file.filename.endswith(".csv"):
+            raise LibraryException(
+                status_code=400,
+                code=ErrorCode.INVALID_FIELDS,
+                msg="Only CSV files are allowed!",
+            )
+
+        user_repository = UserRepository(db=db)
+        bulk_upload_user_use_case = BulkUploadUsersUseCase(
+            user_repository=user_repository
+        )
+
+        result = await bulk_upload_user_use_case.execute(file)
+        return BulkUploadUsersResponse(
+            inserted=result["inserted"], skipped=result["skipped"]
         )
 
     # please use this code as an example to implement your email api service

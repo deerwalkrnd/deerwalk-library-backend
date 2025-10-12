@@ -192,3 +192,20 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
         return [self.entity.model_validate(obj=x) for x in data]
+
+    async def insert_many(self, rows: list[dict[str, Any]] | Any) -> tuple[int, int]:
+        inserted_count = 0
+        skipped_count = 0
+
+        for row in rows:
+            model_instance = self.model(**row)
+            self.db.add(model_instance)
+            try:
+                await self.db.commit()
+                inserted_count += 1
+            except IntegrityError:
+                await self.db.rollback()
+                skipped_count += 1
+                continue
+
+        return inserted_count, skipped_count
