@@ -4,7 +4,6 @@ from app.modules.bookmarks.presentation.v1.controller.bookmark_controller import
     BookmarkController,
 )
 
-
 router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 
 bookmark_controller = BookmarkController()

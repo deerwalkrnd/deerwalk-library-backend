@@ -3,7 +3,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
 from app.modules.auth.presentation.v1.router.auth_router import router as auth_router
+from app.modules.book_borrow.presentation.v1.router.book_borrow_router import (
+    router as book_borrow_router,
+)
+from app.modules.bookmarks.presentation.v1.router.bookmark_router import (
+    router as bookmark_router,
+)
 from app.modules.books.presentation.v1.router.books_router import router as books_router
+from app.modules.books_reviews.presentation.v1.router.books_reviews_router import (
+    router as books_reviews_router,
+)
 from app.modules.events.presentation.v1.router.events_router import (
     router as event_router,
 )
@@ -20,17 +29,7 @@ from app.modules.quotes.presentation.v1.router.quotes_router import (
 from app.modules.recommendations.presentation.v1.router.recommendation_router import (
     router as recommendation_router,
 )
-
 from app.modules.users.presentation.v1.router.users_router import router as users_router
-from app.modules.bookmarks.presentation.v1.router.bookmark_router import (
-    router as bookmark_router,
-)
-from app.modules.books_reviews.presentation.v1.router.books_reviews_router import (
-    router as books_reviews_router,
-)
-from app.modules.books_reviews.presentation.v1.router.books_reviews_router import (
-    router as books_reviews_router,
-)
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -45,6 +44,7 @@ v1_router.include_router(event_router)
 v1_router.include_router(recommendation_router)
 v1_router.include_router(bookmark_router)
 v1_router.include_router(books_reviews_router)
+v1_router.include_router(book_borrow_router)
 
 
 # remove at production

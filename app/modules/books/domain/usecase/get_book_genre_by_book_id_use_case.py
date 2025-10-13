@@ -1,4 +1,5 @@
 from typing import List
+
 from app.modules.books.domain.repository.books_genre_repository_interface import (
     BooksGenreRepositoryInterface,
 )

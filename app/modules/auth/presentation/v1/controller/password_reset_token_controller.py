@@ -1,5 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.background.tasks.email_task import send_reset_password_email_task
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_settings import get_settings
@@ -11,7 +12,6 @@ from app.modules.auth.domain.request.password_reset_token_request import (
     PasswordResetTokenRequest,
 )
 from app.modules.auth.domain.request.reset_password_request import ResetPasswordRequest
-
 from app.modules.auth.domain.response.forgot_password_response import (
     ForgotPasswordResponse,
 )
@@ -28,12 +28,10 @@ from app.modules.auth.infra.password_reset_token_repository import (
     PasswordResetTokenRepository,
 )
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
-
+from app.modules.auth.utils.generate_url_safe_token import generate_url_safe_token
 from app.modules.auth.utils.generate_url_safe_token_expiry import (
     generate_url_safe_token_expiry,
 )
-
-from app.modules.auth.utils.generate_url_safe_token import generate_url_safe_token
 from app.modules.auth.utils.validate_password_reset_token import (
     validate_password_reset_token,
 )

@@ -1,5 +1,5 @@
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
 
 from app.core.infra.repositories.repository import Repository
 from app.core.models.book_review import BookReviewModel

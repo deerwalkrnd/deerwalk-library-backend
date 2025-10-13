@@ -1,20 +1,21 @@
 from .base import Base as Base
+from .book import BookModel as BookModel
+from .book_borrow import BookBorrowModel as BookBorrowModel
+from .book_copy import BookCopyModel as BookCopyModel
+from .book_review import BookReviewModel as BookReviewModel
+from .bookmark import BookmarkModel as BookmarkModel
+from .books_genre import BooksGenreModel as BooksGenreModel
 from .event import EventModel as EventModel
 from .feedback import FeedbackModel as FeedbackModel
 from .genre import GenreModel as GenreModel
-from .quote import QuoteModel as QuoteModel
-from .users import UserModel as UserModel
-from .book import BookModel as BookModel
-from .book_copy import BookCopyModel as BookCopyModel
-from .recommendation import RecommendationModel as RecommendationModel
 from .password_reset_token import PasswordResetTokenModel as PasswordResetTokenModel
-from .books_genre import BooksGenreModel as BooksGenreModel
-from .bookmark import BookmarkModel as BookmarkModel
-from .book_review import BookReviewModel as BookReviewModel
+from .quote import QuoteModel as QuoteModel
+from .recommendation import RecommendationModel as RecommendationModel
+from .users import UserModel as UserModel
 
 _all_ = [
-    "UserModel",
     "Base",
+    "UserModel",
     "QuoteModel",
     "FeedbackModel",
     "GenreModel",
@@ -27,4 +28,5 @@ _all_ = [
     "BooksGenreModel",
     "BookmarkModel",
     "BookReviewModel",
+    "BookBorrowModel",
 ]

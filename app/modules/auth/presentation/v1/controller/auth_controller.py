@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta
 from typing import Dict
+from urllib.parse import unquote as url_decode
+
+import httpx
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
-import httpx
-from datetime import datetime, timedelta
 
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_settings import get_settings
@@ -37,7 +39,6 @@ from app.modules.users.domain.usecases.get_user_by_email_use_case import (
 from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
     UpdateUsersByUUIDUseCase,
 )
-from urllib.parse import unquote as url_decode
 
 
 class AuthController:

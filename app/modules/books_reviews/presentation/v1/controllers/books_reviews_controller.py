@@ -17,14 +17,14 @@ from app.modules.books_reviews.domain.request.book_review_list_params import (
 from app.modules.books_reviews.domain.request.book_review_spam_request import (
     BookReviewSpamRequest,
 )
-from app.modules.books_reviews.domain.usecase.update_book_review_spam_by_id_use_case import (
-    UpdateBookReviewSpamByIdUseCase,
-)
 from app.modules.books_reviews.domain.usecase.create_book_review_use_case import (
     CreateBookReviewUseCase,
 )
 from app.modules.books_reviews.domain.usecase.get_many_book_reviews_by_id_use_case import (
     GetManyBookReviewsByIdUseCase,
+)
+from app.modules.books_reviews.domain.usecase.update_book_review_spam_by_id_use_case import (
+    UpdateBookReviewSpamByIdUseCase,
 )
 from app.modules.books_reviews.infra.book_review_repository import BookReviewRepository
 

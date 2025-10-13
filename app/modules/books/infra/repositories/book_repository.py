@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.infra.repositories.repository import Repository
 from app.core.models.book import BookModel
 from app.modules.books.domain.entities.book import Book

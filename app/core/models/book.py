@@ -2,8 +2,9 @@ from enum import Enum
 from typing import List, Optional
 
 from sqlalchemy import Index
-from app.core.models.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.core.models.base import Base
 
 
 class BookCategoryType(Enum):

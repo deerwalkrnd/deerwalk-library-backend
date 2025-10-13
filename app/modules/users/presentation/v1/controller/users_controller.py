@@ -1,5 +1,5 @@
 from aiosmtplib import SMTP
-from fastapi import BackgroundTasks, Depends, logger, UploadFile, File
+from fastapi import BackgroundTasks, Depends, File, UploadFile, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.background.tasks.email_task import send_welcome_email_task
