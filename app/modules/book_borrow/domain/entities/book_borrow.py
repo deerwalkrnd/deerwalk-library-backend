@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import ConfigDict, BaseModel
-
+from pydantic import BaseModel, ConfigDict
 
 from app.core.domain.entities.user import User
 from app.core.models.book_borrow import FineStatus
@@ -25,7 +24,3 @@ class BookBorrow(BaseModel):
 
     user: Optional[User] = None
     book_copy: Optional[BookCopy] = None
-
- 
-            
-

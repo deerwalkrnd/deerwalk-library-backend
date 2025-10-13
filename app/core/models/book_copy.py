@@ -15,7 +15,7 @@ class BookCopyModel(Base):
     is_available: Mapped[Optional[bool]] = mapped_column(default=True)
     condition: Mapped[Optional[str]]
 
-    book: Mapped["BookModel"] = relationship( #type: ignore
+    book: Mapped["BookModel"] = relationship(  # type: ignore
         "BookModel", back_populates="copies", lazy="selectin"
     )  # type: ignore
 

@@ -1,9 +1,10 @@
+from datetime import datetime
+
 from app.core.models.book_borrow import FineStatus
 from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import (
     BookBorrowRepositoryInterface,
 )
-from datetime import datetime
 
 
 class ReturnBookUseCase:

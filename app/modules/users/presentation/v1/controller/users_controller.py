@@ -1,5 +1,5 @@
 from aiosmtplib import SMTP
-from fastapi import BackgroundTasks, Depends, logger, UploadFile, File
+from fastapi import BackgroundTasks, Depends, File, UploadFile, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.background.tasks.email_task import send_welcome_email_task
@@ -16,25 +16,6 @@ from app.core.infra.services.email_notification_service import EmailNotification
 from app.core.utils.make_email import create_email
 from app.modules.auth.domain.templates.welcome_template import get_welcome_template
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
-from app.modules.users.domain.request.user_creation_request import UserCreationRequest
-from app.modules.users.domain.request.user_list_request import UserSearchRequest
-from app.modules.users.domain.request.user_update_request import UpdateUserRequest
-from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
-from app.modules.users.domain.usecases.delete_users_by_uuid_use_case import (
-    DeleteUsersByUUIDUseCase,
-)
-from app.modules.users.domain.usecases.get_many_users_use_case import (
-    GetManyUsersUseCase,
-)
-from app.modules.users.domain.usecases.get_user_by_email_use_case import (
-    GetUserByEmailUseCase,
-)
-from app.modules.users.domain.usecases.get_user_by_uuid_use_case import (
-    GetUserByUUIDUseCase,
-)
-from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
-    UpdateUsersByUUIDUseCase,
-)
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
 from app.modules.users.domain.request.user_update_request import UpdateUserRequest

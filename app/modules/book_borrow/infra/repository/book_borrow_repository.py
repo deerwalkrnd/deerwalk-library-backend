@@ -1,14 +1,14 @@
 from datetime import datetime
 from typing import List
+
 from pydantic import BaseModel
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
+
 from app.core.infra.repositories.repository import Repository
-from app.core.models.book import BookModel
 from app.core.models.book_borrow import BookBorrowModel
 from app.core.models.book_copy import BookCopyModel
-from app.core.models.users import UserModel
 from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import (
     BookBorrowRepositoryInterface,
@@ -47,7 +47,6 @@ class BookBorrowRepository(
 
         if searchable_key and not searchable_value:
             raise ValueError("searchable_value required when searchable_key provided")
-
 
         query = (
             select(BookBorrowModel)
