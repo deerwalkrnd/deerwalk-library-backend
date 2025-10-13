@@ -2,11 +2,10 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
 from app.core.dependencies.database import get_db
-from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
-from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
+from app.core.models.book_borrow import FineStatus
 from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrow.domain.request.book_borrow_request import BookBorrowRequest
 from app.modules.book_borrow.domain.request.get_many_book_borrow_request import (
@@ -20,6 +19,9 @@ from app.modules.book_borrow.infra.usecases.borrow_book_use_case import (
 )
 from app.modules.book_borrow.infra.usecases.get_book_borrow_by_id_usecase import (
     GetBookBorrowByIdUseCase,
+)
+from app.modules.book_borrow.infra.usecases.get_book_borrow_by_user_id_and_book_copy_id_use_case import (
+    GetBookBorrowByUserIdAndBookCopyIdUseCase,
 )
 
 
@@ -51,11 +53,34 @@ class BookBorrowController:
     # TODO(aashutosh): test this and also unique constraint
     async def borrow_book(
         self,
+        book_copy_id: int,
         book_borrow_request: BookBorrowRequest,
-        _: User = Depends(get_current_librarian),
         db: AsyncSession = Depends(get_db),
     ) -> BookBorrow | None:
         book_borrow_repository = BookBorrowRepository(db=db)
+
+        get_book_borrow_by_user_id_and_book_copy_id_use_case = (
+            GetBookBorrowByUserIdAndBookCopyIdUseCase(
+                book_borrow_repository=book_borrow_repository
+            )
+        )
+
+        already = await get_book_borrow_by_user_id_and_book_copy_id_use_case.execute(
+            book_copy_id=book_copy_id,
+            user_id=book_borrow_request.user_uuid,
+        )
+
+        if already:
+            raise LibraryException(
+                status_code=409,
+                code=ErrorCode.DUPLICATE_ENTRY,
+                msg="this book is already borrowed by this individual",
+            )
+
+        fine_status = FineStatus.DISABLED
+
+        if book_borrow_request.fine_enabled:
+            fine_status = FineStatus.UNPAID
 
         try:
             borrow_book_use_case = BorrowBookUseCase(
@@ -63,18 +88,23 @@ class BookBorrowController:
             )
 
             borrow = await borrow_book_use_case.execute(
-                **book_borrow_request.model_dump(exclude_unset=True)
+                book_copy_id=book_copy_id,
+                due_date=book_borrow_request.due_date,
+                fine_accumulated=0,
+                times_renewable=book_borrow_request.times_renewable,
+                times_renewed=0,
+                user_id=book_borrow_request.user_uuid,
+                fine_status=fine_status,
             )
-
             return borrow
         except ValueError as e:
             raise LibraryException(
-                status_code=409,
-                code=ErrorCode.DUPLICATE_ENTRY,
-                msg="This person has already borrowed this book ;" + str(e),
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg="Something Bad Happened",
             )
 
-    #TODO(aashutosh): Join users table and book table with a new DTO for response
+    # TODO(aashutosh): Join users table and book table with a new DTO for response
     async def get_many_borrow_books(
         self,
         db: AsyncSession = Depends(get_db),

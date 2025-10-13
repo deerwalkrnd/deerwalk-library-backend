@@ -1,3 +1,4 @@
+from app.core.models.book_borrow import FineStatus
 from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import (
     BookBorrowRepositoryInterface,
@@ -17,6 +18,7 @@ class BorrowBookUseCase:
         times_renewable: int,
         times_renewed: int,
         due_date: datetime,
+        fine_status: FineStatus,
     ) -> BookBorrow | None:
         try:
             created = await self.book_borrow_repository.create(
@@ -27,9 +29,9 @@ class BorrowBookUseCase:
                     times_renewable=times_renewable,
                     times_renewed=times_renewed,
                     user_id=user_id,
+                    fine_status=fine_status,
                 )
             )
+            return created
         except Exception as e:
             raise ValueError(str(e))
-
-        return created

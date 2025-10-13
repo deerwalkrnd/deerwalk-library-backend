@@ -32,7 +32,9 @@ from app.modules.books_reviews.presentation.v1.router.books_reviews_router impor
     router as books_reviews_router,
 )
 
-from app.modules.book_borrow.presentation.v1.router.book_borrow_router import router as book_borrow_router
+from app.modules.book_borrow.presentation.v1.router.book_borrow_router import (
+    router as book_borrow_router,
+)
 
 v1_router = APIRouter(prefix="/v1")
 

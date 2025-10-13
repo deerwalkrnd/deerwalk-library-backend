@@ -5,9 +5,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from enum import Enum
 
+
 class FineStatus(Enum):
-    UNPAID= "UNPAID"
+    UNPAID = "UNPAID"
     PAID = "PAID"
+    DISABLED = "DISABLED"
 
 
 class BookBorrowModel(Base):
@@ -29,7 +31,7 @@ class BookBorrowModel(Base):
     returned: Mapped[Optional[bool]] = mapped_column(default=False)
 
     book_copy: Mapped["BookCopyModel"] = relationship(  # type: ignore
-        "BookCopyModel", back_populates="borrows", lazy="selectin"
+        "BookCopyModel", back_populates="borrows", lazy="noload"
     )
 
     user: Mapped["UserModel"] = relationship(  # type: ignore
