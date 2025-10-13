@@ -9,5 +9,3 @@ class BooksGenreRepositoryInterface(RepositoryInterface[BooksGenre]):
     @abstractmethod
     async def get_genres_by_book_id(self, book_id: int) -> List[Genre]:
         raise NotImplementedError
-
-    pass
