@@ -1,6 +1,8 @@
 import csv
 from io import StringIO
+from typing import List
 from fastapi import UploadFile
+from app.core.domain.entities.user import UserWithPassword
 from app.core.domain.repositories.user_repository_interface import (
     UserRepositoryInterface,
 )
@@ -35,7 +37,11 @@ class BulkUploadUsersUseCase:
         password_hased_csv = await csv_password_hasher(rows=csv_reader)
         processed_csv = await csv_metadata_parser(rows=password_hased_csv)
 
+        user_models: List[UserWithPassword] = [
+            UserWithPassword(**row) for row in processed_csv
+        ]
+
         inserted_count, skipped_count = await self.user_repository.insert_many(
-            rows=processed_csv
+            rows=user_models
         )
         return {"inserted": inserted_count, "skipped": skipped_count}

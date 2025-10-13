@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, List
+from typing import List
 
 
 class RepositoryInterface[T](ABC):
@@ -51,5 +51,5 @@ class RepositoryInterface[T](ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def insert_many(self, rows: List[dict[str, Any]] | Any) -> tuple[int, int]:
+    async def insert_many(self, rows: List[T]) -> tuple[int, int]:
         raise NotImplementedError

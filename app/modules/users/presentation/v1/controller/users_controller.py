@@ -22,7 +22,7 @@ from app.modules.users.domain.request.user_update_request import UpdateUserReque
 from app.modules.users.domain.response.bulk_upload_users_reponse import (
     BulkUploadUsersResponse,
 )
-from app.modules.users.domain.usecases.bulk_upload_users_usecase import (
+from app.modules.users.domain.usecases.bulk_upload_users_use_case import (
     BulkUploadUsersUseCase,
 )
 from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase

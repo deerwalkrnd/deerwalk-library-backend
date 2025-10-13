@@ -193,13 +193,13 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
         data = result.scalars().unique().all()
         return [self.entity.model_validate(obj=x) for x in data]
 
-    async def insert_many(self, rows: list[dict[str, Any]] | Any) -> tuple[int, int]:
+    async def insert_many(self, rows: List[T]) -> tuple[int, int]:
         inserted_count = 0
         skipped_count = 0
 
         for row in rows:
-            model_instance = self.model(**row)
-            self.db.add(model_instance)
+            model: Model = self.model(**row.model_dump(exclude_unset=True))
+            self.db.add(model)
             try:
                 await self.db.commit()
                 inserted_count += 1
