@@ -1,6 +1,7 @@
-from typing import Optional
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 from app.core.domain.entities.user import User
 from app.core.models.book_borrow import FineStatus
@@ -18,5 +19,6 @@ class BookBorrow(BaseModel):
     due_date: Optional[datetime] = None
     fine_status: Optional[FineStatus] = None
     returned: Optional[bool] = None
+    returned_date: Optional[datetime] = None
 
     user: Optional[User] = None

@@ -1,6 +1,9 @@
 from abc import abstractmethod
-from app.core.domain.repositories.repository_interface import RepositoryInterface
-from app.modules.auth.domain.entity.password_reset_token import PasswordResetToken
+
+from app.core.domain.repositories.repository_interface import \
+    RepositoryInterface
+from app.modules.auth.domain.entity.password_reset_token import \
+    PasswordResetToken
 
 
 class PasswordResetTokenRepositoryInterface(RepositoryInterface[PasswordResetToken]):

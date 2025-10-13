@@ -6,12 +6,13 @@ from fastapi.logger import logger
 
 from app.background.celery_app import celery_app
 from app.core.dependencies.get_smtp import get_smtp
-from app.core.infra.services.email_notification_service import EmailNotificationService
+from app.core.infra.services.email_notification_service import \
+    EmailNotificationService
 from app.core.utils.make_email import create_email
-from app.modules.auth.domain.templates.password_reset_template import (
-    get_password_reset_template,
-)
-from app.modules.auth.domain.templates.welcome_template import get_welcome_template
+from app.modules.auth.domain.templates.password_reset_template import \
+    get_password_reset_template
+from app.modules.auth.domain.templates.welcome_template import \
+    get_welcome_template
 
 
 class EmailTask(Task):  # type: ignore

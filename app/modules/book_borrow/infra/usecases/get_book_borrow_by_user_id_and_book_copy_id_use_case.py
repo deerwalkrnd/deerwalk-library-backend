@@ -1,7 +1,6 @@
 from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
-from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import (
-    BookBorrowRepositoryInterface,
-)
+from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import \
+    BookBorrowRepositoryInterface
 
 
 class GetBookBorrowByUserIdAndBookCopyIdUseCase:

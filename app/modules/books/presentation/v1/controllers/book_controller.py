@@ -1,40 +1,43 @@
 from typing import List
+
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies.database import get_db
-from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
+from app.core.domain.entities.response.paginated_response import \
+    PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.books.domain.entities.book import Book
-from app.modules.books.domain.request.book_create_request import CreateBookRequest
-from app.modules.books.domain.request.book_request_list_params import BookListParams
-from app.modules.books.domain.request.book_update_request import BookUpdateRequest
-from app.modules.books.domain.usecase.associate_book_with_genre_use_case import (
-    AssociateBookWithGenreUseCase,
-)
-from app.modules.books.domain.usecase.create_book_copy_use_case import (
-    CreateBookCopyUseCase,
-)
-from app.modules.books.domain.usecase.create_book_use_case import CreateBookUseCase
-from app.modules.books.domain.usecase.get_book_genre_by_book_id_use_case import (
-    GetBookGenreByBookIdUseCase,
-)
-from app.modules.books.domain.usecase.get_books_based_on_conditions_use_case import (
-    GetBooksBasedOnConditionsUseCase,
-)
-from app.modules.books.domain.usecase.delete_book_by_id_use_case import (
-    DeleteBookByIdUseCase,
-)
-from app.modules.books.domain.usecase.get_book_by_id_use_case import GetBookByIdUseCase
-from app.modules.books.domain.usecase.update_book_by_id_use_case import (
-    UpdateBookByIdUseCase,
-)
-from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
+from app.modules.books.domain.request.book_create_request import \
+    CreateBookRequest
+from app.modules.books.domain.request.book_request_list_params import \
+    BookListParams
+from app.modules.books.domain.request.book_update_request import \
+    BookUpdateRequest
+from app.modules.books.domain.usecase.associate_book_with_genre_use_case import \
+    AssociateBookWithGenreUseCase
+from app.modules.books.domain.usecase.create_book_copy_use_case import \
+    CreateBookCopyUseCase
+from app.modules.books.domain.usecase.create_book_use_case import \
+    CreateBookUseCase
+from app.modules.books.domain.usecase.delete_book_by_id_use_case import \
+    DeleteBookByIdUseCase
+from app.modules.books.domain.usecase.get_book_by_id_use_case import \
+    GetBookByIdUseCase
+from app.modules.books.domain.usecase.get_book_genre_by_book_id_use_case import \
+    GetBookGenreByBookIdUseCase
+from app.modules.books.domain.usecase.get_books_based_on_conditions_use_case import \
+    GetBooksBasedOnConditionsUseCase
+from app.modules.books.domain.usecase.get_many_book_use_case import \
+    GetManyBookUseCase
+from app.modules.books.domain.usecase.update_book_by_id_use_case import \
+    UpdateBookByIdUseCase
+from app.modules.books.infra.repositories.book_copy_repository import \
+    BookCopyRepository
 from app.modules.books.infra.repositories.book_repository import BookRepository
-from app.modules.books.domain.usecase.get_many_book_use_case import GetManyBookUseCase
-from app.modules.books.infra.repositories.books_genre_repository import (
-    BooksGenreRepository,
-)
+from app.modules.books.infra.repositories.books_genre_repository import \
+    BooksGenreRepository
 from app.modules.genres.domain.entity.genre import Genre
 
 

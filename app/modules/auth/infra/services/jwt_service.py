@@ -4,9 +4,8 @@ import jwt
 
 from app.core.config import Settings
 from app.core.dependencies.get_settings import get_settings
-from app.modules.auth.domain.services.token_service_interface import (
-    TokenServiceInterface,
-)
+from app.modules.auth.domain.services.token_service_interface import \
+    TokenServiceInterface
 
 
 class JWTService(TokenServiceInterface):

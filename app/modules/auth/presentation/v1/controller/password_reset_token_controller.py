@@ -1,5 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.background.tasks.email_task import send_reset_password_email_task
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_settings import get_settings
@@ -7,45 +8,33 @@ from app.core.domain.entities.user import UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
-from app.modules.auth.domain.request.password_reset_token_request import (
-    PasswordResetTokenRequest,
-)
-from app.modules.auth.domain.request.reset_password_request import ResetPasswordRequest
-
-from app.modules.auth.domain.response.forgot_password_response import (
-    ForgotPasswordResponse,
-)
-from app.modules.auth.domain.response.reset_password_response import (
-    ResetPasswordResponse,
-)
-from app.modules.auth.domain.usecases.create_password_reset_token_use_case import (
-    CreatePasswordResetTokenUseCase,
-)
-from app.modules.auth.domain.usecases.get_password_reset_token_by_hash_use_case import (
-    GetPasswordResetTokenByHashUseCase,
-)
-from app.modules.auth.infra.password_reset_token_repository import (
-    PasswordResetTokenRepository,
-)
+from app.modules.auth.domain.request.password_reset_token_request import \
+    PasswordResetTokenRequest
+from app.modules.auth.domain.request.reset_password_request import \
+    ResetPasswordRequest
+from app.modules.auth.domain.response.forgot_password_response import \
+    ForgotPasswordResponse
+from app.modules.auth.domain.response.reset_password_response import \
+    ResetPasswordResponse
+from app.modules.auth.domain.usecases.create_password_reset_token_use_case import \
+    CreatePasswordResetTokenUseCase
+from app.modules.auth.domain.usecases.get_password_reset_token_by_hash_use_case import \
+    GetPasswordResetTokenByHashUseCase
+from app.modules.auth.infra.password_reset_token_repository import \
+    PasswordResetTokenRepository
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
-
-from app.modules.auth.utils.generate_url_safe_token_expiry import (
-    generate_url_safe_token_expiry,
-)
-
-from app.modules.auth.utils.generate_url_safe_token import generate_url_safe_token
-from app.modules.auth.utils.validate_password_reset_token import (
-    validate_password_reset_token,
-)
-from app.modules.users.domain.usecases.get_user_by_email_use_case import (
-    GetUserByEmailUseCase,
-)
-from app.modules.users.domain.usecases.get_user_by_uuid_use_case import (
-    GetUserByUUIDUseCase,
-)
-from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
-    UpdateUsersByUUIDUseCase,
-)
+from app.modules.auth.utils.generate_url_safe_token import \
+    generate_url_safe_token
+from app.modules.auth.utils.generate_url_safe_token_expiry import \
+    generate_url_safe_token_expiry
+from app.modules.auth.utils.validate_password_reset_token import \
+    validate_password_reset_token
+from app.modules.users.domain.usecases.get_user_by_email_use_case import \
+    GetUserByEmailUseCase
+from app.modules.users.domain.usecases.get_user_by_uuid_use_case import \
+    GetUserByUUIDUseCase
+from app.modules.users.domain.usecases.update_users_by_uuid_use_case import \
+    UpdateUsersByUUIDUseCase
 
 
 class PasswordResetController:

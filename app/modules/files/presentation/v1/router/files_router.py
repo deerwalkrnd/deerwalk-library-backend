@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from app.modules.files.presentation.v1.controller.file_controller import FileController
+from app.modules.files.presentation.v1.controller.file_controller import \
+    FileController
 
 router = APIRouter(prefix="/files", tags=["files"])
 file_controller = FileController()

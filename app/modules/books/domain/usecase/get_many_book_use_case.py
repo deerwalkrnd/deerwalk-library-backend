@@ -1,8 +1,8 @@
-from app.modules.books.domain.entities.book import Book
-from app.modules.books.domain.repository.book_repository_interface import (
-    BookRepositoryInterface,
-)
 from typing import List
+
+from app.modules.books.domain.entities.book import Book
+from app.modules.books.domain.repository.book_repository_interface import \
+    BookRepositoryInterface
 
 
 class GetManyBookUseCase:

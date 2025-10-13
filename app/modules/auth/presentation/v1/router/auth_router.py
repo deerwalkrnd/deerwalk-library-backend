@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from app.modules.auth.presentation.v1.controller.auth_controller import AuthController
-from app.modules.auth.presentation.v1.controller.password_reset_token_controller import (
-    PasswordResetController,
-)
+from app.modules.auth.presentation.v1.controller.auth_controller import \
+    AuthController
+from app.modules.auth.presentation.v1.controller.password_reset_token_controller import \
+    PasswordResetController
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

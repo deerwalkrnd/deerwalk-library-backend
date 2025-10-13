@@ -1,8 +1,9 @@
 from typing import Optional
 
 from sqlalchemy import ForeignKey, Index
-from app.core.models.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.core.models.base import Base
 
 
 class BookReviewModel(Base):

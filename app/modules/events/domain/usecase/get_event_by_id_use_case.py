@@ -1,7 +1,6 @@
 from app.modules.events.domain.entities.event import Event
-from app.modules.events.domain.repository.event_repository_interface import (
-    EventRepositoryInterface,
-)
+from app.modules.events.domain.repository.event_repository_interface import \
+    EventRepositoryInterface
 
 
 class GetEventByIdUseCase:

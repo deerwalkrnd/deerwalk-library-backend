@@ -1,8 +1,7 @@
 from fastapi import APIRouter
 
-from app.modules.quotes.presentation.v1.controllers.quotes_controller import (
-    QuotesController,
-)
+from app.modules.quotes.presentation.v1.controllers.quotes_controller import \
+    QuotesController
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
 

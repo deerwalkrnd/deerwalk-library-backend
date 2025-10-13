@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from app.modules.books.presentation.v1.controllers.book_controller import BookController
+from app.modules.books.presentation.v1.controllers.book_controller import \
+    BookController
 
 router = APIRouter(prefix="/books", tags=["books"])
 

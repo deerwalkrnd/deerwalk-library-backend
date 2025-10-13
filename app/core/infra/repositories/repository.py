@@ -3,22 +3,13 @@ from typing import Any, List, Sequence, Tuple, Type
 from venv import logger
 
 from pydantic import BaseModel
-from sqlalchemy import (
-    CursorResult,
-    Delete,
-    Result,
-    Select,
-    Update,
-    delete,
-    desc,
-    select,
-    text,
-    update,
-)
+from sqlalchemy import (CursorResult, Delete, Result, Select, Update, delete,
+                        desc, select, text, update)
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.domain.repositories.repository_interface import RepositoryInterface
+from app.core.domain.repositories.repository_interface import \
+    RepositoryInterface
 from app.core.models.base import Base
 
 

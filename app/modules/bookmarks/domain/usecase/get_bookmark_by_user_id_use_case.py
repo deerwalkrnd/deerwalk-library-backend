@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List
+
 from app.modules.bookmarks.domain.entities.bookmark import Bookmark
-from app.modules.bookmarks.domain.repository.bookmark_repository_interface import (
-    BookmarkRepositoryInterface,
-)
+from app.modules.bookmarks.domain.repository.bookmark_repository_interface import \
+    BookmarkRepositoryInterface
 
 
 class GetBookmarkByUserIdUseCase:

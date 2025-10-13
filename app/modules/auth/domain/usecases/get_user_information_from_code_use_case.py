@@ -1,4 +1,5 @@
 from typing import Any, Dict
+
 import httpx
 
 from app.core.domain.entities.user import User

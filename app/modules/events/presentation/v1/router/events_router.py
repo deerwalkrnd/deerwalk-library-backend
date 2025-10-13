@@ -1,8 +1,7 @@
 from fastapi import APIRouter
 
-from app.modules.events.presentation.v1.controller.events_controller import (
-    EventsController,
-)
+from app.modules.events.presentation.v1.controller.events_controller import \
+    EventsController
 
 router = APIRouter(prefix="/events", tags=["events"])
 events_controller = EventsController()

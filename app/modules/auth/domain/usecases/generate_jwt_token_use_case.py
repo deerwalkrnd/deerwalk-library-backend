@@ -1,7 +1,7 @@
 from typing import Any, Dict
-from app.modules.auth.domain.services.token_service_interface import (
-    TokenServiceInterface,
-)
+
+from app.modules.auth.domain.services.token_service_interface import \
+    TokenServiceInterface
 
 
 class GenerateJWTTokenUseCase:

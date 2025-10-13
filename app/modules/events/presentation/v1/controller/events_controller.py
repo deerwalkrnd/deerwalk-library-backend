@@ -5,32 +5,31 @@ from fastapi.logger import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
-from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
+from app.core.domain.entities.response.paginated_response import \
+    PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.events.domain.entities.event import Event
-from app.modules.events.domain.request.create_event_request import CreateEventRequest
-from app.modules.events.domain.request.get_many_event_params_request import (
-    GetManyEventParams,
-)
-from app.modules.events.domain.request.update_event_request import UpdateEventRequest
-from app.modules.events.domain.usecase.create_event_use_case import CreateEventUseCase
-from app.modules.events.domain.usecase.delete_event_by_id_use_case import (
-    DeleteEventByIdUseCase,
-)
-from app.modules.events.domain.usecase.get_event_by_id_use_case import (
-    GetEventByIdUseCase,
-)
-from app.modules.events.domain.usecase.get_latest_event_use_case import (
-    GetLatestEventUseCase,
-)
-from app.modules.events.domain.usecase.get_many_events_use_case import (
-    GetManyEventsUseCase,
-)
-from app.modules.events.domain.usecase.update_event_by_id_use_case import (
-    UpdateEventByIdUseCase,
-)
-from app.modules.events.infra.repository.event_repository import EventRepository
+from app.modules.events.domain.request.create_event_request import \
+    CreateEventRequest
+from app.modules.events.domain.request.get_many_event_params_request import \
+    GetManyEventParams
+from app.modules.events.domain.request.update_event_request import \
+    UpdateEventRequest
+from app.modules.events.domain.usecase.create_event_use_case import \
+    CreateEventUseCase
+from app.modules.events.domain.usecase.delete_event_by_id_use_case import \
+    DeleteEventByIdUseCase
+from app.modules.events.domain.usecase.get_event_by_id_use_case import \
+    GetEventByIdUseCase
+from app.modules.events.domain.usecase.get_latest_event_use_case import \
+    GetLatestEventUseCase
+from app.modules.events.domain.usecase.get_many_events_use_case import \
+    GetManyEventsUseCase
+from app.modules.events.domain.usecase.update_event_by_id_use_case import \
+    UpdateEventByIdUseCase
+from app.modules.events.infra.repository.event_repository import \
+    EventRepository
 
 
 class EventsController:

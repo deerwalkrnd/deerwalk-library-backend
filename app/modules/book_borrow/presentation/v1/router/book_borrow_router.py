@@ -1,8 +1,7 @@
 from fastapi import APIRouter
 
-from app.modules.book_borrow.presentation.v1.controller.book_borrow_controller import (
-    BookBorrowController,
-)
+from app.modules.book_borrow.presentation.v1.controller.book_borrow_controller import \
+    BookBorrowController
 
 router = APIRouter(prefix="/borrows", tags=["book borrow"])
 book_borrow_controller = BookBorrowController()
@@ -25,7 +24,7 @@ router.add_api_route(
     "/{id}/renew",
     methods=["POST"],
     endpoint=book_borrow_controller.renew_book,
-    response_description="Renew a book"
+    response_description="Renew a book",
 )
 
 router.add_api_route(

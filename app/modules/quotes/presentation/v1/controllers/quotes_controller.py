@@ -2,30 +2,30 @@ from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
-from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
+from app.core.domain.entities.response.paginated_response import \
+    PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.quotes.domain.entities.quote import Quote
-from app.modules.quotes.domain.request.quote_create_request import QuoteCreateRequest
+from app.modules.quotes.domain.request.quote_create_request import \
+    QuoteCreateRequest
 from app.modules.quotes.domain.request.quote_list_params import QuoteListParams
-from app.modules.quotes.domain.request.quote_update_request import QuoteUpdateRequest
-from app.modules.quotes.domain.usecase.create_quote_use_case import CreateQuoteUseCase
-from app.modules.quotes.domain.usecase.delete_quote_by_id_use_case import (
-    DeleteQuoteByIdUseCase,
-)
-from app.modules.quotes.domain.usecase.get_many_quotes_use_case import (
-    GetManyQuotesUseCase,
-)
-from app.modules.quotes.domain.usecase.get_quote_by_id_use_case import (
-    GetQuoteByIdUseCase,
-)
-from app.modules.quotes.domain.usecase.get_random_quote_use_case import (
-    GetRandomQuoteUseCase,
-)
-from app.modules.quotes.domain.usecase.update_quote_by_id_use_case import (
-    UpdateQuoteByIdUseCase,
-)
-from app.modules.quotes.infra.repositories.quote_repository import QuoteRepository
+from app.modules.quotes.domain.request.quote_update_request import \
+    QuoteUpdateRequest
+from app.modules.quotes.domain.usecase.create_quote_use_case import \
+    CreateQuoteUseCase
+from app.modules.quotes.domain.usecase.delete_quote_by_id_use_case import \
+    DeleteQuoteByIdUseCase
+from app.modules.quotes.domain.usecase.get_many_quotes_use_case import \
+    GetManyQuotesUseCase
+from app.modules.quotes.domain.usecase.get_quote_by_id_use_case import \
+    GetQuoteByIdUseCase
+from app.modules.quotes.domain.usecase.get_random_quote_use_case import \
+    GetRandomQuoteUseCase
+from app.modules.quotes.domain.usecase.update_quote_by_id_use_case import \
+    UpdateQuoteByIdUseCase
+from app.modules.quotes.infra.repositories.quote_repository import \
+    QuoteRepository
 
 
 class QuotesController:

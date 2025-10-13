@@ -1,40 +1,31 @@
 from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies.database import get_db
-from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
+from app.core.domain.entities.response.paginated_response import \
+    PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
-from app.modules.recommendations.domain.entities.recommendation import (
-    Recommendation,
-)
-from app.modules.recommendations.domain.request.recommendation_create_request import (
-    CreateRecommendationRequest,
-)
-from app.modules.recommendations.domain.request.recommendation_list_params import (
-    RecommendationListParams,
-)
-from app.modules.recommendations.domain.request.recommendation_update_request import (
-    RecommendationUpdateRequest,
-)
-from app.modules.recommendations.domain.usecase.create_recommendation_use_case import (
-    CreateRecommendationUseCase,
-)
-from app.modules.recommendations.domain.usecase.get_recommendation_by_id_use_case import (
-    GetRecommendationByIdUseCase,
-)
-from app.modules.recommendations.domain.usecase.update_recommendation_by_id_use_case import (
-    UpdateRecommendationByIdUseCase,
-)
-from app.modules.recommendations.infra.recommendation_repository import (
-    RecommendationRepository,
-)
-from app.modules.recommendations.domain.usecase.get_many_recommendation_use_case import (
-    GetManyRecommendationUseCase,
-)
-
-from app.modules.recommendations.domain.usecase.delete_recommendation_by_id_use_case import (
-    DeleteRecommendationByIdUseCase,
-)
+from app.modules.recommendations.domain.entities.recommendation import \
+    Recommendation
+from app.modules.recommendations.domain.request.recommendation_create_request import \
+    CreateRecommendationRequest
+from app.modules.recommendations.domain.request.recommendation_list_params import \
+    RecommendationListParams
+from app.modules.recommendations.domain.request.recommendation_update_request import \
+    RecommendationUpdateRequest
+from app.modules.recommendations.domain.usecase.create_recommendation_use_case import \
+    CreateRecommendationUseCase
+from app.modules.recommendations.domain.usecase.delete_recommendation_by_id_use_case import \
+    DeleteRecommendationByIdUseCase
+from app.modules.recommendations.domain.usecase.get_many_recommendation_use_case import \
+    GetManyRecommendationUseCase
+from app.modules.recommendations.domain.usecase.get_recommendation_by_id_use_case import \
+    GetRecommendationByIdUseCase
+from app.modules.recommendations.domain.usecase.update_recommendation_by_id_use_case import \
+    UpdateRecommendationByIdUseCase
+from app.modules.recommendations.infra.recommendation_repository import \
+    RecommendationRepository
 
 
 class RecommendationController:

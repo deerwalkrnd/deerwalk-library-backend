@@ -1,17 +1,15 @@
-from pydantic import BaseModel
+from datetime import datetime
 from typing import List
+
+from pydantic import BaseModel
+from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.infra.repositories.repository import Repository
 from app.core.models.bookmark import BookmarkModel
 from app.modules.bookmarks.domain.entities.bookmark import Bookmark
-from app.modules.bookmarks.domain.repository.bookmark_repository_interface import (
-    BookmarkRepositoryInterface,
-)
-from datetime import datetime
-from sqlalchemy import (
-    desc,
-    select,
-)
+from app.modules.bookmarks.domain.repository.bookmark_repository_interface import \
+    BookmarkRepositoryInterface
 
 
 class BookmarkRepository(

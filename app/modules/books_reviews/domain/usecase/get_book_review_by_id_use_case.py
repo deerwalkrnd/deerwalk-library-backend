@@ -1,7 +1,6 @@
 from app.modules.books_reviews.domain.entities.book_review import BookReview
-from app.modules.books_reviews.domain.repository.book_review_repository_interface import (
-    BookReviewRepositoryInterface,
-)
+from app.modules.books_reviews.domain.repository.book_review_repository_interface import \
+    BookReviewRepositoryInterface
 
 
 class GetBookReviewByIdUseCase:

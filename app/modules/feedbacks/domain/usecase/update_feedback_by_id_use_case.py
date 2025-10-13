@@ -1,7 +1,6 @@
 from app.modules.feedbacks.domain.entities.feedback import Feedback
-from app.modules.feedbacks.domain.repository.feedback_repository_interface import (
-    FeedbackRepositoryInterface,
-)
+from app.modules.feedbacks.domain.repository.feedback_repository_interface import \
+    FeedbackRepositoryInterface
 
 
 class UpdateFeedbackByIdUseCase:

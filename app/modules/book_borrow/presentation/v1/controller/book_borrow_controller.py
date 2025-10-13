@@ -1,28 +1,31 @@
-from typing import Any
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies.database import get_db
-from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
+from app.core.domain.entities.response.paginated_response import \
+    PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.models.book_borrow import FineStatus
 from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
-from app.modules.book_borrow.domain.request.book_borrow_request import BookBorrowRequest
-from app.modules.book_borrow.domain.request.get_many_book_borrow_request import (
-    GetManyBookBorrowRequest,
-)
-from app.modules.book_borrow.infra.repository.book_borrow_repository import (
-    BookBorrowRepository,
-)
-from app.modules.book_borrow.infra.usecases.borrow_book_use_case import (
-    BorrowBookUseCase,
-)
-from app.modules.book_borrow.infra.usecases.get_book_borrow_by_id_usecase import (
-    GetBookBorrowByIdUseCase,
-)
-from app.modules.book_borrow.infra.usecases.get_book_borrow_by_user_id_and_book_copy_id_use_case import (
-    GetBookBorrowByUserIdAndBookCopyIdUseCase,
-)
+from app.modules.book_borrow.domain.request.book_borrow_request import \
+    BookBorrowRequest
+from app.modules.book_borrow.domain.request.book_renew_request import \
+    BookRenewRequest
+from app.modules.book_borrow.domain.request.book_return_request import \
+    BookReturnRequest
+from app.modules.book_borrow.domain.request.get_many_book_borrow_request import \
+    GetManyBookBorrowRequest
+from app.modules.book_borrow.infra.repository.book_borrow_repository import \
+    BookBorrowRepository
+from app.modules.book_borrow.infra.usecases.borrow_book_use_case import \
+    BorrowBookUseCase
+from app.modules.book_borrow.infra.usecases.get_book_borrow_by_id_usecase import \
+    GetBookBorrowByIdUseCase
+from app.modules.book_borrow.infra.usecases.get_book_borrow_by_user_id_and_book_copy_id_use_case import \
+    GetBookBorrowByUserIdAndBookCopyIdUseCase
+from app.modules.book_borrow.infra.usecases.renew_book_use_case import \
+    RenewBookUseCase
 
 
 class BookBorrowController:
@@ -39,7 +42,7 @@ class BookBorrowController:
             book_borrow_repository=book_borrow_repository
         )
 
-        book_borrow = await get_book_borrow_by_id_use_case.execute(book_borrow_id=id)
+        book_borrow = await get_book_borrow_by_id_use_case.execute(book_borrow_id=id, returned=False)
 
         if not book_borrow:
             raise LibraryException(
@@ -114,8 +117,45 @@ class BookBorrowController:
 
         raise NotImplementedError
 
-    async def renew_book(self, book_renew_request: Any) -> None:
-        raise NotImplementedError
+    async def renew_book(
+        self,
+        id: int,
+        book_renew_request: BookRenewRequest,
+        db: AsyncSession = Depends(get_db),
+    ) -> None:
+        book_borrow_repository = BookBorrowRepository(db=db)
 
-    async def return_book(self, return_book_request: Any) -> None:
+        get_book_borrow_by_id_use_case = GetBookBorrowByIdUseCase(
+            book_borrow_repository=book_borrow_repository
+        )
+
+        book_borrow = await get_book_borrow_by_id_use_case.execute(book_borrow_id=id, returned=False)
+
+        if (
+            not book_borrow
+            or not book_borrow.times_renewable
+            or book_borrow.times_renewable <= 0
+        ):
+            raise LibraryException(
+                status_code=403,
+                code=ErrorCode.INSUFFICIENT_PERMISSION,
+                msg="You can now longer renew this book and it must be re-issued.",
+            )
+
+        renew_book_use_case = RenewBookUseCase(
+            book_borrow_repository=book_borrow_repository
+        )
+
+        await renew_book_use_case.execute(
+            new_due_date=book_renew_request.new_due_date,
+            fine_collected=book_renew_request.fine_collected,
+            id=id,
+            prev_fine=book_borrow.fine_accumulated
+            if book_borrow.fine_accumulated
+            else 0,
+        )
+
+        return None
+
+    async def return_book(self, id: int, return_book_request: BookReturnRequest) -> None:
         raise NotImplementedError

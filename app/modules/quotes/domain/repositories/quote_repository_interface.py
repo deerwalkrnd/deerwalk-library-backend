@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from app.core.domain.repositories.repository_interface import RepositoryInterface
+from app.core.domain.repositories.repository_interface import \
+    RepositoryInterface
 from app.modules.quotes.domain.entities.quote import Quote
 
 
