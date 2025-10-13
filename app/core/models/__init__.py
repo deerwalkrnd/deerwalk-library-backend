@@ -8,8 +8,7 @@ from .books_genre import BooksGenreModel as BooksGenreModel
 from .event import EventModel as EventModel
 from .feedback import FeedbackModel as FeedbackModel
 from .genre import GenreModel as GenreModel
-from .password_reset_token import \
-    PasswordResetTokenModel as PasswordResetTokenModel
+from .password_reset_token import PasswordResetTokenModel as PasswordResetTokenModel
 from .quote import QuoteModel as QuoteModel
 from .recommendation import RecommendationModel as RecommendationModel
 from .users import UserModel as UserModel

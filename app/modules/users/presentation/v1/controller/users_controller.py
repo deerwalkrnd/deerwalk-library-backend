@@ -5,39 +5,36 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.background.tasks.email_task import send_welcome_email_task
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_smtp import get_smtp
-from app.core.dependencies.middleware.get_current_librarian import \
-    get_current_librarian
+from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
 from app.core.dependencies.middleware.get_current_user import get_current_user
-from app.core.domain.entities.response.paginated_response import \
-    PaginatedResponseMany
+from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
-from app.core.infra.services.email_notification_service import \
-    EmailNotificationService
+from app.core.infra.services.email_notification_service import EmailNotificationService
 from app.core.utils.make_email import create_email
-from app.modules.auth.domain.templates.welcome_template import \
-    get_welcome_template
+from app.modules.auth.domain.templates.welcome_template import get_welcome_template
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
-from app.modules.users.domain.request.user_creation_request import \
-    UserCreationRequest
-from app.modules.users.domain.request.user_list_request import \
-    UserSearchRequest
-from app.modules.users.domain.request.user_update_request import \
-    UpdateUserRequest
-from app.modules.users.domain.usecases.create_user_use_case import \
-    CreateUserUseCase
-from app.modules.users.domain.usecases.delete_users_by_uuid_use_case import \
-    DeleteUsersByUUIDUseCase
-from app.modules.users.domain.usecases.get_many_users_use_case import \
-    GetManyUsersUseCase
-from app.modules.users.domain.usecases.get_user_by_email_use_case import \
-    GetUserByEmailUseCase
-from app.modules.users.domain.usecases.get_user_by_uuid_use_case import \
-    GetUserByUUIDUseCase
-from app.modules.users.domain.usecases.update_users_by_uuid_use_case import \
-    UpdateUsersByUUIDUseCase
+from app.modules.users.domain.request.user_creation_request import UserCreationRequest
+from app.modules.users.domain.request.user_list_request import UserSearchRequest
+from app.modules.users.domain.request.user_update_request import UpdateUserRequest
+from app.modules.users.domain.usecases.create_user_use_case import CreateUserUseCase
+from app.modules.users.domain.usecases.delete_users_by_uuid_use_case import (
+    DeleteUsersByUUIDUseCase,
+)
+from app.modules.users.domain.usecases.get_many_users_use_case import (
+    GetManyUsersUseCase,
+)
+from app.modules.users.domain.usecases.get_user_by_email_use_case import (
+    GetUserByEmailUseCase,
+)
+from app.modules.users.domain.usecases.get_user_by_uuid_use_case import (
+    GetUserByUUIDUseCase,
+)
+from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
+    UpdateUsersByUUIDUseCase,
+)
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 from app.modules.users.domain.request.user_list_request import UserSearchRequest
 from app.modules.users.domain.request.user_update_request import UpdateUserRequest

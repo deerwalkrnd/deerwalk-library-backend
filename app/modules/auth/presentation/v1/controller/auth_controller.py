@@ -8,8 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_settings import get_settings
-from app.core.dependencies.middleware.get_available_user import \
-    get_available_user
+from app.core.dependencies.middleware.get_available_user import get_available_user
 from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
@@ -19,21 +18,27 @@ from app.modules.auth.domain.request.login_request import LoginRequest
 from app.modules.auth.domain.request.sso_url_request import SSOURLRequest
 from app.modules.auth.domain.response.token_response import TokenResponse
 from app.modules.auth.domain.response.url_response import URLResponse
-from app.modules.auth.domain.usecases.generate_jwt_token_use_case import \
-    GenerateJWTTokenUseCase
-from app.modules.auth.domain.usecases.get_sso_login_url_use_case import \
-    GetSSOLoginURLUseCase
-from app.modules.auth.domain.usecases.get_user_information_from_code_use_case import \
-    GetUserInformationFromCodeUseCase
+from app.modules.auth.domain.usecases.generate_jwt_token_use_case import (
+    GenerateJWTTokenUseCase,
+)
+from app.modules.auth.domain.usecases.get_sso_login_url_use_case import (
+    GetSSOLoginURLUseCase,
+)
+from app.modules.auth.domain.usecases.get_user_information_from_code_use_case import (
+    GetUserInformationFromCodeUseCase,
+)
 from app.modules.auth.domain.usecases.login_use_case import LoginUseCase
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher
 from app.modules.auth.infra.services.jwt_service import JWTService
-from app.modules.users.domain.usecases.create_user_from_google_use_case import \
-    CreateUserFromGoogleUseCase
-from app.modules.users.domain.usecases.get_user_by_email_use_case import \
-    GetUserByEmailUseCase
-from app.modules.users.domain.usecases.update_users_by_uuid_use_case import \
-    UpdateUsersByUUIDUseCase
+from app.modules.users.domain.usecases.create_user_from_google_use_case import (
+    CreateUserFromGoogleUseCase,
+)
+from app.modules.users.domain.usecases.get_user_by_email_use_case import (
+    GetUserByEmailUseCase,
+)
+from app.modules.users.domain.usecases.update_users_by_uuid_use_case import (
+    UpdateUsersByUUIDUseCase,
+)
 
 
 class AuthController:

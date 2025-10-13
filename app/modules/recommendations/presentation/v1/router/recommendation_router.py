@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.modules.recommendations.presentation.v1.controllers.recommendation_controller import \
-    RecommendationController
+from app.modules.recommendations.presentation.v1.controllers.recommendation_controller import (
+    RecommendationController,
+)
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 

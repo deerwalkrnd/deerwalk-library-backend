@@ -1,21 +1,28 @@
-from datetime import datetime
-
+from app.core.models.book_borrow import FineStatus
 from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import (
     BookBorrowRepositoryInterface,
 )
+from datetime import datetime
 
 
-class RenewBookUseCase:
+class ReturnBookUseCase:
     def __init__(self, book_borrow_repository: BookBorrowRepositoryInterface) -> None:
         self.book_borrow_repository = book_borrow_repository
 
     async def execute(
-        self, id: int, new_due_date: datetime, fine_collected: int, prev_fine: int = 0
+        self,
+        book_borrow_id: int,
+        fine_paid: int,
+        fine_prev: int,
+        returned_date: datetime,
     ) -> int:
         return await self.book_borrow_repository.update(
-            conditions=BookBorrow(id=id),
+            conditions=BookBorrow(id=book_borrow_id, returned=False),
             obj=BookBorrow(
-                due_date=new_due_date, fine_accumulated=prev_fine + fine_collected
+                fine_accumulated=fine_paid + fine_prev,
+                returned_date=returned_date,
+                returned=True,
+                fine_status=FineStatus.PAID,
             ),
         )

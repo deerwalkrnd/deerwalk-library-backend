@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.modules.genres.presentation.v1.controller.genre_controller import \
-    GenreController
+from app.modules.genres.presentation.v1.controller.genre_controller import (
+    GenreController,
+)
 
 router = APIRouter(prefix="/genre", tags=["genre"])
 

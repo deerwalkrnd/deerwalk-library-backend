@@ -1,6 +1,7 @@
 from app.core.domain.entities.user import UserWithPassword
-from app.core.domain.repositories.user_repository_interface import \
-    UserRepositoryInterface
+from app.core.domain.repositories.user_repository_interface import (
+    UserRepositoryInterface,
+)
 
 
 class UpdateUsersByUUIDUseCase:

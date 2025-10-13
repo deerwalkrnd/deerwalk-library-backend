@@ -2,26 +2,26 @@ from fastapi import Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
-from app.core.domain.entities.response.paginated_response import \
-    PaginatedResponseMany
+from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.genres.domain.entity.genre import Genre
-from app.modules.genres.domain.request.genre_create_request import \
-    CreateGenreReqeust
+from app.modules.genres.domain.request.genre_create_request import CreateGenreReqeust
 from app.modules.genres.domain.request.genre_list_params import GenreListParams
-from app.modules.genres.domain.request.genre_update_request import \
-    GenreUpdateRequest
-from app.modules.genres.domain.usecase.create_genre_use_case import \
-    CreateGenreUseCase
-from app.modules.genres.domain.usecase.delete_genre_by_id_use_case import \
-    DeleteGenreByIdUseCase
-from app.modules.genres.domain.usecase.get_genre_by_id_use_case import \
-    GetGenreByIdUseCase
-from app.modules.genres.domain.usecase.get_many_genre_use_case import \
-    GetManyGenreUseCase
-from app.modules.genres.domain.usecase.update_genre_by_id_use_case import \
-    UpdateGenreByIdUseCase
+from app.modules.genres.domain.request.genre_update_request import GenreUpdateRequest
+from app.modules.genres.domain.usecase.create_genre_use_case import CreateGenreUseCase
+from app.modules.genres.domain.usecase.delete_genre_by_id_use_case import (
+    DeleteGenreByIdUseCase,
+)
+from app.modules.genres.domain.usecase.get_genre_by_id_use_case import (
+    GetGenreByIdUseCase,
+)
+from app.modules.genres.domain.usecase.get_many_genre_use_case import (
+    GetManyGenreUseCase,
+)
+from app.modules.genres.domain.usecase.update_genre_by_id_use_case import (
+    UpdateGenreByIdUseCase,
+)
 from app.modules.genres.infra.genre_repository import GenreRepository
 
 

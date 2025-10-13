@@ -8,8 +8,9 @@ from app.core.infra.repositories.repository import Repository
 from app.core.models.books_genre import BooksGenreModel
 from app.core.models.genre import GenreModel
 from app.modules.books.domain.entities.books_genre import BooksGenre
-from app.modules.books.domain.repository.books_genre_repository_interface import \
-    BooksGenreRepositoryInterface
+from app.modules.books.domain.repository.books_genre_repository_interface import (
+    BooksGenreRepositoryInterface,
+)
 from app.modules.genres.domain.entity.genre import Genre
 
 

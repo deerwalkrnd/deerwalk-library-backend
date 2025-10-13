@@ -1,6 +1,7 @@
 from app.modules.quotes.domain.entities.quote import Quote
-from app.modules.quotes.domain.repositories.quote_repository_interface import \
-    QuoteRepositoryInterface
+from app.modules.quotes.domain.repositories.quote_repository_interface import (
+    QuoteRepositoryInterface,
+)
 
 
 class GetQuoteByIdUseCase:

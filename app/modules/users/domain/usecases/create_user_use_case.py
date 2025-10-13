@@ -1,8 +1,8 @@
 from app.core.domain.entities.user import User, UserWithPassword
-from app.core.domain.repositories.user_repository_interface import \
-    UserRepositoryInterface
-from app.modules.users.domain.request.user_creation_request import \
-    UserCreationRequest
+from app.core.domain.repositories.user_repository_interface import (
+    UserRepositoryInterface,
+)
+from app.modules.users.domain.request.user_creation_request import UserCreationRequest
 
 
 class CreateUserUseCase:

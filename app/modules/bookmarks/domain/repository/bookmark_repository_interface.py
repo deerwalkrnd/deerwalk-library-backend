@@ -4,8 +4,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from app.core.domain.repositories.repository_interface import \
-    RepositoryInterface
+from app.core.domain.repositories.repository_interface import RepositoryInterface
 from app.modules.bookmarks.domain.entities.bookmark import Bookmark
 
 

@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.modules.users.presentation.v1.controller.users_controller import \
-    UsersController
+from app.modules.users.presentation.v1.controller.users_controller import (
+    UsersController,
+)
 
 router = APIRouter(prefix="/users", tags=["users"])
 users_controller = UsersController()

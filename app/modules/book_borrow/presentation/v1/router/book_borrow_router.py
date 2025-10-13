@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.modules.book_borrow.presentation.v1.controller.book_borrow_controller import \
-    BookBorrowController
+from app.modules.book_borrow.presentation.v1.controller.book_borrow_controller import (
+    BookBorrowController,
+)
 
 router = APIRouter(prefix="/borrows", tags=["book borrow"])
 book_borrow_controller = BookBorrowController()

@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.modules.bookmarks.presentation.v1.controller.bookmark_controller import \
-    BookmarkController
+from app.modules.bookmarks.presentation.v1.controller.bookmark_controller import (
+    BookmarkController,
+)
 
 router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 

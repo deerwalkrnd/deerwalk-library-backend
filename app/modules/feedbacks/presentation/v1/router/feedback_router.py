@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.modules.feedbacks.presentation.v1.controller.feedback_controller import \
-    FeedbackController
+from app.modules.feedbacks.presentation.v1.controller.feedback_controller import (
+    FeedbackController,
+)
 
 router = APIRouter(prefix="/feedbacks", tags=["feedbacks"])
 

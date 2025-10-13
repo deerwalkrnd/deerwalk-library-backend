@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import List
 
 from app.modules.genres.domain.entity.genre import Genre
-from app.modules.genres.domain.repository.genre_repository_interface import \
-    GenreRepositoryInterface
+from app.modules.genres.domain.repository.genre_repository_interface import (
+    GenreRepositoryInterface,
+)
 
 
 class GetManyGenreUseCase:

@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from app.modules.books_reviews.presentation.v1.controllers.books_reviews_controller import \
-    BooksReviewsController
+from app.modules.books_reviews.presentation.v1.controllers.books_reviews_controller import (
+    BooksReviewsController,
+)
 
 router = APIRouter(prefix="/reviews", tags=["books-reviews"])
 

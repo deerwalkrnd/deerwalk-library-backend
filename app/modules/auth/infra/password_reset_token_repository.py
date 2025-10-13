@@ -5,10 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.infra.repositories.repository import Repository
 from app.core.models.password_reset_token import PasswordResetTokenModel
-from app.modules.auth.domain.entity.password_reset_token import \
-    PasswordResetToken
-from app.modules.auth.domain.repository.password_reset_token_repository_interface import \
-    PasswordResetTokenRepositoryInterface
+from app.modules.auth.domain.entity.password_reset_token import PasswordResetToken
+from app.modules.auth.domain.repository.password_reset_token_repository_interface import (
+    PasswordResetTokenRepositoryInterface,
+)
 
 
 class PasswordResetTokenRepository(
