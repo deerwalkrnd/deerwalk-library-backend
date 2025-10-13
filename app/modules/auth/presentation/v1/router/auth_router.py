@@ -13,7 +13,7 @@ password_reset_controller = PasswordResetController()
 router.add_api_route(
     "/google-callback",
     auth_controller.handle_google_callback,
-    methods=["POST"],
+    methods=["GET"],
     response_description="Here the `token` field in the response contains the url "
     "instead of the jwt token",
 )
