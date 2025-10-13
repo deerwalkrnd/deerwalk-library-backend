@@ -49,3 +49,7 @@ class RepositoryInterface[T](ABC):
         searchable_value: str | None,
     ) -> List[T]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def insert_many(self, rows: List[T]) -> tuple[int, int]:
+        raise NotImplementedError

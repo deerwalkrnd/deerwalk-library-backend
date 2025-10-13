@@ -43,3 +43,10 @@ router.add_api_route(
     response_description="Update a user based on the incoming field,"
     " need to send a multipart/form-data",
 )
+
+router.add_api_route(
+    path="/bulk-upload",
+    endpoint=users_controller.bulk_upload_users,
+    methods=["POST"],
+    response_description="upload a csv to bulk-create users.",
+)
