@@ -32,6 +32,7 @@ class BookBorrowModel(Base):
     due_date: Mapped[Optional[datetime]]
     returned: Mapped[Optional[bool]] = mapped_column(default=False)
     returned_date: Mapped[Optional[datetime]]
+    remark: Mapped[Optional[str]]
 
     book_copy: Mapped["BookCopyModel"] = relationship(  # type: ignore
         "BookCopyModel", back_populates="borrows", lazy="selectin"

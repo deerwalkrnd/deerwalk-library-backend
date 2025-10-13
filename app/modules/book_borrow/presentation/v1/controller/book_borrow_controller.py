@@ -221,4 +221,5 @@ class BookBorrowController:
             fine_prev=book_borrow.fine_accumulated
             if book_borrow.fine_accumulated
             else 0,
+            remark=return_book_request.remark,
         )
