@@ -19,20 +19,20 @@ from app.modules.book_borrow.domain.response.book_borrow_response_dto import (
 from app.modules.book_borrow.infra.repository.book_borrow_repository import (
     BookBorrowRepository,
 )
-from app.modules.book_borrow.infra.usecases.borrow_book_use_case import (
+from app.modules.book_borrow.domain.usecases.borrow_book_use_case import (
     BorrowBookUseCase,
 )
-from app.modules.book_borrow.infra.usecases.get_book_borrow_by_id_usecase import (
+from app.modules.book_borrow.domain.usecases.get_book_borrow_by_id_usecase import (
     GetBookBorrowByIdUseCase,
 )
-from app.modules.book_borrow.infra.usecases.get_book_borrow_by_user_id_and_book_copy_id_use_case import (
+from app.modules.book_borrow.domain.usecases.get_book_borrow_by_user_id_and_book_copy_id_use_case import (
     GetBookBorrowByUserIdAndBookCopyIdUseCase,
 )
-from app.modules.book_borrow.infra.usecases.get_many_borrow_books_with_user_and_book_use_case import (
+from app.modules.book_borrow.domain.usecases.get_many_borrow_books_with_user_and_book_use_case import (
     GetManyBorrowBooksWithUserAndBookUseCase,
 )
-from app.modules.book_borrow.infra.usecases.renew_book_use_case import RenewBookUseCase
-from app.modules.book_borrow.infra.usecases.return_book_use_case import (
+from app.modules.book_borrow.domain.usecases.renew_book_use_case import RenewBookUseCase
+from app.modules.book_borrow.domain.usecases.return_book_use_case import (
     ReturnBookUseCase,
 )
 
