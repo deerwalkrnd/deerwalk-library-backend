@@ -20,8 +20,10 @@ class BooksGenreRepository(
         super().__init__(db, BooksGenreModel, BooksGenre)
 
     async def get_genres_by_book_id(self, book_id: int) -> List[Genre]:
-        query = select(GenreModel).join(
-            BooksGenreModel, BooksGenreModel.book_id == book_id
+        query = (
+            select(GenreModel)
+            .join(BooksGenreModel, BooksGenreModel.genre_id == GenreModel.id)
+            .where(BooksGenreModel.book_id == book_id)
         )
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
