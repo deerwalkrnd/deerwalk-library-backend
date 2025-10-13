@@ -13,6 +13,9 @@ from app.modules.book_borrow.domain.request.book_return_request import BookRetur
 from app.modules.book_borrow.domain.request.get_many_book_borrow_request import (
     GetManyBookBorrowRequest,
 )
+from app.modules.book_borrow.domain.response.book_borrow_response_dto import (
+    BookBorrowResponseDTO,
+)
 from app.modules.book_borrow.infra.repository.book_borrow_repository import (
     BookBorrowRepository,
 )
@@ -24,6 +27,9 @@ from app.modules.book_borrow.infra.usecases.get_book_borrow_by_id_usecase import
 )
 from app.modules.book_borrow.infra.usecases.get_book_borrow_by_user_id_and_book_copy_id_use_case import (
     GetBookBorrowByUserIdAndBookCopyIdUseCase,
+)
+from app.modules.book_borrow.infra.usecases.get_many_borrow_books_with_user_and_book_use_case import (
+    GetManyBorrowBooksWithUserAndBookUseCase,
 )
 from app.modules.book_borrow.infra.usecases.renew_book_use_case import RenewBookUseCase
 from app.modules.book_borrow.infra.usecases.return_book_use_case import (
@@ -105,7 +111,7 @@ class BookBorrowController:
                 fine_status=fine_status,
             )
             return borrow
-        except ValueError as e:
+        except ValueError:
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
@@ -117,10 +123,29 @@ class BookBorrowController:
         self,
         db: AsyncSession = Depends(get_db),
         params: GetManyBookBorrowRequest = Depends(),
-    ) -> PaginatedResponseMany[BookBorrow]:
+    ) -> PaginatedResponseMany[BookBorrowResponseDTO]:
         book_borrow_repository = BookBorrowRepository(db=db)
 
-        raise NotImplementedError
+        get_many_borrow_books_with_user_and_book_use_case = (
+            GetManyBorrowBooksWithUserAndBookUseCase(
+                book_borrow_repository=book_borrow_repository
+            )
+        )
+
+        data = await get_many_borrow_books_with_user_and_book_use_case.execute(
+            page=params.page,
+            end_date=params.ends,
+            limit=params.limit,
+            searchable_key=params.searchable_field,
+            searchable_value=params.searchable_value,
+            sort_by=params.sort_by,
+            start_date=params.starts,
+            user_id=None,
+        )
+
+        return PaginatedResponseMany(
+            page=params.page, total=len(data), next=params.page + 1, items=data
+        )
 
     async def renew_book(
         self,
@@ -138,11 +163,7 @@ class BookBorrowController:
             book_borrow_id=id, returned=False
         )
 
-        if (
-            not book_borrow
-            or not book_borrow.times_renewable
-            or book_borrow.times_renewable <= 0
-        ):
+        if not book_borrow or book_borrow.times_renewed == book_borrow.times_renewable:
             raise LibraryException(
                 status_code=403,
                 code=ErrorCode.INSUFFICIENT_PERMISSION,
@@ -153,6 +174,9 @@ class BookBorrowController:
             book_borrow_repository=book_borrow_repository
         )
 
+        if book_borrow.times_renewed == None:
+            raise ValueError("unreachable")
+
         await renew_book_use_case.execute(
             new_due_date=book_renew_request.new_due_date,
             fine_collected=book_renew_request.fine_collected,
@@ -160,6 +184,7 @@ class BookBorrowController:
             prev_fine=book_borrow.fine_accumulated
             if book_borrow.fine_accumulated
             else 0,
+            prev_renewed=book_borrow.times_renewed + 1,
         )
 
         return None
@@ -197,4 +222,3 @@ class BookBorrowController:
             if book_borrow.fine_accumulated
             else 0,
         )
-

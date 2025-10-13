@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.base import Base
@@ -34,13 +34,13 @@ class BookBorrowModel(Base):
     returned_date: Mapped[Optional[datetime]]
 
     book_copy: Mapped["BookCopyModel"] = relationship(  # type: ignore
-        "BookCopyModel", back_populates="borrows", lazy="noload"
+        "BookCopyModel", back_populates="borrows", lazy="selectin"
     )
 
     user: Mapped["UserModel"] = relationship(  # type: ignore
         "UserModel", back_populates="borrows", lazy="selectin"
     )
 
-    __table_args__ = (
-        UniqueConstraint("book_copy_id", "user_id", name="uq_book_copy_user"),
-    )
+    # __table_args__ = (
+    #     # UniqueConstraint("book_copy_id", "user_id", name="uq_book_copy_user"),
+    # )
