@@ -11,7 +11,9 @@ from app.modules.feedbacks.domain.entities.feedback import Feedback
 from app.modules.feedbacks.domain.requests.feedback_create_request import (
     FeedbackCreateRequest,
 )
-from app.modules.feedbacks.domain.requests.feedback_list_params import FeedbackListParams
+from app.modules.feedbacks.domain.requests.feedback_list_params import (
+    FeedbackListParams,
+)
 from app.modules.feedbacks.domain.requests.feedback_update_request import (
     FeedbackUpdateRequest,
 )
@@ -27,7 +29,9 @@ from app.modules.feedbacks.domain.usecases.get_many_feedback_use_case import (
 from app.modules.feedbacks.domain.usecases.update_feedback_by_id_use_case import (
     UpdateFeedbackByIdUseCase,
 )
-from app.modules.feedbacks.infra.repositories.feedback_repository import FeedbackRepository
+from app.modules.feedbacks.infra.repositories.feedback_repository import (
+    FeedbackRepository,
+)
 
 
 class FeedbackController:

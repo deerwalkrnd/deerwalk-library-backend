@@ -26,7 +26,9 @@ from app.modules.books_reviews.domain.usecases.get_many_book_reviews_by_id_use_c
 from app.modules.books_reviews.domain.usecases.update_book_review_spam_by_id_use_case import (
     UpdateBookReviewSpamByIdUseCase,
 )
-from app.modules.books_reviews.infra.repositories.book_review_repository import BookReviewRepository
+from app.modules.books_reviews.infra.repositories.book_review_repository import (
+    BookReviewRepository,
+)
 
 
 class BooksReviewsController:
