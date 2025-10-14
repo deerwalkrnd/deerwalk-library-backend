@@ -11,7 +11,7 @@ from app.modules.books.domain.entities.books_genre import BooksGenre
 from app.modules.books.domain.repository.books_genre_repository_interface import (
     BooksGenreRepositoryInterface,
 )
-from app.modules.genres.domain.entity.genre import Genre
+from app.modules.genres.domain.entities.genre import Genre
 
 
 class BooksGenreRepository(

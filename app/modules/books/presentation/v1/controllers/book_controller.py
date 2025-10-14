@@ -37,7 +37,7 @@ from app.modules.books.infra.repositories.book_repository import BookRepository
 from app.modules.books.infra.repositories.books_genre_repository import (
     BooksGenreRepository,
 )
-from app.modules.genres.domain.entity.genre import Genre
+from app.modules.genres.domain.entities.genre import Genre
 
 
 class BookController:
