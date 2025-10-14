@@ -53,3 +53,11 @@ router.add_api_route(
     description="Returns book on the basis of id",
     status_code=200,
 )
+
+router.add_api_route(
+    path="/bulk-upload",
+    endpoint=book_controller.bulk_upload_books,
+    methods=["POST"],
+    description="Uploads books in bulk",
+    status_code=200,
+)

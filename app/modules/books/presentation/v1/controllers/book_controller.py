@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import Depends, logger
+from fastapi import Depends, File, UploadFile, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
@@ -13,6 +13,9 @@ from app.modules.books.domain.request.book_request_list_params import BookListPa
 from app.modules.books.domain.request.book_update_request import BookUpdateRequest
 from app.modules.books.domain.usecase.associate_book_with_genre_use_case import (
     AssociateBookWithGenreUseCase,
+)
+from app.modules.books.domain.usecase.bulk_upload_books_use_case import (
+    BulkUploadBooksUseCase,
 )
 from app.modules.books.domain.usecase.create_book_copy_use_case import (
     CreateBookCopyUseCase,
@@ -259,3 +262,25 @@ class BookController:
                 code=ErrorCode.UNKOWN_ERROR,
                 msg="server could not retrieve book by id.",
             )
+
+    async def bulk_upload_books(
+        self, file: UploadFile = File(...), db: AsyncSession = Depends(get_db)
+    ):
+        if file.filename and not file.filename.endswith(".csv"):
+            raise LibraryException(
+                status_code=400,
+                code=ErrorCode.INVALID_FIELDS,
+                msg="Only CSV files are allowed!",
+            )
+
+        book_repository = BookRepository(db=db)
+        book_copy_repository = BookCopyRepository(db=db)
+
+        create_book_use_case = CreateBookUseCase(book_repository=book_repository)
+        bulk_upload_books_use_case = BulkUploadBooksUseCase(
+            book_repository=book_repository
+        )
+
+        book_model = await bulk_upload_books_use_case.execute(file=file)
+        
+        print(book_model)
