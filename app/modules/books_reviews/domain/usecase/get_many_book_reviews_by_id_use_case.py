@@ -12,12 +12,12 @@ class GetManyBookReviewsByIdUseCase:
 
     async def execute(
         self,
-        book_id: int,
         page: int,
         limit: int,
         sort_by: str,
         descending: bool,
         is_spam: bool,
+        book_id:int
     ) -> List[BookReview]:
         offset = (page - 1) * limit
         book_reviews = await self.book_review_repository.filter(
