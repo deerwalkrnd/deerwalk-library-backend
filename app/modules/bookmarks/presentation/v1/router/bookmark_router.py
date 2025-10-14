@@ -28,3 +28,11 @@ router.add_api_route(
     methods=["DELETE"],
     description="delete/remove bookmark of a user.",
 )
+
+router.add_api_route(
+    path="/{book_id}",
+    endpoint=bookmark_controller.check_bookmark,
+    methods=["GET"],
+    description="check if a book is bookmarked or not",
+    status_code=200
+)
