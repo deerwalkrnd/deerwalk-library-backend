@@ -241,3 +241,21 @@ class BookController:
         genres = await get_book_genre_use_case.execute(book_id=id)
 
         return genres
+
+    async def get_book_by_book_id(self, id: int, db: AsyncSession = Depends(get_db)):
+        try:
+            book_repository = BookRepository(db=db)
+            get_book_by_id_use_case = GetBookByIdUseCase(
+                book_repository=book_repository
+            )
+
+            book = await get_book_by_id_use_case.execute(id=id)
+
+            return book
+        except Exception as e:
+            logger.logger.error(e)
+            raise LibraryException(
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg="server could not retrieve book by id.",
+            )
