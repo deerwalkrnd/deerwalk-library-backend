@@ -17,7 +17,7 @@ router.add_api_route(
     status_code=200,
 )
 router.add_api_route(
-    path="/{id}",
+    path="/",
     endpoint=books_reviews_controller.get_book_reviews_by_book_id,
     methods=["GET"],
     description="This method is used to get book reviews by book id.",
