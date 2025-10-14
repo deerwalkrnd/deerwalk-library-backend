@@ -187,7 +187,6 @@ class BookBorrowController:
             prev_renewed=book_borrow.times_renewed + 1,
         )
 
-        return None
 
     async def return_book(
         self,

@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.infra.repositories.repository import Repository
 from app.core.models.password_reset_token import PasswordResetTokenModel
-from app.modules.auth.domain.entity.password_reset_token import PasswordResetToken
-from app.modules.auth.domain.repository.password_reset_token_repository_interface import (
+from app.modules.auth.domain.entities.password_reset_token import PasswordResetToken
+from app.modules.auth.domain.repositories.password_reset_token_repository_interface import (
     PasswordResetTokenRepositoryInterface,
 )
 
@@ -24,7 +24,7 @@ class PasswordResetTokenRepository(
         now = datetime.now()
         query = (
             select(self.model)
-            .where(self.model.user_id == user_id, self.model.token_expiry > now)
+            .where(self.model.user_id == user_id, self.model.expires_at > now)
             .order_by(self.model.created_at.desc())
             .limit(1)
         )
@@ -37,6 +37,6 @@ class PasswordResetTokenRepository(
                 id=token_model.id,
                 user_id=token_model.user_id,
                 token=token_model.token,
-                token_expiry=token_model.token_expiry,
+                expires_at=token_model.expires_at,
             )
         return None

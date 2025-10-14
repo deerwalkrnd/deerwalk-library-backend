@@ -1,5 +1,5 @@
 from app.core.dependencies.get_settings import get_settings
-from app.modules.auth.domain.request.sso_url_request import SSOProviderEnum
+from app.modules.auth.domain.requests.sso_url_request import SSOProviderEnum
 
 
 class GetSSOLoginURLUseCase:

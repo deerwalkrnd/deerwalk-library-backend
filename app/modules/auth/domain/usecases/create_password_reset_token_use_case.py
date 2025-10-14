@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from app.modules.auth.domain.entity.password_reset_token import PasswordResetToken
-from app.modules.auth.domain.repository.password_reset_token_repository_interface import (
+from app.modules.auth.domain.entities.password_reset_token import PasswordResetToken
+from app.modules.auth.domain.repositories.password_reset_token_repository_interface import (
     PasswordResetTokenRepositoryInterface,
 )
 
