@@ -8,14 +8,12 @@ from app.core.domain.entities.response.paginated_response import PaginatedRespon
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.books.domain.entities.book import Book
+from app.modules.books.domain.repository.response.book_bulk_upload_response import BookBulkUploadResponse
 from app.modules.books.domain.request.book_create_request import CreateBookRequest
 from app.modules.books.domain.request.book_request_list_params import BookListParams
 from app.modules.books.domain.request.book_update_request import BookUpdateRequest
 from app.modules.books.domain.usecase.associate_book_with_genre_use_case import (
     AssociateBookWithGenreUseCase,
-)
-from app.modules.books.domain.usecase.bulk_upload_books_use_case import (
-    BulkUploadBooksUseCase,
 )
 from app.modules.books.domain.usecase.create_book_copy_use_case import (
     CreateBookCopyUseCase,
@@ -40,6 +38,8 @@ from app.modules.books.infra.repositories.book_repository import BookRepository
 from app.modules.books.infra.repositories.books_genre_repository import (
     BooksGenreRepository,
 )
+from app.modules.books.infra.services.book_bulk_upload_service import BookBulkUploadService
+from app.modules.books.utils.parse_book_csv_to_create_requests import parse_book_csv_to_create_requests
 from app.modules.genres.domain.entity.genre import Genre
 
 
@@ -272,15 +272,23 @@ class BookController:
                 code=ErrorCode.INVALID_FIELDS,
                 msg="Only CSV files are allowed!",
             )
-
+        
+        book_requests_model = await parse_book_csv_to_create_requests(file=file)
         book_repository = BookRepository(db=db)
+        books_genre_repository = BooksGenreRepository(db=db)
         book_copy_repository = BookCopyRepository(db=db)
 
-        create_book_use_case = CreateBookUseCase(book_repository=book_repository)
-        bulk_upload_books_use_case = BulkUploadBooksUseCase(
-            book_repository=book_repository
+        book_bulk_upload_service = BookBulkUploadService(
+            book_repository=book_repository,
+            books_genre_repository=books_genre_repository,
+            book_copy_repository=book_copy_repository,
+            db=db
         )
 
-        book_model = await bulk_upload_books_use_case.execute(file=file)
-        
-        print(book_model)
+        result: BookBulkUploadResponse = await book_bulk_upload_service.bulk_upload(
+            create_book_requests=book_requests_model
+        )
+
+        return result
+
+    
