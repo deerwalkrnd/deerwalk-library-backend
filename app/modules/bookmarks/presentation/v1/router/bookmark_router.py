@@ -34,5 +34,5 @@ router.add_api_route(
     endpoint=bookmark_controller.check_bookmark,
     methods=["GET"],
     description="check if a book is bookmarked or not",
-    status_code=200
+    status_code=200,
 )
