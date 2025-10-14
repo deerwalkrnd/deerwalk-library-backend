@@ -1,5 +1,5 @@
 from app.modules.feedbacks.domain.entities.feedback import Feedback
-from app.modules.feedbacks.domain.repository.feedback_repository_interface import (
+from app.modules.feedbacks.domain.repositories.feedback_repository_interface import (
     FeedbackRepositoryInterface,
 )
 
