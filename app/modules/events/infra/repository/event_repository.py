@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.infra.repositories.repository import Repository
 from app.core.models.event import EventModel
 from app.modules.events.domain.entities.event import Event
-from app.modules.events.domain.repository.event_repository_interface import (
+from app.modules.events.domain.repositories.event_repository_interface import (
     EventRepositoryInterface,
 )
 

@@ -1,5 +1,5 @@
 from app.modules.events.domain.entities.event import Event
-from app.modules.events.domain.repository.event_repository_interface import (
+from app.modules.events.domain.repositories.event_repository_interface import (
     EventRepositoryInterface,
 )
 
