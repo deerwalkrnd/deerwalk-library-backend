@@ -1,7 +1,6 @@
 # Library Management System (Deerwalk Schools)
 
-A modular, scalable backend built with **FastAPI**, designed using **Clean Architecture** and **Domain-Driven Design (DDD)** principles.  
-The system is divided into distinct layers and feature-based modules to ensure maintainability, testability, and clear separation of concerns.
+A modular, scalable backend built with **FastAPI**, designed using **Clean Architecture** and **Domain-Driven Design (DDD)** principles.The system is divided into distinct layers and feature-based modules to ensure maintainability, testability, and clear separation of concerns.
 
 ---
 
@@ -213,6 +212,5 @@ uv run fastapi dev main.py
 
 ---
 
-## 🧾 License
 
 MIT License © 2025 — Built with ❤️ by dmt guys.
