@@ -1,5 +1,5 @@
 from app.modules.books_reviews.domain.entities.book_review import BookReview
-from app.modules.books_reviews.domain.repository.book_review_repository_interface import (
+from app.modules.books_reviews.domain.repositories.book_review_repository_interface import (
     BookReviewRepositoryInterface,
 )
 
