@@ -1,7 +1,7 @@
 from typing import List
 
 from app.modules.recommendations.domain.entities.recommendation import Recommendation
-from app.modules.recommendations.domain.repository.recommendation_repository_interface import (
+from app.modules.recommendations.domain.repositories.recommendation_repository_interface import (
     RecommendationRepositoryInterface,
 )
 
