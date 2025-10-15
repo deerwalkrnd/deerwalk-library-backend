@@ -163,7 +163,7 @@ class UsersController:
         user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
     ) -> None:
-        if user.role.value != "LIBRARIAN" or user.uuid != uuid:  # type: ignore
+        if user.role.value != "LIBRARIAN" and user.uuid != uuid:  # type: ignore
             raise LibraryException(
                 status_code=403,
                 code=ErrorCode.INSUFFICIENT_PERMISSION,
