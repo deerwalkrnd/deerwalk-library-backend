@@ -10,7 +10,7 @@ from app.core.domain.repositories.user_repository_interface import (
 )
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
-from app.core.utils.csv_metadata_parser import csv_metadata_parser
+from app.core.utils.csv_JSON_parser import csv_JSON_parser
 from app.core.utils.csv_password_hasher import csv_password_hasher
 from app.core.utils.csv_validator import validate_csv_headers
 from app.modules.users.domain.request.user_creation_request import UserCreationRequest
@@ -37,7 +37,9 @@ class BulkUploadUsersUseCase:
             )
 
         password_hased_csv = await csv_password_hasher(rows=csv_reader)
-        processed_csv = await csv_metadata_parser(rows=password_hased_csv)
+        processed_csv = await csv_JSON_parser(
+            rows=password_hased_csv, header=["user_metadata"]
+        )
 
         user_models: List[UserWithPassword] = [
             UserWithPassword(**row) for row in processed_csv
