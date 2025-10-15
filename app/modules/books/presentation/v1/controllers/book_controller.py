@@ -269,7 +269,7 @@ class BookController:
 
     async def bulk_upload_books(
         self, file: UploadFile = File(...), db: AsyncSession = Depends(get_db)
-    )->BookBulkUploadRespose:
+    ) -> BookBulkUploadRespose:
         if file.filename and not file.filename.endswith(".csv"):
             raise LibraryException(
                 status_code=400,
