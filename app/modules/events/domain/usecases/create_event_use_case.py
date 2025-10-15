@@ -11,13 +11,14 @@ class CreateEventUseCase:
         self.event_repository = event_repository
 
     async def execute(
-        self, name: str, description: str, image_url: str, event_date: datetime
+        self, name: str, description: str, image_url: str, event_date: datetime, venue:str
     ) -> Event | None:
         event = Event(
             name=name,
             description=description,
             image_url=image_url,
             event_date=event_date,
+            venue=venue
         )
 
         e = await self.event_repository.create(event)

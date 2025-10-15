@@ -42,3 +42,10 @@ router.add_api_route(
     endpoint=events_controller.get_many_events,
     response_description="returns paginated response of all available events",
 )
+
+router.add_api_route(
+    path="/{id}",
+    methods=["PUT"],
+    endpoint=events_controller.update_event,
+    response_description="updates event by id."
+)
