@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.modules.book_borrow.presentation.v1.controller.book_borrow_controller import (
+from app.modules.book_borrows.presentation.v1.controller.book_borrow_controller import (
     BookBorrowController,
 )
 

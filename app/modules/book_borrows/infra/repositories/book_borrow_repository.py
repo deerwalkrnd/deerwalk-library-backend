@@ -9,11 +9,11 @@ from sqlalchemy.orm import selectinload
 from app.core.infra.repositories.repository import Repository
 from app.core.models.book_borrow import BookBorrowModel
 from app.core.models.book_copy import BookCopyModel
-from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
-from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import (
+from app.modules.book_borrows.domain.entities.book_borrow import BookBorrow
+from app.modules.book_borrows.domain.repositories.book_borrow_repository_interface import (
     BookBorrowRepositoryInterface,
 )
-from app.modules.book_borrow.domain.response.book_borrow_response_dto import (
+from app.modules.book_borrows.domain.responses.book_borrow_response_dto import (
     BookBorrowResponseDTO,
 )
 

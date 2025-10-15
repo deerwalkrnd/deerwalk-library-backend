@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
-from app.modules.book_borrow.domain.repository.book_borrow_repository_interface import (
+from app.modules.book_borrows.domain.entities.book_borrow import BookBorrow
+from app.modules.book_borrows.domain.repositories.book_borrow_repository_interface import (
     BookBorrowRepositoryInterface,
 )
 

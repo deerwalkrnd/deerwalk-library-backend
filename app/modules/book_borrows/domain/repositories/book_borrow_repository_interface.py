@@ -5,8 +5,8 @@ from typing import List
 from pydantic import BaseModel
 
 from app.core.domain.repositories.repository_interface import RepositoryInterface
-from app.modules.book_borrow.domain.entities.book_borrow import BookBorrow
-from app.modules.book_borrow.domain.response.book_borrow_response_dto import (
+from app.modules.book_borrows.domain.entities.book_borrow import BookBorrow
+from app.modules.book_borrows.domain.responses.book_borrow_response_dto import (
     BookBorrowResponseDTO,
 )
 
