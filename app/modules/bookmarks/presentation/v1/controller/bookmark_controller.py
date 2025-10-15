@@ -11,12 +11,14 @@ from app.modules.bookmarks.domain.entities.bookmark import Bookmark
 from app.modules.bookmarks.domain.requests.bookamark_list_params import (
     BookmarkListParams,
 )
+from app.modules.bookmarks.domain.requests.bookmark_check_request import BookmarkCheckRequest
 from app.modules.bookmarks.domain.requests.bookmark_create_request import (
     BookmarkCreateRequest,
 )
 from app.modules.bookmarks.domain.usecases.add_bookmark_use_case import (
     AddBookmarkUseCase,
 )
+from app.modules.bookmarks.domain.usecases.check_bookmark_by_book_id_use_case import CheckBookmarkByBookIdUseCase
 from app.modules.bookmarks.domain.usecases.get_bookmark_by_user_id_use_case import (
     GetBookmarkByUserIdUseCase,
 )
@@ -116,4 +118,37 @@ class BookmarkController:
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
                 msg="could not fetch bookmarks",
+            )
+
+    async def check_bookmark(
+        self,
+        bookmark_check_request: BookmarkCheckRequest,
+        db: AsyncSession = Depends(get_db),
+        user: User = Depends(get_current_user),
+    ):
+        try:
+            bookmark_repository = BookmarkRepository(db=db)
+
+            check_bookmark_by_book_id_use_case = CheckBookmarkByBookIdUseCase(
+                bookmark_repository=bookmark_repository
+            )
+
+            if user.uuid:
+                status = await check_bookmark_by_book_id_use_case.execute(
+                    book_id=bookmark_check_request.book_id, user_id=user.uuid
+                )
+            else:
+                raise LibraryException(
+                    status_code=500,
+                    code=ErrorCode.UNKOWN_ERROR,
+                    msg="unable to fetch current user",
+                )
+
+            return status
+        except Exception as e:
+            logger.logger.error(e)
+            raise LibraryException(
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg="failed to check status of current book",
             )

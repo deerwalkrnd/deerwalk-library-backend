@@ -74,7 +74,6 @@ class BooksReviewsController:
 
     async def get_book_reviews_by_book_id(
         self,
-        book_id: int,
         params: BookReviewListParams = Depends(),
         user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
@@ -89,12 +88,12 @@ class BooksReviewsController:
                 book_review_repository
             )
             book_reviews = await get_many_book_reviews_by_id_use_case.execute(
-                book_id=book_id,
                 page=params.page,
                 limit=params.limit,
                 descending=params.is_descending,
                 sort_by=params.sort_by,
                 is_spam=params.is_spam,
+                book_id=params.book_id
             )
             return PaginatedResponseMany(
                 page=params.page,

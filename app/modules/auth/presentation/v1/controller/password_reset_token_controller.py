@@ -79,7 +79,7 @@ class PasswordResetController:
             )
 
             password_reset_link = (
-                f"{settings.frontend_url}/reset-password?token={token}"
+                f"{settings.frontend_url}/auth/reset-password?token={token}"
             )
 
             send_reset_password_email_task.delay(

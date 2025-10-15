@@ -45,3 +45,11 @@ router.add_api_route(
     description="Returns the genres of a book provided in the id field",
     status_code=200,
 )
+
+router.add_api_route(
+    path="/{id}",
+    endpoint=book_controller.get_book_by_book_id,
+    methods=["GET"],
+    description="Returns book on the basis of id",
+    status_code=200,
+)

@@ -1,0 +1,14 @@
+from app.modules.book_borrows.domain.entities.book_borrow import BookBorrow
+from app.modules.book_borrows.domain.repositories.book_borrow_repository_interface import (
+    BookBorrowRepositoryInterface,
+)
+
+
+class GetBookBorrowByUserIdAndBookCopyIdUseCase:
+    def __init__(self, book_borrow_repository: BookBorrowRepositoryInterface) -> None:
+        self.book_borrow_repository = book_borrow_repository
+
+    async def execute(self, user_id: str, book_copy_id: int) -> BookBorrow | None:
+        return await self.book_borrow_repository.find_one(
+            obj=BookBorrow(book_copy_id=book_copy_id, user_id=user_id, returned=False)
+        )
