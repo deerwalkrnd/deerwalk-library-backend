@@ -8,14 +8,14 @@ from app.core.domain.entities.user import UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
-from app.modules.auth.domain.request.password_reset_token_request import (
+from app.modules.auth.domain.requests.password_reset_token_request import (
     PasswordResetTokenRequest,
 )
-from app.modules.auth.domain.request.reset_password_request import ResetPasswordRequest
-from app.modules.auth.domain.response.forgot_password_response import (
+from app.modules.auth.domain.requests.reset_password_request import ResetPasswordRequest
+from app.modules.auth.domain.responses.forgot_password_response import (
     ForgotPasswordResponse,
 )
-from app.modules.auth.domain.response.reset_password_response import (
+from app.modules.auth.domain.responses.reset_password_response import (
     ResetPasswordResponse,
 )
 from app.modules.auth.domain.usecases.create_password_reset_token_use_case import (
@@ -24,7 +24,7 @@ from app.modules.auth.domain.usecases.create_password_reset_token_use_case impor
 from app.modules.auth.domain.usecases.get_password_reset_token_by_hash_use_case import (
     GetPasswordResetTokenByHashUseCase,
 )
-from app.modules.auth.infra.password_reset_token_repository import (
+from app.modules.auth.infra.repositories.password_reset_token_repository import (
     PasswordResetTokenRepository,
 )
 from app.modules.auth.infra.services.argon2_hasher import Argon2PasswordHasher

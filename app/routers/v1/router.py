@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
 from app.modules.auth.presentation.v1.router.auth_router import router as auth_router
-from app.modules.book_borrow.presentation.v1.router.book_borrow_router import (
+from app.modules.book_borrows.presentation.v1.router.book_borrow_router import (
     router as book_borrow_router,
 )
 from app.modules.bookmarks.presentation.v1.router.bookmark_router import (

@@ -8,8 +8,8 @@ from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.services.s3_file_service import S3FileService
 from app.modules.files.dependencies.get_s3_file_service import get_s3_file_service
-from app.modules.files.domain.request.file_type_enum import LibraryFileType
-from app.modules.files.domain.response.file_response import FileResponse
+from app.modules.files.domain.requests.file_type_enum import LibraryFileType
+from app.modules.files.domain.responses.file_response import FileResponse
 
 PROFILE_PATH = Template("profile-picture/$filename")
 BOOK_COVER_PATH = Template("book-cover/$filename")

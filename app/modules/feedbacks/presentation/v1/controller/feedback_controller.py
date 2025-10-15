@@ -8,26 +8,30 @@ from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.feedbacks.domain.entities.feedback import Feedback
-from app.modules.feedbacks.domain.request.feedback_create_request import (
+from app.modules.feedbacks.domain.requests.feedback_create_request import (
     FeedbackCreateRequest,
 )
-from app.modules.feedbacks.domain.request.feedback_list_params import FeedbackListParams
-from app.modules.feedbacks.domain.request.feedback_update_request import (
+from app.modules.feedbacks.domain.requests.feedback_list_params import (
+    FeedbackListParams,
+)
+from app.modules.feedbacks.domain.requests.feedback_update_request import (
     FeedbackUpdateRequest,
 )
-from app.modules.feedbacks.domain.usecase.create_feedback_use_case import (
+from app.modules.feedbacks.domain.usecases.create_feedback_use_case import (
     CreateFeedbackUseCase,
 )
-from app.modules.feedbacks.domain.usecase.get_feedback_by_id_use_case import (
+from app.modules.feedbacks.domain.usecases.get_feedback_by_id_use_case import (
     GetFeedbackByIdUseCase,
 )
-from app.modules.feedbacks.domain.usecase.get_many_feedback_use_case import (
+from app.modules.feedbacks.domain.usecases.get_many_feedback_use_case import (
     GetManyFeedbackUseCase,
 )
-from app.modules.feedbacks.domain.usecase.update_feedback_by_id_use_case import (
+from app.modules.feedbacks.domain.usecases.update_feedback_by_id_use_case import (
     UpdateFeedbackByIdUseCase,
 )
-from app.modules.feedbacks.infra.feedback_repository import FeedbackRepository
+from app.modules.feedbacks.infra.repositories.feedback_repository import (
+    FeedbackRepository,
+)
 
 
 class FeedbackController:

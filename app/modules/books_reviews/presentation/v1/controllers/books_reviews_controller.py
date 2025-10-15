@@ -8,25 +8,27 @@ from app.core.domain.entities.user import User, UserRole
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.books_reviews.domain.entities.book_review import BookReview
-from app.modules.books_reviews.domain.request.book_review_create_request import (
+from app.modules.books_reviews.domain.requests.book_review_create_request import (
     BookReviewCreateRequest,
 )
-from app.modules.books_reviews.domain.request.book_review_list_params import (
+from app.modules.books_reviews.domain.requests.book_review_list_params import (
     BookReviewListParams,
 )
-from app.modules.books_reviews.domain.request.book_review_spam_request import (
+from app.modules.books_reviews.domain.requests.book_review_spam_request import (
     BookReviewSpamRequest,
 )
-from app.modules.books_reviews.domain.usecase.create_book_review_use_case import (
+from app.modules.books_reviews.domain.usecases.create_book_review_use_case import (
     CreateBookReviewUseCase,
 )
-from app.modules.books_reviews.domain.usecase.get_many_book_reviews_by_id_use_case import (
+from app.modules.books_reviews.domain.usecases.get_many_book_reviews_by_id_use_case import (
     GetManyBookReviewsByIdUseCase,
 )
-from app.modules.books_reviews.domain.usecase.update_book_review_spam_by_id_use_case import (
+from app.modules.books_reviews.domain.usecases.update_book_review_spam_by_id_use_case import (
     UpdateBookReviewSpamByIdUseCase,
 )
-from app.modules.books_reviews.infra.book_review_repository import BookReviewRepository
+from app.modules.books_reviews.infra.repositories.book_review_repository import (
+    BookReviewRepository,
+)
 
 
 class BooksReviewsController:

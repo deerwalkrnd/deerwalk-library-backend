@@ -14,10 +14,10 @@ from app.core.domain.entities.user import User, UserWithPassword
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.infra.repositories.user_repository import UserRepository
-from app.modules.auth.domain.request.login_request import LoginRequest
-from app.modules.auth.domain.request.sso_url_request import SSOURLRequest
-from app.modules.auth.domain.response.token_response import TokenResponse
-from app.modules.auth.domain.response.url_response import URLResponse
+from app.modules.auth.domain.requests.login_request import LoginRequest
+from app.modules.auth.domain.requests.sso_url_request import SSOURLRequest
+from app.modules.auth.domain.responses.token_response import TokenResponse
+from app.modules.auth.domain.responses.url_response import URLResponse
 from app.modules.auth.domain.usecases.generate_jwt_token_use_case import (
     GenerateJWTTokenUseCase,
 )

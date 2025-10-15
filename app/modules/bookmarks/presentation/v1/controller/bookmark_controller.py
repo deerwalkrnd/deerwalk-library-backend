@@ -8,28 +8,24 @@ from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.bookmarks.domain.entities.bookmark import Bookmark
-from app.modules.bookmarks.domain.request.bookamark_list_params import (
+from app.modules.bookmarks.domain.requests.bookamark_list_params import (
     BookmarkListParams,
 )
-from app.modules.bookmarks.domain.request.bookmark_check_request import (
-    BookmarkCheckRequest,
-)
-from app.modules.bookmarks.domain.request.bookmark_create_request import (
+from app.modules.bookmarks.domain.requests.bookmark_check_request import BookmarkCheckRequest
+from app.modules.bookmarks.domain.requests.bookmark_create_request import (
     BookmarkCreateRequest,
 )
-from app.modules.bookmarks.domain.usecase.add_bookmark_use_case import (
+from app.modules.bookmarks.domain.usecases.add_bookmark_use_case import (
     AddBookmarkUseCase,
 )
-from app.modules.bookmarks.domain.usecase.check_bookmark_by_book_id_use_case import (
-    CheckBookmarkByBookIdUseCase,
-)
-from app.modules.bookmarks.domain.usecase.get_bookmark_by_user_id_use_case import (
+from app.modules.bookmarks.domain.usecases.check_bookmark_by_book_id_use_case import CheckBookmarkByBookIdUseCase
+from app.modules.bookmarks.domain.usecases.get_bookmark_by_user_id_use_case import (
     GetBookmarkByUserIdUseCase,
 )
-from app.modules.bookmarks.domain.usecase.remove_bookmark_by_id_use_case import (
+from app.modules.bookmarks.domain.usecases.remove_bookmark_by_id_use_case import (
     RemoveBookmarkByIdUseCase,
 )
-from app.modules.bookmarks.infra.bookmark_repository import BookmarkRepository
+from app.modules.bookmarks.infra.repositories.bookmark_repository import BookmarkRepository
 
 
 class BookmarkController:

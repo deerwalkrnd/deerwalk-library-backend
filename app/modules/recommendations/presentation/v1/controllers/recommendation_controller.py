@@ -30,7 +30,7 @@ from app.modules.recommendations.domain.usecase.get_recommendation_by_id_use_cas
 from app.modules.recommendations.domain.usecase.update_recommendation_by_id_use_case import (
     UpdateRecommendationByIdUseCase,
 )
-from app.modules.recommendations.infra.recommendation_repository import (
+from app.modules.recommendations.infra.repositories.recommendation_repository import (
     RecommendationRepository,
 )
 
