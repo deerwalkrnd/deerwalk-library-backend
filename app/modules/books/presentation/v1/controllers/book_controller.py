@@ -11,7 +11,9 @@ from app.modules.books.domain.entities.book import Book
 from app.modules.books.domain.request.book_create_request import CreateBookRequest
 from app.modules.books.domain.request.book_request_list_params import BookListParams
 from app.modules.books.domain.request.book_update_request import BookUpdateRequest
-from app.modules.books.domain.response.book_bulk_upload_response import BookBulkUploadRespose
+from app.modules.books.domain.response.book_bulk_upload_response import (
+    BookBulkUploadRespose,
+)
 from app.modules.books.domain.usecase.associate_book_with_genre_use_case import (
     AssociateBookWithGenreUseCase,
 )
@@ -270,7 +272,7 @@ class BookController:
 
     async def bulk_upload_books(
         self, file: UploadFile = File(...), db: AsyncSession = Depends(get_db)
-    )->BookBulkUploadRespose:
+    ) -> BookBulkUploadRespose:
         if file.filename and not file.filename.endswith(".csv"):
             raise LibraryException(
                 status_code=400,

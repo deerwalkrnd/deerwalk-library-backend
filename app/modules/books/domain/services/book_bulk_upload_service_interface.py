@@ -12,7 +12,9 @@ from app.modules.books.domain.repository.books_genre_repository_interface import
 from app.modules.books.domain.request.book_create_request import CreateBookRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.books.domain.response.book_bulk_upload_response import BookBulkUploadRespose
+from app.modules.books.domain.response.book_bulk_upload_response import (
+    BookBulkUploadRespose,
+)
 from app.modules.genres.domain.repository.genre_repository_interface import (
     GenreRepositoryInterface,
 )
