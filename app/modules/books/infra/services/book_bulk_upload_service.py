@@ -5,61 +5,132 @@ from fastapi import logger
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.books.domain.entities.book import Book
-from app.modules.books.domain.repository.book_copy_repository_interface import BookCopyRepositoryInterface
-from app.modules.books.domain.repository.book_repository_interface import BookRepositoryInterface
-from app.modules.books.domain.repository.books_genre_repository_interface import BooksGenreRepositoryInterface
-from app.modules.books.domain.repository.response.book_bulk_upload_response import BookBulkUploadResponse
+from app.modules.books.domain.repository.book_copy_repository_interface import (
+    BookCopyRepositoryInterface,
+)
+from app.modules.books.domain.repository.book_repository_interface import (
+    BookRepositoryInterface,
+)
+from app.modules.books.domain.repository.books_genre_repository_interface import (
+    BooksGenreRepositoryInterface,
+)
+from app.modules.books.domain.repository.response.book_bulk_upload_response import (
+    BookBulkUploadResponse,
+)
+from app.modules.books.domain.repository.response.book_bulk_upload_skip_response import (
+    BookBulkUploadSkipResponse,
+)
 from app.modules.books.domain.request.book_create_request import CreateBookRequest
-from app.modules.books.domain.services.book_bulk_upload_service_interface import BookBulkUploadServiceInterface
+from app.modules.books.domain.services.book_bulk_upload_service_interface import (
+    BookBulkUploadServiceInterface,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.books.domain.usecase.associate_book_with_genre_use_case import AssociateBookWithGenreUseCase
-from app.modules.books.domain.usecase.create_book_copy_use_case import CreateBookCopyUseCase
+from app.modules.books.domain.usecase.associate_book_with_genre_use_case import (
+    AssociateBookWithGenreUseCase,
+)
+from app.modules.books.domain.usecase.create_book_copy_use_case import (
+    CreateBookCopyUseCase,
+)
 from app.modules.books.domain.usecase.create_book_use_case import CreateBookUseCase
-from app.modules.books.domain.usecase.get_books_based_on_conditions_use_case import GetBooksBasedOnConditionsUseCase
+from app.modules.books.domain.usecase.get_books_based_on_conditions_use_case import (
+    GetBooksBasedOnConditionsUseCase,
+)
+from app.modules.genres.domain.repository.genre_repository_interface import (
+    GenreRepositoryInterface,
+)
+from app.modules.genres.domain.usecase.get_genre_by_id_use_case import (
+    GetGenreByIdUseCase,
+)
+
 
 class BookBulkUploadService(BookBulkUploadServiceInterface):
-    def __init__(self, book_repository: BookRepositoryInterface, books_genre_repository: BooksGenreRepositoryInterface, book_copy_repository: BookCopyRepositoryInterface, db:AsyncSession):
+    def __init__(
+        self,
+        book_repository: BookRepositoryInterface,
+        books_genre_repository: BooksGenreRepositoryInterface,
+        book_copy_repository: BookCopyRepositoryInterface,
+        genre_repository: GenreRepositoryInterface,
+        db: AsyncSession,
+    ):
         self.book_repository = book_repository
         self.books_genre_repository = books_genre_repository
         self.book_copy_repository = book_copy_repository
+        self.genre_repository = genre_repository
         self.db = db
 
-    async def bulk_upload(self, create_book_requests:List[CreateBookRequest]) -> BookBulkUploadResponse:
-        
+    async def bulk_upload(
+        self, create_book_requests: List[CreateBookRequest]
+    ) -> BookBulkUploadResponse:
         inserted = 0
-        skipped = 0
+        skipped: List[BookBulkUploadSkipResponse] = []
 
         for req in create_book_requests:
             try:
                 created_book = await self.create_book(req)
-                await self.db.commit()  # Commit each successful book
+                await self.db.commit()
                 if created_book:
                     inserted += 1
                 else:
-                    skipped += 1
+                    skipped.append(
+                        BookBulkUploadSkipResponse(
+                            book_title=req.title, reason="Book creation returned None"
+                        )
+                    )
 
-            except (IntegrityError, LibraryException) as e:
+            except LibraryException as e:
                 await self.db.rollback()
-                logger.logger.error(f"Skipping book due to error: {e}")
-                skipped += 1
+                logger.logger.error(f"Skipping book '{req.title}' due to error: {e}")
+                skipped.append(
+                    BookBulkUploadSkipResponse(
+                        book_title=req.title, reason=f"error: {e}"
+                    )
+                )
+            except IntegrityError as e:
+                await self.db.rollback()
+                logger.logger.error(
+                    f"Skipping book '{req.title}' due to integrity error: {e}"
+                )
+                skipped.append(
+                    BookBulkUploadSkipResponse(
+                        book_title=req.title,
+                        reason=f"Database integrity constraint violation: {e}",
+                    )
+                )
             except Exception as e:
-                logger.logger.error(e)
                 await self.db.rollback()
-                skipped += 1
+                logger.logger.error(
+                    f"Skipping book '{req.title}' due to unexpected error: {e}"
+                )
+                skipped.append(
+                    BookBulkUploadSkipResponse(
+                        book_title=req.title, reason=f"Unexpected error: {e}"
+                    )
+                )
 
         return BookBulkUploadResponse(inserted=inserted, skipped=skipped)
 
-    async def create_book(
-        self, create_book_request: CreateBookRequest
-    ) -> Book | None:
+    async def create_book(self, create_book_request: CreateBookRequest) -> Book | None:
         if not create_book_request.genres or len(create_book_request.genres) < 1:
             raise LibraryException(
                 status_code=400,
                 code=ErrorCode.INVALID_FIELDS,
                 msg="All Book Creation Requests must have atleast one genre",
             )
-        
+
+        get_genre_by_id_use_case = GetGenreByIdUseCase(
+            genre_repository=self.genre_repository
+        )
+
+        for genre_id in create_book_request.genres:
+            genre = await get_genre_by_id_use_case.execute(id=genre_id)
+            if not genre:
+                raise LibraryException(
+                    status_code=404,
+                    code=ErrorCode.NOT_FOUND,
+                    msg=f"Genre with id {genre_id} does not exist",
+                )
+
         get_books_based_on_conditions_use_case = GetBooksBasedOnConditionsUseCase(
             book_repository=self.book_repository
         )
@@ -75,7 +146,7 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
             raise LibraryException(
                 status_code=409,
                 code=ErrorCode.DUPLICATE_ENTRY,
-                msg="book with same publication and isbn already exists",
+                msg=f"Book with ISBN '{create_book_request.isbn}' and publication '{create_book_request.publication}' already exists",
             )
 
         create_book_use_case = CreateBookUseCase(book_repository=self.book_repository)
@@ -94,14 +165,14 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
-                msg="failed to create book",
+                msg="Failed to create book",
             )
 
         if not created_book.id:
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
-                msg="could not insert book into the db",
+                msg="Could not insert book into the database",
             )
 
         if create_book_request.copies and len(create_book_request.copies) >= 1:
@@ -114,7 +185,7 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
                     raise LibraryException(
                         status_code=400,
                         code=ErrorCode.INVALID_FIELDS,
-                        msg="all book copies need a unique_identifier",
+                        msg="All book copies need a unique_identifier",
                     )
 
                 await create_book_copy_use_case.execute(
@@ -131,4 +202,4 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
                 genre_id=genre_id, book_id=created_book.id
             )
 
-        return book
+        return created_book
