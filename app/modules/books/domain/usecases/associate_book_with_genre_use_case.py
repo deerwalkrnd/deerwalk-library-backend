@@ -1,5 +1,5 @@
 from app.modules.books.domain.entities.books_genre import BooksGenre
-from app.modules.books.domain.repository.books_genre_repository_interface import (
+from app.modules.books.domain.repositories.books_genre_repository_interface import (
     BooksGenreRepositoryInterface,
 )
 

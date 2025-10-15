@@ -1,6 +1,6 @@
 from app.core.models.book import BookCategoryType
 from app.modules.books.domain.entities.book import Book
-from app.modules.books.domain.repository.book_repository_interface import (
+from app.modules.books.domain.repositories.book_repository_interface import (
     BookRepositoryInterface,
 )
 

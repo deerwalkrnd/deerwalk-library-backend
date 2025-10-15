@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.modules.books.domain.entities.book_copy import BookCopy
-from app.modules.books.domain.repository.book_copy_repository_interface import (
+from app.modules.books.domain.repositories.book_copy_repository_interface import (
     BookCopyRepositoryInterface,
 )
 

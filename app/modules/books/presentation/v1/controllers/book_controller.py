@@ -8,28 +8,28 @@ from app.core.domain.entities.response.paginated_response import PaginatedRespon
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.modules.books.domain.entities.book import Book
-from app.modules.books.domain.request.book_create_request import CreateBookRequest
-from app.modules.books.domain.request.book_request_list_params import BookListParams
-from app.modules.books.domain.request.book_update_request import BookUpdateRequest
-from app.modules.books.domain.usecase.associate_book_with_genre_use_case import (
+from app.modules.books.domain.requests.book_create_request import CreateBookRequest
+from app.modules.books.domain.requests.book_request_list_params import BookListParams
+from app.modules.books.domain.requests.book_update_request import BookUpdateRequest
+from app.modules.books.domain.usecases.associate_book_with_genre_use_case import (
     AssociateBookWithGenreUseCase,
 )
-from app.modules.books.domain.usecase.create_book_copy_use_case import (
+from app.modules.books.domain.usecases.create_book_copy_use_case import (
     CreateBookCopyUseCase,
 )
-from app.modules.books.domain.usecase.create_book_use_case import CreateBookUseCase
-from app.modules.books.domain.usecase.delete_book_by_id_use_case import (
+from app.modules.books.domain.usecases.create_book_use_case import CreateBookUseCase
+from app.modules.books.domain.usecases.delete_book_by_id_use_case import (
     DeleteBookByIdUseCase,
 )
-from app.modules.books.domain.usecase.get_book_by_id_use_case import GetBookByIdUseCase
-from app.modules.books.domain.usecase.get_book_genre_by_book_id_use_case import (
+from app.modules.books.domain.usecases.get_book_by_id_use_case import GetBookByIdUseCase
+from app.modules.books.domain.usecases.get_book_genre_by_book_id_use_case import (
     GetBookGenreByBookIdUseCase,
 )
-from app.modules.books.domain.usecase.get_books_based_on_conditions_use_case import (
+from app.modules.books.domain.usecases.get_books_based_on_conditions_use_case import (
     GetBooksBasedOnConditionsUseCase,
 )
-from app.modules.books.domain.usecase.get_many_book_use_case import GetManyBookUseCase
-from app.modules.books.domain.usecase.update_book_by_id_use_case import (
+from app.modules.books.domain.usecases.get_many_book_use_case import GetManyBookUseCase
+from app.modules.books.domain.usecases.update_book_by_id_use_case import (
     UpdateBookByIdUseCase,
 )
 from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
