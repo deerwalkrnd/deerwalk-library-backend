@@ -30,7 +30,7 @@ from app.modules.events.domain.usecases.get_many_events_use_case import (
 from app.modules.events.domain.usecases.update_event_by_id_use_case import (
     UpdateEventByIdUseCase,
 )
-from app.modules.events.infra.repository.event_repository import EventRepository
+from app.modules.events.infra.repositories.event_repository import EventRepository
 
 
 class EventsController:
