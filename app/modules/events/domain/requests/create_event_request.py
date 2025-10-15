@@ -8,3 +8,4 @@ class CreateEventRequest(BaseModel):
     event_date: datetime
     image_url: str
     description: str
+    venue:str

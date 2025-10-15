@@ -11,4 +11,5 @@ class EventModel(Base):
     name: Mapped[str] = mapped_column(index=True, nullable=False)
     description: Mapped[str] = mapped_column(nullable=True)
     event_date: Mapped[datetime]
+    venue: Mapped[str]
     image_url: Mapped[str]

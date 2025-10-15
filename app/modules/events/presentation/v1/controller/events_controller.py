@@ -53,6 +53,7 @@ class EventsController:
                 create_event_request.description,
                 create_event_request.image_url,
                 create_event_request.event_date.replace(tzinfo=None),
+                create_event_request.venue
             )
 
             if not created:
