@@ -93,7 +93,7 @@ class BooksReviewsController:
                 descending=params.is_descending,
                 sort_by=params.sort_by,
                 is_spam=params.is_spam,
-                book_id=params.book_id
+                book_id=params.book_id,
             )
             return PaginatedResponseMany(
                 page=params.page,

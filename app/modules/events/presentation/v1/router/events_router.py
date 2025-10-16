@@ -47,5 +47,5 @@ router.add_api_route(
     path="/{id}",
     methods=["PUT"],
     endpoint=events_controller.update_event,
-    response_description="updates event by id."
+    response_description="updates event by id.",
 )
