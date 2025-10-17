@@ -1,12 +1,23 @@
 from typing import List
 from app.modules.books.domain.entities.book import Book
-from app.modules.books.domain.repositories.book_copy_repository_interface import BookCopyRepositoryInterface
-from app.modules.books.domain.repositories.book_repository_interface import BookRepositoryInterface
-from app.modules.books.domain.repositories.books_genre_repository_interface import BooksGenreRepositoryInterface
+from app.modules.books.domain.repositories.book_copy_repository_interface import (
+    BookCopyRepositoryInterface,
+)
+from app.modules.books.domain.repositories.book_repository_interface import (
+    BookRepositoryInterface,
+)
+from app.modules.books.domain.repositories.books_genre_repository_interface import (
+    BooksGenreRepositoryInterface,
+)
 from app.modules.books.domain.requests.book_create_request import CreateBookRequest
-from app.modules.books.domain.responses.book_bulk_upload_response import BookBulkUploadRespose
-from app.modules.genres.domain.repositories.genre_repository_interface import GenreRepositoryInterface
+from app.modules.books.domain.responses.book_bulk_upload_response import (
+    BookBulkUploadRespose,
+)
+from app.modules.genres.domain.repositories.genre_repository_interface import (
+    GenreRepositoryInterface,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class BookBulkUploadServiceInterface:
     def __init__(

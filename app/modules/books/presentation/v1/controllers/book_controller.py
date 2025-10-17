@@ -11,7 +11,9 @@ from app.modules.books.domain.entities.book import Book
 from app.modules.books.domain.requests.book_create_request import CreateBookRequest
 from app.modules.books.domain.requests.book_request_list_params import BookListParams
 from app.modules.books.domain.requests.book_update_request import BookUpdateRequest
-from app.modules.books.domain.responses.book_bulk_upload_response import BookBulkUploadRespose
+from app.modules.books.domain.responses.book_bulk_upload_response import (
+    BookBulkUploadRespose,
+)
 from app.modules.books.domain.usecases.associate_book_with_genre_use_case import (
     AssociateBookWithGenreUseCase,
 )
@@ -38,7 +40,9 @@ from app.modules.books.infra.repositories.book_repository import BookRepository
 from app.modules.books.infra.repositories.books_genre_repository import (
     BooksGenreRepository,
 )
-from app.modules.books.utils.parse_book_csv_to_create_requests import parse_book_csv_to_create_requests
+from app.modules.books.utils.parse_book_csv_to_create_requests import (
+    parse_book_csv_to_create_requests,
+)
 from app.modules.genres.domain.entities.genre import Genre
 from app.modules.books.infra.services.book_bulk_upload_service import (
     BookBulkUploadService,

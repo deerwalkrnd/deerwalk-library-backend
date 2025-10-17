@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.modules.quotes.domain.request.quote_create_request import QuoteCreateRequest
+from app.modules.quotes.domain.requests.quote_create_request import QuoteCreateRequest
 
 
 class QuoteResponse(QuoteCreateRequest):

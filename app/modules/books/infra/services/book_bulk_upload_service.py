@@ -7,25 +7,43 @@ from app.core.exc.library_exception import LibraryException
 from app.modules.books.domain.entities.book import Book
 
 
-from app.modules.books.domain.repositories.book_copy_repository_interface import BookCopyRepositoryInterface
-from app.modules.books.domain.repositories.book_repository_interface import BookRepositoryInterface
-from app.modules.books.domain.repositories.books_genre_repository_interface import BooksGenreRepositoryInterface
+from app.modules.books.domain.repositories.book_copy_repository_interface import (
+    BookCopyRepositoryInterface,
+)
+from app.modules.books.domain.repositories.book_repository_interface import (
+    BookRepositoryInterface,
+)
+from app.modules.books.domain.repositories.books_genre_repository_interface import (
+    BooksGenreRepositoryInterface,
+)
 from app.modules.books.domain.requests.book_create_request import CreateBookRequest
-from app.modules.books.domain.responses.book_bulk_upload_response import BookBulkUploadRespose
-from app.modules.books.domain.responses.book_bulk_upload_skip_response import BookBulkUploadSkipResponse
+from app.modules.books.domain.responses.book_bulk_upload_response import (
+    BookBulkUploadRespose,
+)
+from app.modules.books.domain.responses.book_bulk_upload_skip_response import (
+    BookBulkUploadSkipResponse,
+)
 from app.modules.books.domain.services.book_bulk_upload_service_interface import (
     BookBulkUploadServiceInterface,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.books.domain.usecases.associate_book_with_genre_use_case import AssociateBookWithGenreUseCase
-from app.modules.books.domain.usecases.create_book_copy_use_case import CreateBookCopyUseCase
+from app.modules.books.domain.usecases.associate_book_with_genre_use_case import (
+    AssociateBookWithGenreUseCase,
+)
+from app.modules.books.domain.usecases.create_book_copy_use_case import (
+    CreateBookCopyUseCase,
+)
 from app.modules.books.domain.usecases.create_book_use_case import CreateBookUseCase
-from app.modules.books.domain.usecases.get_books_based_on_conditions_use_case import GetBooksBasedOnConditionsUseCase
-from app.modules.genres.domain.repositories.genre_repository_interface import GenreRepositoryInterface
-from app.modules.genres.domain.usecases.get_genre_by_id_use_case import GetGenreByIdUseCase
-
-
+from app.modules.books.domain.usecases.get_books_based_on_conditions_use_case import (
+    GetBooksBasedOnConditionsUseCase,
+)
+from app.modules.genres.domain.repositories.genre_repository_interface import (
+    GenreRepositoryInterface,
+)
+from app.modules.genres.domain.usecases.get_genre_by_id_use_case import (
+    GetGenreByIdUseCase,
+)
 
 
 class BookBulkUploadService(BookBulkUploadServiceInterface):
