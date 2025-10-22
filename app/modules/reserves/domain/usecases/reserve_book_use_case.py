@@ -9,6 +9,6 @@ class ReserveBookUseCase:
         self.reserves_repository = reserves_repository
 
     async def execute(self, book_copy_id: int, user_id: str) -> Reserve | None:
-        return await self.reserves_repository.find_one(
+        return await self.reserves_repository.create(
             obj=Reserve(book_copy_id=book_copy_id, user_id=user_id)
         )

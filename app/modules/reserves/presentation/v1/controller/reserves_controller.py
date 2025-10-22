@@ -1,6 +1,7 @@
 from typing import Any
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.dependencies.database import get_db
 from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
@@ -9,11 +10,20 @@ from app.core.models.book_reserve import BookReserveEnum
 from app.modules.book_copies.domain.usecases.get_book_copy_by_id_use_case import (
     GetBookCopyByIdUseCase,
 )
+from app.modules.book_copies.domain.usecases.update_book_copy_availability_use_case import (
+    UpdateBookCopyAvailabilityUseCase,
+)
 from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
 from app.modules.reserves.domain.entities.reserve import Reserve
 from app.modules.reserves.domain.requests.reserve_book_request import ReserveBookRequest
 from app.modules.reserves.domain.usecases.get_reserve_by_book_copy_id_and_user_id_use_case import (
     GetReserveByBookCopyIdandUserIdUseCase,
+)
+from app.modules.reserves.domain.usecases.get_reserve_by_id_use_case import (
+    GetReserveByIdUseCase,
+)
+from app.modules.reserves.domain.usecases.remove_reserve_use_case import (
+    RemoveReserveUseCase,
 )
 from app.modules.reserves.domain.usecases.reserve_book_use_case import (
     ReserveBookUseCase,
@@ -90,11 +100,47 @@ class ReservesController:
             user_id=user.uuid,
         )
 
+        update_book_copy_availability_use_case = UpdateBookCopyAvailabilityUseCase(
+            book_copy_repository=book_copy_repository
+        )
+
+        await update_book_copy_availability_use_case.execute(
+            book_copy_id=reserve_book_request.book_copy_id, is_available=False
+        )
+
         return r
 
-    async def remove_reserve(self, reserve_id: int) -> None:
-        
-        raise NotImplementedError
+    async def remove_reserve(
+        self,
+        reserve_id: int,
+        db: AsyncSession = Depends(get_db),
+        user: User = Depends(get_current_user),
+    ) -> None:
+        reserves_repository = ReservesRepository(db=db)
+
+        get_reserve_by_id_use_case = GetReserveByIdUseCase(
+            reserve_repository=reserves_repository
+        )
+
+        reserve = await get_reserve_by_id_use_case.execute(reserve_id=reserve_id)
+
+        if not reserve:
+            raise LibraryException(
+                status_code=404, code=ErrorCode.NOT_FOUND, msg="reserve was not found"
+            )
+
+        if reserve.user_id != user.uuid:
+            raise LibraryException(
+                status_code=403,
+                code=ErrorCode.INSUFFICIENT_PERMISSION,
+                msg="you are not allowed to remove this reserve",
+            )
+
+        remove_reserve_use_case = RemoveReserveUseCase(
+            reserve_repository=reserves_repository
+        )
+
+        await remove_reserve_use_case.execute(reserve_id=reserve_id)
 
     async def is_book_reserved(self, book_id: int) -> Any:
         raise NotImplementedError
