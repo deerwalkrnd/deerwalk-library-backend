@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import Depends, logger
+from fastapi import Depends, File, UploadFile, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
@@ -11,6 +11,9 @@ from app.modules.books.domain.entities.book import Book
 from app.modules.books.domain.requests.book_create_request import CreateBookRequest
 from app.modules.books.domain.requests.book_request_list_params import BookListParams
 from app.modules.books.domain.requests.book_update_request import BookUpdateRequest
+from app.modules.books.domain.responses.book_bulk_upload_response import (
+    BookBulkUploadRespose,
+)
 from app.modules.books.domain.usecases.associate_book_with_genre_use_case import (
     AssociateBookWithGenreUseCase,
 )
@@ -37,7 +40,15 @@ from app.modules.books.infra.repositories.book_repository import BookRepository
 from app.modules.books.infra.repositories.books_genre_repository import (
     BooksGenreRepository,
 )
+from app.modules.books.utils.parse_book_csv_to_create_requests import (
+    parse_book_csv_to_create_requests,
+)
 from app.modules.genres.domain.entities.genre import Genre
+from app.modules.books.infra.services.book_bulk_upload_service import (
+    BookBulkUploadService,
+)
+
+from app.modules.genres.infra.genre_repository import GenreRepository
 
 
 class BookController:
@@ -259,3 +270,33 @@ class BookController:
                 code=ErrorCode.UNKOWN_ERROR,
                 msg="server could not retrieve book by id.",
             )
+
+    async def bulk_upload_books(
+        self, file: UploadFile = File(...), db: AsyncSession = Depends(get_db)
+    ) -> BookBulkUploadRespose:
+        if file.filename and not file.filename.endswith(".csv"):
+            raise LibraryException(
+                status_code=400,
+                code=ErrorCode.INVALID_FIELDS,
+                msg="Only CSV files are allowed!",
+            )
+
+        book_requests_model = await parse_book_csv_to_create_requests(file=file)
+        book_repository = BookRepository(db=db)
+        books_genre_repository = BooksGenreRepository(db=db)
+        book_copy_repository = BookCopyRepository(db=db)
+        genre_repository = GenreRepository(db=db)
+
+        book_bulk_upload_service = BookBulkUploadService(
+            book_repository=book_repository,
+            books_genre_repository=books_genre_repository,
+            book_copy_repository=book_copy_repository,
+            genre_repository=genre_repository,
+            db=db,
+        )
+
+        result = await book_bulk_upload_service.bulk_upload(
+            create_book_requests=book_requests_model
+        )
+
+        return result
