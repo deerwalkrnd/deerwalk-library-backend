@@ -11,21 +11,27 @@ from app.modules.bookmarks.domain.entities.bookmark import Bookmark
 from app.modules.bookmarks.domain.requests.bookamark_list_params import (
     BookmarkListParams,
 )
-from app.modules.bookmarks.domain.requests.bookmark_check_request import BookmarkCheckRequest
+from app.modules.bookmarks.domain.requests.bookmark_check_request import (
+    BookmarkCheckRequest,
+)
 from app.modules.bookmarks.domain.requests.bookmark_create_request import (
     BookmarkCreateRequest,
 )
 from app.modules.bookmarks.domain.usecases.add_bookmark_use_case import (
     AddBookmarkUseCase,
 )
-from app.modules.bookmarks.domain.usecases.check_bookmark_by_book_id_use_case import CheckBookmarkByBookIdUseCase
+from app.modules.bookmarks.domain.usecases.check_bookmark_by_book_id_use_case import (
+    CheckBookmarkByBookIdUseCase,
+)
 from app.modules.bookmarks.domain.usecases.get_bookmark_by_user_id_use_case import (
     GetBookmarkByUserIdUseCase,
 )
 from app.modules.bookmarks.domain.usecases.remove_bookmark_by_id_use_case import (
     RemoveBookmarkByIdUseCase,
 )
-from app.modules.bookmarks.infra.repositories.bookmark_repository import BookmarkRepository
+from app.modules.bookmarks.infra.repositories.bookmark_repository import (
+    BookmarkRepository,
+)
 
 
 class BookmarkController:
