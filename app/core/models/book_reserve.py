@@ -18,7 +18,7 @@ def get_due_date() -> datetime:
     return datetime.now() + timedelta(days=3)
 
 
-class BookReserveModel(Base):
+class ReserveModel(Base):
     __tablename__ = "book_reserves"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     book_copy_id: Mapped[int] = mapped_column(
