@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from app.modules.books.domain.entities.book import Book
@@ -14,6 +15,10 @@ class GetManyBookUseCase:
         self,
         page: int,
         limit: int,
+        searchable_value: str | None,
+        searchable_field: str | None,
+        starts: datetime | None,
+        ends: datetime | None,
     ) -> List[Book]:
         offset = (page - 1) * limit
         books = await self.book_repository.filter(
@@ -22,9 +27,9 @@ class GetManyBookUseCase:
             descending=True,
             sort_by="created_at",
             filter=None,
-            start_date=None,
-            end_date=None,
-            searchable_value=None,
-            searchable_key=None,
+            start_date=starts,
+            end_date=ends,
+            searchable_value=searchable_value,
+            searchable_key=searchable_field,
         )
         return books
