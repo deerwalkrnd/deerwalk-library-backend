@@ -178,7 +178,7 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
             if not hasattr(self.model, searchable_key):
                 raise ValueError(f"Invalid searchable_key: {searchable_key}")
             query = query.where(
-                getattr(self.model, searchable_key).like(f"{searchable_value}%")
+                getattr(self.model, searchable_key).ilike(f"%{searchable_value}%")
             )
 
         if not hasattr(self.model, sort_by):

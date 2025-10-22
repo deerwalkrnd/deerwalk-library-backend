@@ -68,6 +68,10 @@ class BookController:
             books = await get_many_book_use_case.execute(
                 page=params.page,
                 limit=params.limit,
+                searchable_value=params.searchable_value,
+                searchable_field = params.searchable_field,
+                starts=params.starts,
+                ends=params.ends
             )
 
             return PaginatedResponseMany(
@@ -79,7 +83,7 @@ class BookController:
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
-                msg="could not create Book",
+                msg="could not list Books",
             )
 
     async def create_book(
