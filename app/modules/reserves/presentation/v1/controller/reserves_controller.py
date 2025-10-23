@@ -6,7 +6,7 @@ from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
-from app.core.models.book_reserve import BookReserveEnum
+from app.core.models.reserve import BookReserveEnum
 from app.modules.book_copies.domain.usecases.get_book_copy_by_id_use_case import (
     GetBookCopyByIdUseCase,
 )
@@ -117,6 +117,7 @@ class ReservesController:
         user: User = Depends(get_current_user),
     ) -> None:
         reserves_repository = ReservesRepository(db=db)
+        book_copy_repository = BookCopyRepository(db=db)
 
         get_reserve_by_id_use_case = GetReserveByIdUseCase(
             reserve_repository=reserves_repository
@@ -138,6 +139,17 @@ class ReservesController:
 
         remove_reserve_use_case = RemoveReserveUseCase(
             reserve_repository=reserves_repository
+        )
+
+        update_book_copy_availability_use_case = UpdateBookCopyAvailabilityUseCase(
+            book_copy_repository=book_copy_repository
+        )
+
+        if not reserve.book_copy_id:
+            raise ValueError("unreachable")
+
+        await update_book_copy_availability_use_case.execute(
+            book_copy_id=reserve.book_copy_id, is_available=False
         )
 
         await remove_reserve_use_case.execute(reserve_id=reserve_id)

@@ -12,7 +12,7 @@ from .password_reset_token import PasswordResetTokenModel as PasswordResetTokenM
 from .quote import QuoteModel as QuoteModel
 from .recommendation import RecommendationModel as RecommendationModel
 from .users import UserModel as UserModel
-from .book_reserve import ReserveModel as BookReserveModel
+from .reserve import ReserveModel as BookReserveModel
 
 _all_ = [
     "Base",
