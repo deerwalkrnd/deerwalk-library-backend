@@ -1,6 +1,5 @@
 from typing import List
 
-from fastapi.logger import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,7 +27,5 @@ class BooksGenreRepository(
         )
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
-
-        logger.debug(data)
 
         return [Genre.model_validate(obj=x) for x in data]

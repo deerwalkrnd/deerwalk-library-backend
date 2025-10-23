@@ -32,8 +32,8 @@ class ReserveModel(Base):
     remarks: Mapped[Optional[str]]
 
     book_copy: Mapped[Optional[BookCopyModel]] = relationship(
-        "BookCopyModel", back_populates="reserves", lazy="selectin"
+        "BookCopyModel", back_populates="reserves", lazy="joined"
     )
     user: Mapped[Optional[UserModel]] = relationship(
-        "UserModel", back_populates="reserves", lazy="selectin"
+        "UserModel", back_populates="reserves", lazy="joined"
     )

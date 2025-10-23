@@ -1,8 +1,9 @@
-from typing import Any
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.dependencies.database import get_db
 from app.core.dependencies.middleware.get_current_user import get_current_user
+from app.core.domain.entities.response.boolean_response import BooleanResponse
+from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
@@ -14,10 +15,19 @@ from app.modules.book_copies.domain.usecases.update_book_copy_availability_use_c
     UpdateBookCopyAvailabilityUseCase,
 )
 from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
+from app.modules.reserves.domain.entities.requests.get_reserves_request import (
+    GetReservesRequest,
+)
 from app.modules.reserves.domain.entities.reserve import Reserve
 from app.modules.reserves.domain.requests.reserve_book_request import ReserveBookRequest
+from app.modules.reserves.domain.usecases.get_many_reserves_use_case import (
+    GetManyReservesUseCase,
+)
 from app.modules.reserves.domain.usecases.get_reserve_by_book_copy_id_and_user_id_use_case import (
     GetReserveByBookCopyIdandUserIdUseCase,
+)
+from app.modules.reserves.domain.usecases.get_reserve_by_book_id_and_user_id_use_case import (
+    GetReserveByBookIdAndUserIdUseCase,
 )
 from app.modules.reserves.domain.usecases.get_reserve_by_id_use_case import (
     GetReserveByIdUseCase,
@@ -154,8 +164,68 @@ class ReservesController:
 
         await remove_reserve_use_case.execute(reserve_id=reserve_id)
 
-    async def is_book_reserved(self, book_id: int) -> Any:
-        raise NotImplementedError
+    async def is_book_reserved(
+        self,
+        book_id: int,
+        user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db),
+    ) -> BooleanResponse[Reserve]:
+        reserves_repository = ReservesRepository(db=db)
 
-    async def get_borrow_requests(self, params: Any) -> Any:
+        get_reserve_by_book_id_and_user_id_use_case = (
+            GetReserveByBookIdAndUserIdUseCase(reserves_repository=reserves_repository)
+        )
+
+        if not user.uuid:
+            raise ValueError("unreachable")
+
+        reserved = await get_reserve_by_book_id_and_user_id_use_case.execute(
+            book_id=book_id, user_id=user.uuid
+        )
+
+        if not reserved:
+            return BooleanResponse(value=False, data=None)
+
+        return BooleanResponse(value=True, data=reserved)
+
+    async def get_reserve_requests(
+        self, params: GetReservesRequest =Depends(), db: AsyncSession = Depends(get_db)
+    ) -> PaginatedResponseMany[Reserve]:
+        reserves_repository = ReservesRepository(db=db)
+
+        if params.searchable_value and not params.searchable_field:
+            raise LibraryException(
+                code=ErrorCode.INVALID_FIELDS,
+                status_code=400,
+                msg="searchable value needs searchable field",
+            )
+
+        if params.searchable_field and not params.searchable_value:
+            raise LibraryException(
+                code=ErrorCode.INVALID_FIELDS,
+                status_code=400,
+                msg="searchable value needs searchable field",
+            )
+
+        get_many_reserves_use_case = GetManyReservesUseCase(
+            reserves_repository=reserves_repository
+        )
+
+        reserves = await get_many_reserves_use_case.execute(
+            page=params.page,
+            limit=params.limit,
+            starts=params.starts,
+            ends=params.ends,
+            is_descending=True,
+            sort_by="created_at",
+            searchable_value=params.searchable_value,
+            searchable_field=params.searchable_field,
+        )
+
+        return PaginatedResponseMany(
+            page=params.page, total=len(reserves), next=params.page + 1, items=reserves
+        )
+    
+    async def borrow_from_reserve(self, reserve_id: int , db: AsyncSession = Depends(get_db)) -> Reserve | None:
+        # reserves_repository = ReservesRepository(db=db)
         raise NotImplementedError

@@ -188,6 +188,7 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
         query = query.order_by(desc(sort_column) if descending else sort_column)
 
         query = query.limit(limit).offset(offset)
+        # print(query)
 
         result = await self.db.execute(query)
         data = result.scalars().unique().all()

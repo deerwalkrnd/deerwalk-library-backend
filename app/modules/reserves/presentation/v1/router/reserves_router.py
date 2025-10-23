@@ -18,7 +18,7 @@ router.add_api_route(
     "/",
     methods=["GET"],
     response_description="returns all borrow requests along with joined tables",
-    endpoint=reserves_controller.get_borrow_requests,
+    endpoint=reserves_controller.get_reserve_requests,
 )
 
 router.add_api_route(
