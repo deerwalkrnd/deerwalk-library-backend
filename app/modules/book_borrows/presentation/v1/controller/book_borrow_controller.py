@@ -2,7 +2,9 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
+from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
+from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
 from app.core.models.book_borrow import FineStatus
@@ -32,6 +34,7 @@ from app.modules.book_borrows.infra.usecases.get_book_borrow_by_id_usecase impor
 from app.modules.book_borrows.infra.usecases.get_book_borrow_by_user_id_and_book_copy_id_use_case import (
     GetBookBorrowByUserIdAndBookCopyIdUseCase,
 )
+from app.modules.book_borrows.infra.usecases.get_currently_borrowed_books_use_case import GetCurrentlyBorrowedBooksUseCase
 from app.modules.book_borrows.infra.usecases.get_many_borrow_books_with_user_and_book_use_case import (
     GetManyBorrowBooksWithUserAndBookUseCase,
 )
@@ -250,3 +253,53 @@ class BookBorrowController:
         await update_book_copy_availability_use_case.execute(
             book_copy_id=book_borrow.book_copy_id, is_available=True
         )
+
+        
+    async def get_currently_borrowed_books(
+            self,
+            db: AsyncSession = Depends(get_db),
+            params: GetManyBookBorrowRequest = Depends(),
+            user: User = Depends(get_current_user),
+    ) -> PaginatedResponseMany[BookBorrowResponseDTO]:
+        
+        try:
+
+            book_borrow_repository = BookBorrowRepository(db=db)
+
+            get_currently_borrowed_books_use_case = GetCurrentlyBorrowedBooksUseCase(
+                book_borrow_repository=book_borrow_repository
+            )
+
+            if not user:
+                raise LibraryException(
+                    status_code=404,
+                    code=ErrorCode.NOT_FOUND,
+                    msg="user with retrieved user id does not exist"
+                )
+
+
+            currently_reading_books = await get_currently_borrowed_books_use_case.execute(
+                page=params.page,
+                end_date=params.ends,
+                limit=params.limit,
+                searchable_key=params.searchable_field,
+                searchable_value=params.searchable_value,
+                sort_by=params.sort_by,
+                start_date=params.starts,
+                user_id=user.uuid,
+            )
+
+            return PaginatedResponseMany(
+            page=params.page, total=len(currently_reading_books), next=params.page + 1, items=currently_reading_books
+        )
+
+
+        except Exception as e:
+            raise LibraryException(
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg=f"Something bad happened error: {e}"
+            )
+
+
+        
