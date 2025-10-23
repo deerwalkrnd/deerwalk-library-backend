@@ -135,6 +135,8 @@ class RecommendationController:
 
         except Exception as e:
             logger.logger.error(e)
+            if isinstance(e, LibraryException):
+                raise e
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
@@ -164,6 +166,8 @@ class RecommendationController:
 
         except Exception as e:
             logger.logger.error(e)
+            if isinstance(e, LibraryException):
+                raise e
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,

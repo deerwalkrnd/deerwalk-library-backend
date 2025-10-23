@@ -69,9 +69,9 @@ class BookController:
                 page=params.page,
                 limit=params.limit,
                 searchable_value=params.searchable_value,
-                searchable_field = params.searchable_field,
+                searchable_field=params.searchable_field,
                 starts=params.starts,
-                ends=params.ends
+                ends=params.ends,
             )
 
             return PaginatedResponseMany(

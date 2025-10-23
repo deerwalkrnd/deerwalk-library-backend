@@ -23,4 +23,8 @@ class BookCopyModel(Base):
         "BookBorrowModel", back_populates="book_copy"
     )  # type: ignore
 
+    reserves: Mapped[list["ReserveModel"]] = relationship(  # type: ignore
+        "ReserveModel", back_populates="book_copy"
+    )
+
     __table_args__ = (Index("idx_book_copy_availability", "book_id", "is_available"),)

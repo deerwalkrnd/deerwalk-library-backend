@@ -39,6 +39,10 @@ from app.modules.book_borrows.infra.usecases.renew_book_use_case import RenewBoo
 from app.modules.book_borrows.infra.usecases.return_book_use_case import (
     ReturnBookUseCase,
 )
+from app.modules.book_copies.domain.usecases.update_book_copy_availability_use_case import (
+    UpdateBookCopyAvailabilityUseCase,
+)
+from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
 
 
 class BookBorrowController:
@@ -76,6 +80,7 @@ class BookBorrowController:
         db: AsyncSession = Depends(get_db),
     ) -> BookBorrow | None:
         book_borrow_repository = BookBorrowRepository(db=db)
+        book_copy_repository = BookCopyRepository(db=db)
 
         get_book_borrow_by_user_id_and_book_copy_id_use_case = (
             GetBookBorrowByUserIdAndBookCopyIdUseCase(
@@ -114,6 +119,14 @@ class BookBorrowController:
                 user_id=book_borrow_request.user_uuid,
                 fine_status=fine_status,
             )
+            update_book_copy_availability_use_case = UpdateBookCopyAvailabilityUseCase(
+                book_copy_repository=book_copy_repository
+            )
+
+            await update_book_copy_availability_use_case.execute(
+                book_copy_id=book_copy_id, is_available=False
+            )
+
             return borrow
         except ValueError:
             raise LibraryException(
@@ -198,6 +211,8 @@ class BookBorrowController:
         db: AsyncSession = Depends(get_db),
     ) -> None:
         book_borrow_repository = BookBorrowRepository(db=db)
+        book_copy_repository = BookCopyRepository(db=db)
+
         get_book_borrow_by_id_use_case = GetBookBorrowByIdUseCase(
             book_borrow_repository=book_borrow_repository
         )
@@ -224,4 +239,14 @@ class BookBorrowController:
             if book_borrow.fine_accumulated
             else 0,
             remark=return_book_request.remark,
+        )
+
+        update_book_copy_availability_use_case = UpdateBookCopyAvailabilityUseCase(
+            book_copy_repository=book_copy_repository
+        )
+        if not book_borrow.book_copy_id:
+            raise ValueError("unreachable")
+
+        await update_book_copy_availability_use_case.execute(
+            book_copy_id=book_borrow.book_copy_id, is_available=True
         )

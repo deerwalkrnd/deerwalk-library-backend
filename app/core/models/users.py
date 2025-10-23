@@ -55,3 +55,4 @@ class UserModel(Base):
         cascade="all, delete-orphan",
         lazy="noload",
     )
+    reserves = relationship("ReserveModel", back_populates="user", lazy="noload")
