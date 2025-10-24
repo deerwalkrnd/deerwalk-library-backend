@@ -45,5 +45,5 @@ router.add_api_route(
     "/current/",
     methods=["GET"],
     endpoint=book_borrow_controller.get_currently_borrowed_books,
-    response_description="Get books currently being read by user."
+    response_description="Get books currently being read by user.",
 )

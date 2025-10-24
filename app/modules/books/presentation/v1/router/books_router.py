@@ -61,3 +61,11 @@ router.add_api_route(
     description="Uploads books in bulk",
     status_code=200,
 )
+
+router.add_api_route(
+    path="/recommendations/",
+    endpoint=book_controller.get_books_recommendation,
+    methods=["GET"],
+    description="Gets book recommendations according to genres of current books read by user.",
+    status_code=200,
+)

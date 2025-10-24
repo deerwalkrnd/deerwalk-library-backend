@@ -4,9 +4,20 @@ from fastapi import Depends, File, UploadFile, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies.database import get_db
+from app.core.dependencies.middleware.get_current_user import get_current_user
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
+from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
+from app.modules.book_borrows.domain.responses.book_borrow_response_dto import (
+    BookBorrowResponseDTO,
+)
+from app.modules.book_borrows.infra.repositories.book_borrow_repository import (
+    BookBorrowRepository,
+)
+from app.modules.book_borrows.infra.usecases.get_currently_borrowed_books_use_case import (
+    GetCurrentlyBorrowedBooksUseCase,
+)
 from app.modules.books.domain.entities.book import Book
 from app.modules.books.domain.requests.book_create_request import CreateBookRequest
 from app.modules.books.domain.requests.book_request_list_params import BookListParams
@@ -24,6 +35,7 @@ from app.modules.books.domain.usecases.create_book_use_case import CreateBookUse
 from app.modules.books.domain.usecases.delete_book_by_id_use_case import (
     DeleteBookByIdUseCase,
 )
+from app.modules.books.domain.usecases.get_book_by_genre_id_use_case import GetBookByGenreIdUseCase
 from app.modules.books.domain.usecases.get_book_by_id_use_case import GetBookByIdUseCase
 from app.modules.books.domain.usecases.get_book_genre_by_book_id_use_case import (
     GetBookGenreByBookIdUseCase,
@@ -304,3 +316,93 @@ class BookController:
         )
 
         return result
+
+    async def get_books_recommendation(
+        self, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+    ):
+        try:
+            if not user:
+                raise LibraryException(
+                    status_code=404,
+                    code=ErrorCode.NOT_FOUND,
+                    msg="the user could not be found",
+                )
+
+            book_borrow_repository = BookBorrowRepository(db=db)
+            get_currently_borrowed_books_use_case = GetCurrentlyBorrowedBooksUseCase(
+                book_borrow_repository=book_borrow_repository
+            )
+
+            currently_reading_books: List[
+                BookBorrowResponseDTO
+            ] = await get_currently_borrowed_books_use_case.execute(
+                page=1,
+                limit=5,
+                sort_by="created_at",
+                user_id=user.uuid,
+                start_date=None,
+                end_date=None,
+                searchable_key=None,
+                searchable_value=None,
+            )
+
+            book_ids: List[int | None] = []
+
+            for borrowed in currently_reading_books:
+                if borrowed.book_copy and borrowed.book_copy.book:
+                    book_id = borrowed.book_copy.book.id
+
+                    book_ids.append(book_id)
+
+            book_ids = list(set(book_ids))
+
+            book_genre_repository = BooksGenreRepository(db=db)
+
+            get_book_genre_by_book_id_use_case = GetBookGenreByBookIdUseCase(
+                book_genre_repository=book_genre_repository
+            )
+
+            if len(book_ids) < 1:
+                return None
+
+            genre_ids: List[int] = []
+
+            for b_id in book_ids:
+                if b_id:
+                    genres: List[
+                        Genre
+                    ] = await get_book_genre_by_book_id_use_case.execute(book_id=b_id)
+
+                    for genre in genres:
+                        if genre.id:
+                            genre_ids.append(genre.id)
+            
+            genre_ids = list(set(genre_ids))
+
+            if len(genre_ids) < 1:
+                return None
+            
+            get_book_by_genre_id_use_case = GetBookByGenreIdUseCase(book_genre_repository=book_genre_repository)
+            final_book_ids:List[int] = []
+
+            for g_id in genre_ids:
+                book_genres = await get_book_by_genre_id_use_case.execute(genre_id=g_id)
+
+                for book_genre in book_genres:
+                    if book_genre.book_id:
+                        final_book_ids.append(book_genre.book_id)
+            
+            final_book_ids = list(set(final_book_ids) - set(book_ids))
+
+            if len(final_book_ids) < 1:
+                return None
+       
+            return book_ids
+
+        except Exception as e:
+            logger.logger.error(e)
+            raise LibraryException(
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg=f"server could not process recommendations",
+            )
