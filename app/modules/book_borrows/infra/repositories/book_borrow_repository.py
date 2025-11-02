@@ -2,12 +2,13 @@ from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel
-from sqlalchemy import desc, select
+from sqlalchemy import and_, desc, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.infra.repositories.repository import Repository
-from app.core.models.book_borrow import BookBorrowModel
+from app.core.models.book import BookModel
+from app.core.models.book_borrow import BookBorrowModel, FineStatus
 from app.core.models.book_copy import BookCopyModel
 from app.modules.book_borrows.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrows.domain.repositories.book_borrow_repository_interface import (
@@ -96,3 +97,132 @@ class BookBorrowRepository(
         print(data)
 
         return [BookBorrowResponseDTO.model_validate(obj=x) for x in data]
+
+    async def student_dashboard(self, student_id: str) -> dict[str, int | str]:
+        data: dict[str, int | str] = {}
+        
+        # total borrowed count (all time)
+        query = (
+            select(func.count())
+            .select_from(self.model)
+            .where(
+                and_(
+                    self.model.deleted == False, 
+                    self.model.user_id == student_id
+                )
+            )
+        )
+        result = await self.db.execute(query)
+        data["borrowed_count"] = result.scalar() or 0
+        
+        # returned books count
+        query = (
+            select(func.count())
+            .select_from(self.model)
+            .where(
+                and_(
+                    self.model.deleted == False,
+                    self.model.returned == True,
+                    self.model.user_id == student_id,
+                )
+            )
+        )
+        result = await self.db.execute(query)
+        data["returned_books_count"] = result.scalar() or 0
+        
+        # overdue books count 
+        query = (
+            select(func.count())
+            .select_from(self.model)
+            .where(
+                and_(
+                    self.model.deleted == False,
+                    self.model.returned == False,
+                    self.model.due_date < datetime.now(),
+                    self.model.user_id == student_id,  
+                )
+            )
+        )
+        result = await self.db.execute(query)
+        data["overdue_books_count"] = result.scalar() or 0
+        
+        # fine accumulated 
+        query = (
+            select(func.sum(self.model.fine_accumulated))
+            .select_from(self.model)
+            .where(
+                and_(
+                    self.model.deleted == False,
+                    self.model.user_id == student_id,  
+                )
+            )
+        )
+        result = await self.db.execute(query)
+        data["fine_levied"] = result.scalar() or 0
+        
+        # most borrowed category 
+        query = (
+            select(BookModel.category)
+            .join(BookCopyModel, BookModel.id == BookCopyModel.book_id)
+            .join(BookBorrowModel, BookBorrowModel.book_copy_id == BookCopyModel.id)
+            .where(BookBorrowModel.user_id == student_id)
+            .group_by(BookModel.category)
+            .order_by(func.count(BookBorrowModel.id).desc())  
+            .limit(1)
+        )
+
+        result = await self.db.execute(query)
+        most_read_category = result.scalar()
+        data["most_borrowed_category"] = most_read_category.value if most_read_category else "none"
+        
+        return data
+
+    async def librarian_dashboard(self) -> dict[str, int]:
+        data: dict[str, int] = {}
+        # overdue books
+        query = select(func.count(self.model.id)).where(
+            and_(
+                self.model.deleted == False,
+                self.model.returned == False,
+                self.model.due_date < datetime.now(),
+            )
+        )
+
+        result = await self.db.execute(query)
+        overdue_books_count = result.scalar() or 0
+
+        data["overdue_books_count"] = overdue_books_count
+
+        # total returned books
+        query = select(func.count(self.model.id)).where(
+            and_(self.model.deleted == False, self.model.returned == True)
+        )
+
+        result = await self.db.execute(query)
+        returned_books_count = result.scalar() or 0
+
+        data["returned_books_count"] = returned_books_count
+
+        # currently issued books
+        query = select(func.count(self.model.id)).where(
+            and_(self.model.deleted == False, self.model.returned == False)
+        )
+        result = await self.db.execute(query)
+        currently_issued_books_count = result.scalar() or 0
+
+        data["currently_issued_books_count"] = currently_issued_books_count
+
+        # total pending fines
+
+        query = select(func.sum(self.model.fine_accumulated)).where(
+            and_(
+                self.model.deleted == False, self.model.fine_status == FineStatus.UNPAID
+            )
+        )
+
+        result = await self.db.execute(query)
+        total_pending_fines = result.scalar() or 0
+
+        data["total_pending_fines"] = total_pending_fines
+
+        return data

@@ -23,3 +23,7 @@ class BookmarkRepositoryInterface(RepositoryInterface[Bookmark]):
         searchable_value: str | None,
     ) -> List[Bookmark]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def get_bookmark_count(self, student_id: str) -> int:
+        raise NotImplementedError

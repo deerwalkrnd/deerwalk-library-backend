@@ -36,6 +36,9 @@ from app.modules.book_copies.presentation.v1.router.book_copy_router import (
 from app.modules.reserves.presentation.v1.router.reserves_router import (
     router as reserves_router,
 )
+from app.modules.dashboard.presentation.v1.router.dashboard_router import (
+    router as dashboard_router,
+)
 
 v1_router = APIRouter(prefix="/v1")
 
@@ -53,6 +56,7 @@ v1_router.include_router(books_reviews_router)
 v1_router.include_router(book_borrow_router)
 v1_router.include_router(book_copy_router)
 v1_router.include_router(reserves_router)
+v1_router.include_router(dashboard_router)
 
 
 # remove at production

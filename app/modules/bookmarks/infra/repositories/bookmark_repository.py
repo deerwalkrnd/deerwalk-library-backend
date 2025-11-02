@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel
-from sqlalchemy import desc, select
+from sqlalchemy import and_, desc, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.infra.repositories.repository import Repository
@@ -81,3 +81,13 @@ class BookmarkRepository(
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
         return [self.entity.model_validate(obj=x) for x in data]
+
+    async def get_bookmark_count(self, student_id: str) -> int:
+        query = select(func.count(self.model.id)).where(
+            and_(self.model.user_id == student_id, self.model.deleted == False)
+        )
+        result = await self.db.execute(query)
+        count = result.scalar()
+        if not count:
+            count = 0
+        return count
