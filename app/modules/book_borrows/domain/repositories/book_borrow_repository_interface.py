@@ -30,3 +30,7 @@ class BookBorrowRepositoryInterface(RepositoryInterface[BookBorrow]):
     @abstractmethod
     async def student_dashboard(self, student_id: str) -> dict[str, int | str]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def librarian_dashboard(self) -> dict[str, int]:
+        raise NotImplementedError
