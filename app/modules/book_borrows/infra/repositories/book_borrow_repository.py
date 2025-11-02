@@ -100,21 +100,16 @@ class BookBorrowRepository(
 
     async def student_dashboard(self, student_id: str) -> dict[str, int | str]:
         data: dict[str, int | str] = {}
-        
+
         # total borrowed count (all time)
         query = (
             select(func.count())
             .select_from(self.model)
-            .where(
-                and_(
-                    self.model.deleted == False, 
-                    self.model.user_id == student_id
-                )
-            )
+            .where(and_(self.model.deleted == False, self.model.user_id == student_id))
         )
         result = await self.db.execute(query)
         data["borrowed_count"] = result.scalar() or 0
-        
+
         # returned books count
         query = (
             select(func.count())
@@ -129,8 +124,8 @@ class BookBorrowRepository(
         )
         result = await self.db.execute(query)
         data["returned_books_count"] = result.scalar() or 0
-        
-        # overdue books count 
+
+        # overdue books count
         query = (
             select(func.count())
             .select_from(self.model)
@@ -139,42 +134,44 @@ class BookBorrowRepository(
                     self.model.deleted == False,
                     self.model.returned == False,
                     self.model.due_date < datetime.now(),
-                    self.model.user_id == student_id,  
+                    self.model.user_id == student_id,
                 )
             )
         )
         result = await self.db.execute(query)
         data["overdue_books_count"] = result.scalar() or 0
-        
-        # fine accumulated 
+
+        # fine accumulated
         query = (
             select(func.sum(self.model.fine_accumulated))
             .select_from(self.model)
             .where(
                 and_(
                     self.model.deleted == False,
-                    self.model.user_id == student_id,  
+                    self.model.user_id == student_id,
                 )
             )
         )
         result = await self.db.execute(query)
         data["fine_levied"] = result.scalar() or 0
-        
-        # most borrowed category 
+
+        # most borrowed category
         query = (
             select(BookModel.category)
             .join(BookCopyModel, BookModel.id == BookCopyModel.book_id)
             .join(BookBorrowModel, BookBorrowModel.book_copy_id == BookCopyModel.id)
             .where(BookBorrowModel.user_id == student_id)
             .group_by(BookModel.category)
-            .order_by(func.count(BookBorrowModel.id).desc())  
+            .order_by(func.count(BookBorrowModel.id).desc())
             .limit(1)
         )
 
         result = await self.db.execute(query)
         most_read_category = result.scalar()
-        data["most_borrowed_category"] = most_read_category.value if most_read_category else "none"
-        
+        data["most_borrowed_category"] = (
+            most_read_category.value if most_read_category else "none"
+        )
+
         return data
 
     async def librarian_dashboard(self) -> dict[str, int]:
