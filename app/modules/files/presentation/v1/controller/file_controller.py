@@ -13,6 +13,8 @@ from app.modules.files.domain.responses.file_response import FileResponse
 
 PROFILE_PATH = Template("profile-picture/$filename")
 BOOK_COVER_PATH = Template("book-cover/$filename")
+EVENT_BANNER_PATH = Template("event-banners/$filename")
+MISC_PATH = Template("misc/$filename")
 
 
 class FileController:
@@ -26,10 +28,17 @@ class FileController:
         try:
             path = ""
 
-            if type == LibraryFileType.PROFILE_IMAGE:
-                path = PROFILE_PATH.safe_substitute({"filename": file.filename})
-            else:
-                path = BOOK_COVER_PATH.safe_substitute({"filename": file.filename})
+            match type:
+                case LibraryFileType.PROFILE_IMAGE:
+                    path = PROFILE_PATH.safe_substitute({"filename": file.filename})
+                case LibraryFileType.BOOK_COVER:
+                    path = BOOK_COVER_PATH.safe_substitute({"filename": file.filename})
+                case LibraryFileType.EVENT_BANNER:
+                    path = EVENT_BANNER_PATH.safe_substitute(
+                        {"filename": file.filename}
+                    )
+                case _:
+                    path = MISC_PATH.safe_substitute({"filename": file.filename})
 
             url = await file_service.save(
                 file_path=path,
