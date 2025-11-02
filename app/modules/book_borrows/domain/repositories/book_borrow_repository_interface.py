@@ -26,3 +26,7 @@ class BookBorrowRepositoryInterface(RepositoryInterface[BookBorrow]):
         searchable_value: str | None,
     ) -> List[BookBorrowResponseDTO]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def student_dashboard(self, student_id: str) -> dict[str, int | str]:
+        raise NotImplementedError
