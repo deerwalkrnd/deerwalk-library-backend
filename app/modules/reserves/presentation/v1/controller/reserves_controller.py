@@ -20,6 +20,9 @@ from app.modules.reserves.domain.entities.requests.get_reserves_request import (
 )
 from app.modules.reserves.domain.entities.reserve import Reserve
 from app.modules.reserves.domain.requests.reserve_book_request import ReserveBookRequest
+from app.modules.reserves.domain.usecases.update_reserve_state_use_case import (
+    UpdateReserveStateUseCase,
+)
 from app.modules.reserves.domain.usecases.get_many_reserves_use_case import (
     GetManyReservesUseCase,
 )
@@ -189,7 +192,7 @@ class ReservesController:
         return BooleanResponse(value=True, data=reserved)
 
     async def get_reserve_requests(
-        self, params: GetReservesRequest =Depends(), db: AsyncSession = Depends(get_db)
+        self, params: GetReservesRequest = Depends(), db: AsyncSession = Depends(get_db)
     ) -> PaginatedResponseMany[Reserve]:
         reserves_repository = ReservesRepository(db=db)
 
@@ -225,7 +228,31 @@ class ReservesController:
         return PaginatedResponseMany(
             page=params.page, total=len(reserves), next=params.page + 1, items=reserves
         )
-    
-    async def borrow_from_reserve(self, reserve_id: int , db: AsyncSession = Depends(get_db)) -> Reserve | None:
-        # reserves_repository = ReservesRepository(db=db)
-        raise NotImplementedError
+
+    async def after_borrow_from_reserve(
+        self, reserve_id: int, db: AsyncSession = Depends(get_db)
+    ) -> Reserve | None:
+        reserves_repository = ReservesRepository(db=db)
+
+        get_reserve_by_id_use_case = GetReserveByIdUseCase(
+            reserve_repository=reserves_repository
+        )
+
+        reserve: Reserve | None = await get_reserve_by_id_use_case.execute(
+            reserve_id=reserve_id
+        )
+
+        if not reserve:
+            raise LibraryException(
+                status_code=404,
+                code=ErrorCode.NOT_FOUND,
+                msg="reserve with that id does not exist",
+            )
+
+        update_reserve_state_use_case = UpdateReserveStateUseCase(
+            reserves_repository=reserves_repository
+        )
+
+        await update_reserve_state_use_case.execute(
+            reserve_id=reserve_id, state=BookReserveEnum.BORROWED
+        )
