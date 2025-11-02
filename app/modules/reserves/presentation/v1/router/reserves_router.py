@@ -22,15 +22,22 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    "/is-reserved/{book_id}",
+    "/{book_id}/is-reserved",
     methods=["GET"],
     response_description="returns if a copy of the provided book has been reserved or not by the currently logged in user",
     endpoint=reserves_controller.is_book_reserved,
 )
 
 router.add_api_route(
-    "/{reservation_id}",
+    "/{reserve_id}",
     methods=["DELETE"],
     response_description="removes a reservation for the book",
     endpoint=reserves_controller.remove_reserve,
+)
+
+router.add_api_route(
+    "/{reserve_id}/borrowed",
+    methods=["POST"],
+    response_description="Marks a reserve as reserve completed and gone to the borrowed state",
+    endpoint=reserves_controller.after_borrow_from_reserve,
 )

@@ -34,7 +34,7 @@ class GetManyReservesUseCase:
             end_date=ends,
             searchable_key=searchable_field,
             searchable_value=searchable_value,
-            filter=Reserve(state=BookReserveEnum.BORROWED),
+            filter=Reserve(state=BookReserveEnum.RESERVED),
         )
 
         return reserves
