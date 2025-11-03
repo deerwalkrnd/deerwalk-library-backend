@@ -9,14 +9,14 @@ router = APIRouter(prefix="/feedbacks", tags=["feedbacks"])
 feedback_controller = FeedbackController()
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=feedback_controller.list_feedbacks,
     methods=["GET"],
     description="get a list of all feedbacks.",
 )
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=feedback_controller.create_feedback,
     methods=["POST"],
     description="create a feedback.",

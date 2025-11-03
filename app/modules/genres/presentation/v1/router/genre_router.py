@@ -10,7 +10,7 @@ genre_controller = GenreController()
 
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=genre_controller.list_genre,
     methods=["GET"],
     description="This route gets all genre",
@@ -18,7 +18,7 @@ router.add_api_route(
 
 
 router.add_api_route(
-    path="/",
+    path="",
     methods=["POST"],
     endpoint=genre_controller.create_genre,
     description="This route creates genres",

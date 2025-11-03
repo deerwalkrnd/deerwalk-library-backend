@@ -9,14 +9,14 @@ router = APIRouter(prefix="/quotes", tags=["quotes"])
 quotes_controller = QuotesController()
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=quotes_controller.list_quotes,
     methods=["GET"],
     description="This method",
 )
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=quotes_controller.create_quote,
     methods=["POST"],
 )

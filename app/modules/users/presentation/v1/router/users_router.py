@@ -13,7 +13,7 @@ users_controller = UsersController()
 # )
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=users_controller.list_many_users,
     methods=["GET"],
     response_description="Returns you the Users based on the many params passed",
@@ -25,7 +25,7 @@ router.add_api_route(
     response_description="You will get user back with the passed uuid",
 )
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=users_controller.create_user,
     methods=["POST"],
     response_description="Creating a uaser entity",

@@ -8,14 +8,14 @@ router = APIRouter(prefix="/reserves", tags=["reserves"])
 reserves_controller = ReservesController()
 
 router.add_api_route(
-    "/",
+    "",
     methods=["POST"],
     response_description="reserves a book for the user",
     endpoint=reserves_controller.reserve_book,
 )
 
 router.add_api_route(
-    "/",
+    "",
     methods=["GET"],
     response_description="returns all borrow requests along with joined tables",
     endpoint=reserves_controller.get_reserve_requests,

@@ -9,14 +9,14 @@ router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 bookmark_controller = BookmarkController()
 
 router.add_api_route(
-    path="/",
+    path="",
     methods=["GET"],
     endpoint=bookmark_controller.get_bookmark,
     description="get a list of bookmarks for current user.",
 )
 
 router.add_api_route(
-    path="/",
+    path="",
     methods=["POST"],
     endpoint=bookmark_controller.add_bookmark,
     description="create/add bookmark for a user.",

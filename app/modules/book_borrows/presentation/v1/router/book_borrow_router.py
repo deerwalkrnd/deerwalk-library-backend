@@ -35,7 +35,7 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    "/",
+    "",
     methods=["GET"],
     endpoint=book_borrow_controller.get_many_borrow_books,
     response_description="Get many returned book borrows",
@@ -52,7 +52,7 @@ router.add_api_route(
     "/history",
     methods=["GET"],
     endpoint=book_borrow_controller.borrowed_history,
-    response_description="Returns the past borrowed book by the user"
+    response_description="Returns the past borrowed book by the user",
 )
 
 router.add_api_route(
