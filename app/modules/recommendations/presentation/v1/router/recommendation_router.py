@@ -9,14 +9,14 @@ router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 recommendation_controller = RecommendationController()
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=recommendation_controller.list_recommendations,
     methods=["GET"],
     description="This method is used to get all recommendations.",
     status_code=200,
 )
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=recommendation_controller.create_recommendation,
     methods=["POST"],
     description="This method is used to create a recommendation.",

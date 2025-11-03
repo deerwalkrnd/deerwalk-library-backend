@@ -7,7 +7,7 @@ router = APIRouter(prefix="/books", tags=["books"])
 book_controller = BookController()
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=book_controller.list_books,
     methods=["GET"],
     description="This method is used to get all books.",
@@ -15,7 +15,7 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    path="/",
+    path="",
     endpoint=book_controller.create_book,
     methods=["POST"],
     description="This method is used to create a book.",

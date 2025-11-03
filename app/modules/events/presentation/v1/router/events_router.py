@@ -8,7 +8,7 @@ router = APIRouter(prefix="/events", tags=["events"])
 events_controller = EventsController()
 
 router.add_api_route(
-    path="/",
+    path="",
     methods=["POST"],
     endpoint=events_controller.create_event,
     response_description="201 if event created else error",
@@ -37,7 +37,7 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    path="/",
+    path="",
     methods=["GET"],
     endpoint=events_controller.get_many_events,
     response_description="returns paginated response of all available events",
