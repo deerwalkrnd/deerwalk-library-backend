@@ -15,14 +15,15 @@ class RenewBookUseCase:
         id: int,
         new_due_date: datetime,
         fine_collected: int,
-        prev_renewed: int,
+        times_renewed: int,
         prev_fine: int = 0,
     ) -> int:
+        times_renewed += 1
         return await self.book_borrow_repository.update(
             conditions=BookBorrow(id=id),
             obj=BookBorrow(
                 due_date=new_due_date,
                 fine_accumulated=prev_fine + fine_collected,
-                times_renewed=prev_renewed + 1,
+                times_renewed=times_renewed,
             ),
         )

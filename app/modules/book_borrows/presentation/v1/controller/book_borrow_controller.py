@@ -220,7 +220,7 @@ class BookBorrowController:
             prev_fine=book_borrow.fine_accumulated
             if book_borrow.fine_accumulated
             else 0,
-            prev_renewed=book_borrow.times_renewed + 1,
+            times_renewed=book_borrow.times_renewed,
         )
 
     async def return_book(
@@ -319,7 +319,7 @@ class BookBorrowController:
 
     async def borrowed_history(
         self,
-        params: BorrowedHistoryParams,
+        params: BorrowedHistoryParams = Depends(),
         db: AsyncSession = Depends(get_db),
         user: User = Depends(get_current_user),
     ) -> PaginatedResponseMany[BookBorrow]:

@@ -162,7 +162,7 @@ class ReservesController:
             raise ValueError("unreachable")
 
         await update_book_copy_availability_use_case.execute(
-            book_copy_id=reserve.book_copy_id, is_available=False
+            book_copy_id=reserve.book_copy_id, is_available=True
         )
 
         await remove_reserve_use_case.execute(reserve_id=reserve_id)
