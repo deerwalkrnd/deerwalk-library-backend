@@ -47,3 +47,10 @@ router.add_api_route(
     endpoint=book_borrow_controller.get_currently_borrowed_books,
     response_description="Get books currently being read by user.",
 )
+
+router.add_api_route(
+    "/book-recommendations/",
+    methods=["GET"],
+    endpoint=book_borrow_controller.get_book_recommendations,
+    response_description="Get Book Recommendations according to borrowed book genres.",
+)

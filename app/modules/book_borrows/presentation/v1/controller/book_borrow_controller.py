@@ -50,6 +50,12 @@ from app.modules.book_copies.domain.usecases.update_book_copy_availability_use_c
     UpdateBookCopyAvailabilityUseCase,
 )
 from app.modules.books.infra.repositories.book_copy_repository import BookCopyRepository
+from app.modules.book_borrows.domain.usecases.get_book_recommendations_use_case import (
+    GetBookRecommendationsUseCase,
+)
+from app.modules.book_borrows.domain.requests.book_recommendation_params import (
+    BookRecommendationParams,
+)
 
 
 class BookBorrowController:
@@ -303,4 +309,29 @@ class BookBorrowController:
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
                 msg=f"Something bad happened error: {e}",
+            )
+
+    async def get_book_recommendations(
+        self,
+        params: BookRecommendationParams = Depends(),
+        db: AsyncSession = Depends(get_db),
+        user: User = Depends(get_current_user),
+    ):
+        try:
+            book_borrow_repository = BookBorrowRepository(db=db)
+
+            get__book_recommendations_use_case = GetBookRecommendationsUseCase(
+                book_borrow_repository=book_borrow_repository
+            )
+
+            recommended_book = await get__book_recommendations_use_case.execute(
+                limit=params.limit, user_id=user.uuid
+            )
+
+            return recommended_book
+        except Exception as e:
+            raise LibraryException(
+                status_code=500,
+                code=ErrorCode.UNKOWN_ERROR,
+                msg=f"Something bad happend error: {e}",
             )

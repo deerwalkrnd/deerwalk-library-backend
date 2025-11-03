@@ -18,6 +18,9 @@ from app.modules.book_borrows.domain.responses.book_borrow_response_dto import (
     BookBorrowResponseDTO,
 )
 
+from app.core.models.books_genre import BooksGenreModel
+from app.modules.books.domain.entities.book import Book
+
 
 class BookBorrowRepository(
     Repository[BookBorrowModel, BookBorrow], BookBorrowRepositoryInterface
@@ -223,3 +226,71 @@ class BookBorrowRepository(
         data["total_pending_fines"] = total_pending_fines
 
         return data
+
+    async def get_book_recommendations(
+        self, user_id: str, limit: int = 10
+    ) -> List[Book]:
+        print(f"user_id being passed: '{user_id}'")
+        print(f"user_id type: {type(user_id)}")
+
+        currently_borrowed_query = (
+            select(BookCopyModel.book_id)
+            .select_from(BookBorrowModel)
+            .join(BookCopyModel, BookBorrowModel.book_copy_id == BookCopyModel.id)
+            .where(
+                and_(
+                    BookBorrowModel.user_id == user_id,
+                    BookBorrowModel.returned == False,
+                    BookBorrowModel.deleted == False,
+                )
+            )
+            .distinct()
+        )
+
+        result = await self.db.execute(currently_borrowed_query)
+        currently_borrowed_book_ids = [row[0] for row in result.fetchall()]
+
+        if not currently_borrowed_book_ids:
+            return []
+
+        genre_query = (
+            select(BooksGenreModel.genre_id)
+            .where(BooksGenreModel.book_id.in_(currently_borrowed_book_ids))
+            .distinct()
+        )
+        result = await self.db.execute(genre_query)
+        genre_ids = [row[0] for row in result.fetchall()]
+
+        if not genre_ids:
+            return []
+
+        recommendations_query = (
+            select(BooksGenreModel.book_id)
+            .where(
+                and_(
+                    BooksGenreModel.genre_id.in_(genre_ids),
+                    BooksGenreModel.book_id.notin_(currently_borrowed_book_ids),
+                )
+            )
+            .distinct()
+            .limit(limit)
+        )
+
+        result = await self.db.execute(recommendations_query)
+        recommended_book_ids = [row[0] for row in result.fetchall()]
+
+        print(f"recommended_book_ids: {recommended_book_ids}")
+
+        get_books_query = (
+            select(BookModel)
+            .where(and_(BookModel.id.in_(recommended_book_ids)))
+            .distinct()
+            .limit(limit)
+        )
+
+        result = await self.db.execute(get_books_query)
+
+        print(f"\nresult: {result}\n")
+        recommended_books = [row[0] for row in result.fetchall()]
+
+        return recommended_books

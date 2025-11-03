@@ -9,6 +9,7 @@ from app.modules.book_borrows.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrows.domain.responses.book_borrow_response_dto import (
     BookBorrowResponseDTO,
 )
+from app.modules.books.domain.entities.book import Book
 
 
 class BookBorrowRepositoryInterface(RepositoryInterface[BookBorrow]):
@@ -33,4 +34,8 @@ class BookBorrowRepositoryInterface(RepositoryInterface[BookBorrow]):
 
     @abstractmethod
     async def librarian_dashboard(self) -> dict[str, int]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_book_recommendations(self, limit: int, user_id: str) -> List[Book]:
         raise NotImplementedError
