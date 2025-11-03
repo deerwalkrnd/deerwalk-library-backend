@@ -19,11 +19,12 @@ class ReservesRepository(
     async def get_reserves_by_book(self, user_id: str, book_id: int) -> Reserve | None:
         query = (
             select(ReserveModel)
-            .join(BookModel, BookCopyModel.book_id == BookModel.id)
             .join(BookCopyModel, ReserveModel.book_copy_id == BookCopyModel.id)
+            .join(BookModel, BookCopyModel.book_id == BookModel.id)
             .where(ReserveModel.user_id == user_id)
             .where(ReserveModel.state == BookReserveEnum.RESERVED)
             .where(BookModel.id == book_id)
+            .where(ReserveModel.deleted == False)
         )
 
         result = await self.db.execute(query)
@@ -33,3 +34,4 @@ class ReservesRepository(
             return None
 
         return Reserve.model_validate(reserve)
+
