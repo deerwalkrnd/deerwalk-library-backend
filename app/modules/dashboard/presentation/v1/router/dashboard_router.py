@@ -16,6 +16,13 @@ router.add_api_route(
 )
 
 router.add_api_route(
+    "/librarian/tables",
+    endpoint=dashboard_controller.librarian_dashboard_tables,
+    methods=["GET"],
+    response_description="",
+)
+
+router.add_api_route(
     "/student",
     endpoint=dashboard_controller.student_dashboard,
     methods=["GET"],
