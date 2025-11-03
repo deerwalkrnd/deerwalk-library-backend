@@ -16,11 +16,17 @@ from app.modules.book_borrows.domain.requests.book_renew_request import BookRene
 from app.modules.book_borrows.domain.requests.book_return_request import (
     BookReturnRequest,
 )
+from app.modules.book_borrows.domain.requests.borrowed_history_params import (
+    BorrowedHistoryParams,
+)
 from app.modules.book_borrows.domain.requests.get_many_book_borrow_request import (
     GetManyBookBorrowRequest,
 )
 from app.modules.book_borrows.domain.responses.book_borrow_response_dto import (
     BookBorrowResponseDTO,
+)
+from app.modules.book_borrows.domain.usecases.get_borrowed_history_use_case import (
+    GetBorrowedHistoryUseCase,
 )
 from app.modules.book_borrows.infra.repositories.book_borrow_repository import (
     BookBorrowRepository,
@@ -311,12 +317,47 @@ class BookBorrowController:
                 msg=f"Something bad happened error: {e}",
             )
 
+    async def borrowed_history(
+        self,
+        params: BorrowedHistoryParams,
+        db: AsyncSession = Depends(get_db),
+        user: User = Depends(get_current_user),
+    ) -> PaginatedResponseMany[BookBorrow]:
+        books_borrow_repository = BookBorrowRepository(db=db)
+
+        get_borrowed_history_use_case = GetBorrowedHistoryUseCase(
+            book_borrow_repository=books_borrow_repository
+        )
+
+        if not user.uuid:
+            raise ValueError("unreachable")
+
+        borrowed = await get_borrowed_history_use_case.execute(
+            ends=params.ends,
+            limit=params.limit,
+            page=params.page,
+            searchable_key=params.searchable_field,
+            searchable_value=params.searchable_value,
+            starts=params.starts,
+            user_id=user.uuid,
+        )
+
+        return PaginatedResponseMany(
+            items=borrowed,
+            next=params.page + 1,
+            page=params.page,
+            total=len(borrowed),
+        )
+
     async def get_book_recommendations(
         self,
         params: BookRecommendationParams = Depends(),
         db: AsyncSession = Depends(get_db),
         user: User = Depends(get_current_user),
     ):
+        if not user.uuid:
+            raise ValueError("unreachable")
+
         try:
             book_borrow_repository = BookBorrowRepository(db=db)
 
@@ -325,7 +366,7 @@ class BookBorrowController:
             )
 
             recommended_book = await get__book_recommendations_use_case.execute(
-                limit=params.limit, user_id=user.uuid
+                limit=params.limit or 5, user_id=user.uuid
             )
 
             return recommended_book
