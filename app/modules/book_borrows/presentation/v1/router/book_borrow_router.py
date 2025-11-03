@@ -42,14 +42,21 @@ router.add_api_route(
 )
 
 router.add_api_route(
-    "/current/",
+    "/current",
     methods=["GET"],
     endpoint=book_borrow_controller.get_currently_borrowed_books,
     response_description="Get books currently being read by user.",
 )
 
 router.add_api_route(
-    "/book-recommendations/",
+    "/history",
+    methods=["GET"],
+    endpoint=book_borrow_controller.borrowed_history,
+    response_description="Returns the past borrowed book by the user"
+)
+
+router.add_api_route(
+    "/book-recommendations",
     methods=["GET"],
     endpoint=book_borrow_controller.get_book_recommendations,
     response_description="Get Book Recommendations according to borrowed book genres.",
