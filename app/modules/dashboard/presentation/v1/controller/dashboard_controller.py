@@ -58,7 +58,7 @@ class DashboardController:
     async def student_dashboard(
         self,
         db: AsyncSession = Depends(get_db),
-        student_id: str = Depends(get_current_user),
+        student: User = Depends(get_current_user),
     ) -> StudentDashboardResponse:
         book_borrow_repository = BookBorrowRepository(db=db)
         bookmark_repository = BookmarkRepository(db=db)
@@ -68,7 +68,7 @@ class DashboardController:
             book_borrow_repository=book_borrow_repository,
         )
 
-        return await get_student_dashboard_info_use_case.execute(student_id=student_id)
+        return await get_student_dashboard_info_use_case.execute(student_id=student.uuid)
 
     async def librarian_dashboard_tables(
         self,

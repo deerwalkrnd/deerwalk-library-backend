@@ -34,4 +34,3 @@ class ReservesRepository(
             return None
 
         return Reserve.model_validate(reserve)
-

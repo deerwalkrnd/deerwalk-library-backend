@@ -19,6 +19,7 @@ class BookBorrow(BaseModel):
     times_renewed: Optional[int] = None
     due_date: Optional[datetime] = None
     fine_status: Optional[FineStatus] = None
+    fine_rate: Optional[int] = None
     returned: Optional[bool] = None
     returned_date: Optional[datetime] = None
     remark: Optional[str] = None
