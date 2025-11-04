@@ -7,9 +7,9 @@ from app.core.domain.entities.user import User
 from app.core.models.book_borrow import FineStatus
 from app.modules.books.domain.entities.book_copy import BookCopy
 
-
 class BookBorrow(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+
 
     id: Optional[int] = None
     user_id: Optional[str] = None
@@ -19,6 +19,7 @@ class BookBorrow(BaseModel):
     times_renewed: Optional[int] = None
     due_date: Optional[datetime] = None
     fine_status: Optional[FineStatus] = None
+    fine_rate: Optional[int] = None
     returned: Optional[bool] = None
     returned_date: Optional[datetime] = None
     remark: Optional[str] = None

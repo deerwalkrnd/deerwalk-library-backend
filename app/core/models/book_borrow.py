@@ -6,13 +6,16 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models.base import Base
+from app.core.dependencies.get_settings import get_settings
 
+
+def get_default_fine_rate():
+    return get_settings().default_fine_amount
 
 class FineStatus(Enum):
     UNPAID = "UNPAID"
     PAID = "PAID"
     DISABLED = "DISABLED"
-
 
 class BookBorrowModel(Base):
     __tablename__ = "book_borrows"
@@ -33,6 +36,7 @@ class BookBorrowModel(Base):
     returned: Mapped[Optional[bool]] = mapped_column(default=False)
     returned_date: Mapped[Optional[datetime]]
     remark: Mapped[Optional[str]]
+    fine_rate: Mapped[Optional[int]] = mapped_column(default=get_default_fine_rate)
 
     book_copy: Mapped["BookCopyModel"] = relationship(  # type: ignore
         "BookCopyModel", back_populates="borrows", lazy="selectin"
