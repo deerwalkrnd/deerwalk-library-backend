@@ -253,7 +253,8 @@ class BookBorrowController:
         await return_book_use_case.execute(
             book_borrow_id=id,
             fine_paid=return_book_request.fine_paid,
-            due_date = book_borrow.due_date,
+            fine_rate=book_borrow.fine_rate,
+            due_date=book_borrow.due_date,
             returned_date=return_book_request.returned_date,
             fine_prev=book_borrow.fine_accumulated
             if book_borrow.fine_accumulated

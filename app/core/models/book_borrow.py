@@ -12,10 +12,12 @@ from app.core.dependencies.get_settings import get_settings
 def get_default_fine_rate():
     return get_settings().default_fine_amount
 
+
 class FineStatus(Enum):
     UNPAID = "UNPAID"
     PAID = "PAID"
     DISABLED = "DISABLED"
+
 
 class BookBorrowModel(Base):
     __tablename__ = "book_borrows"
