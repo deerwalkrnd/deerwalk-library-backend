@@ -1,5 +1,5 @@
 from typing import Optional
-
+from datetime import datetime 
 from pydantic import BaseModel, ConfigDict
 
 
@@ -11,3 +11,4 @@ class Quote(BaseModel):
     id: Optional[int] = None
     author: Optional[str] = None
     quote: Optional[str] = None
+    created_at: Optional[datetime] = None
