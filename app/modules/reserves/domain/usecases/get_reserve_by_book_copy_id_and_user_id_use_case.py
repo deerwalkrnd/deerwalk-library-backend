@@ -11,5 +11,9 @@ class GetReserveByBookCopyIdandUserIdUseCase:
 
     async def execute(self, user_id: str, book_copy_id: int) -> Reserve | None:
         return await self.reserves_repository.find_one(
-            obj=Reserve(book_copy_id=book_copy_id, user_id=user_id, state=BookReserveEnum.RESERVED)
+            obj=Reserve(
+                book_copy_id=book_copy_id,
+                user_id=user_id,
+                state=BookReserveEnum.RESERVED,
+            )
         )

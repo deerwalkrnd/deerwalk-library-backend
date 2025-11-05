@@ -4,6 +4,7 @@ from fastapi import Depends
 from fastapi.logger import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.background.tasks.email_task import send_new_event_email_task
 from app.core.dependencies.database import get_db
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
@@ -62,6 +63,11 @@ class EventsController:
                     code=ErrorCode.INVALID_FIELDS,
                     msg="unable to create event",
                 )
+            
+            send_new_event_email_task.delay(
+                event_name=created.name,
+                event_date=created.event_date
+            )
 
             return created
         except Exception as e:
