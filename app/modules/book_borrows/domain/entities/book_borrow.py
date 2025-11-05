@@ -23,6 +23,7 @@ class BookBorrow(BaseModel):
     returned: Optional[bool] = None
     returned_date: Optional[datetime] = None
     remark: Optional[str] = None
+    created_at: Optional[datetime] = None
 
     user: Optional[User] = None
     book_copy: Optional[BookCopy] = None

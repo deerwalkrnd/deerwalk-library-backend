@@ -10,16 +10,4 @@ class GetTopOverduesUseCase:
         self.book_borrow_repository = book_borrow_repository
 
     async def execute(self, limit: int) -> List[BookBorrow]:
-        return await self.book_borrow_repository.filter(
-            limit=limit,
-            offset=0,
-            filter=BookBorrow(
-                returned=False,
-            ),
-            sort_by="created_at",
-            descending=False,
-            start_date=None,
-            end_date=None,
-            searchable_key=None,
-            searchable_value=None,
-        )
+        return await self.book_borrow_repository.get_top_overdues(limit=limit)

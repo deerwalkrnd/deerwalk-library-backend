@@ -230,9 +230,6 @@ class BookBorrowRepository(
     async def get_book_recommendations(
         self, user_id: str, limit: int = 10
     ) -> List[Book]:
-        print(f"user_id being passed: '{user_id}'")
-        print(f"user_id type: {type(user_id)}")
-
         currently_borrowed_query = (
             select(BookCopyModel.book_id)
             .select_from(BookBorrowModel)
@@ -291,6 +288,28 @@ class BookBorrowRepository(
         result = await self.db.execute(get_books_query)
 
         print(f"\nresult: {result}\n")
-        recommended_books = [row[0] for row in result.fetchall()]
+        recommendations = result.scalars().unique().all()
+
+        recommended_books = [
+            self.entity.model_validate(book) for book in recommendations
+        ]
 
         return recommended_books
+
+    async def get_top_overdues(self, limit: int) -> List[BookBorrow]:
+        query = (
+            select(self.model)
+            .where(
+                and_(
+                    self.model.deleted == False,
+                    self.model.returned == False,
+                    self.model.due_date < datetime.now(),
+                )
+            )
+            .limit(limit)
+        )
+
+        result = await self.db.execute(query)
+        overdue_books = result.scalars().unique().all()
+        top_overdue_books = [self.entity.model_validate(row) for row in overdue_books]
+        return top_overdue_books
