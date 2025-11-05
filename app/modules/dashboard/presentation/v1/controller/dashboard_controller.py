@@ -34,6 +34,12 @@ from app.modules.dashboard.domain.usecases.get_top_borrowed_books_use_case impor
 from app.modules.dashboard.domain.usecases.get_top_overdues_use_case import (
     GetTopOverduesUseCase,
 )
+from app.modules.reserves.infra.repositories.reserves_repository import (
+    ReservesRepository,
+)
+from app.modules.dashboard.domain.usecases.get_top_issued_books_use_case import (
+    GetTopIssuedBooksUseCase,
+)
 
 
 class DashboardController:
@@ -68,7 +74,9 @@ class DashboardController:
             book_borrow_repository=book_borrow_repository,
         )
 
-        return await get_student_dashboard_info_use_case.execute(student_id=student.uuid)
+        return await get_student_dashboard_info_use_case.execute(
+            student_id=student.uuid
+        )
 
     async def librarian_dashboard_tables(
         self,
@@ -77,6 +85,7 @@ class DashboardController:
     ) -> LibrarianDashboardTablesResponse:
         book_borrow_repository = BookBorrowRepository(db=db)
         book_repository = BookRepository(db=db)
+        reserve_repository = ReservesRepository(db=db)
 
         get_top_overdues_use_case = GetTopOverduesUseCase(
             book_borrow_repository=book_borrow_repository
@@ -86,9 +95,18 @@ class DashboardController:
             book_repository=book_repository
         )
 
+        get_top_issued_books_use_case = GetTopIssuedBooksUseCase(
+            reserve_repository=reserve_repository
+        )
+
         top_overdues = await get_top_overdues_use_case.execute(limit=5)
         top_borrowed_books = await get_top_borrowed_books_use_case.execute(limit=5)
+        top_issued_books = await get_top_issued_books_use_case.execute(limit=5)
+
+        print(top_issued_books)
 
         return LibrarianDashboardTablesResponse(
-            top_overdues=top_overdues, top_books_borrowed=top_borrowed_books
+            top_overdues=top_overdues,
+            top_books_borrowed=top_borrowed_books,
+            top_issued_books=top_issued_books,
         )
