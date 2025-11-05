@@ -68,7 +68,9 @@ class DashboardController:
             book_borrow_repository=book_borrow_repository,
         )
 
-        return await get_student_dashboard_info_use_case.execute(student_id=student.uuid)
+        return await get_student_dashboard_info_use_case.execute(
+            student_id=student.uuid
+        )
 
     async def librarian_dashboard_tables(
         self,

@@ -1,6 +1,7 @@
+from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import and_, func, select
-from app.core.domain.entities.user import UserWithPassword
+from app.core.domain.entities.user import User, UserWithPassword
 from app.core.domain.repositories.user_repository_interface import (
     UserRepositoryInterface,
 )
@@ -19,3 +20,13 @@ class UserRepository(Repository[UserModel, UserWithPassword], UserRepositoryInte
         result = await self.db.execute(query)
         students_count = result.scalar() or 0
         return students_count
+
+    async def get_all_students(self) -> List[User]:
+        query = select(self.model).where(
+            and_(self.model.deleted == False, self.model.role == UserRole.STUDENT)
+        )
+
+        result = await self.db.execute(query)
+        students = result.scalars().unique().all()
+
+        return [self.entity.model_validate(student) for student in students]
