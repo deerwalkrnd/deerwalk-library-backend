@@ -98,7 +98,7 @@ class ReservesController:
             )
         )
 
-        if already_reserved and already_reserved.state == BookReserveEnum.BORROWED:
+        if already_reserved:
             raise LibraryException(
                 status_code=409,
                 code=ErrorCode.DUPLICATE_ENTRY,
