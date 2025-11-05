@@ -39,3 +39,7 @@ class BookBorrowRepositoryInterface(RepositoryInterface[BookBorrow]):
     @abstractmethod
     async def get_book_recommendations(self, limit: int, user_id: str) -> List[Book]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def get_top_overdues(self, limit: int) -> List[BookBorrow]:
+        raise NotImplementedError

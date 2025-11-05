@@ -63,10 +63,9 @@ class EventsController:
                     code=ErrorCode.INVALID_FIELDS,
                     msg="unable to create event",
                 )
-            
+
             send_new_event_email_task.delay(
-                event_name=created.name,
-                event_date=created.event_date
+                event_name=created.name, event_date=created.event_date
             )
 
             return created
