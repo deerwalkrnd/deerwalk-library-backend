@@ -41,6 +41,9 @@ from app.modules.reserves.domain.usecases.remove_reserve_use_case import (
 from app.modules.reserves.domain.usecases.reserve_book_use_case import (
     ReserveBookUseCase,
 )
+from app.modules.reserves.domain.utils.validate_get_reserves_request import (
+    validate_get_reserves_request,
+)
 from app.modules.reserves.infra.repositories.reserves_repository import (
     ReservesRepository,
 )
@@ -194,8 +197,6 @@ class ReservesController:
     async def get_reserve_requests(
         self, params: GetReservesRequest = Depends(), db: AsyncSession = Depends(get_db)
     ) -> PaginatedResponseMany[Reserve]:
-        reserves_repository = ReservesRepository(db=db)
-
         if params.searchable_value and not params.searchable_field:
             raise LibraryException(
                 code=ErrorCode.INVALID_FIELDS,
@@ -209,6 +210,10 @@ class ReservesController:
                 status_code=400,
                 msg="searchable value needs searchable field",
             )
+
+        validate_get_reserves_request(params)
+
+        reserves_repository = ReservesRepository(db=db)
 
         get_many_reserves_use_case = GetManyReservesUseCase(
             reserves_repository=reserves_repository
