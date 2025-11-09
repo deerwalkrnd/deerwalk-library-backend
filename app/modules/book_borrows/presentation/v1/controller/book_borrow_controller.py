@@ -28,6 +28,9 @@ from app.modules.book_borrows.domain.responses.book_borrow_response_dto import (
 from app.modules.book_borrows.domain.usecases.get_borrowed_history_use_case import (
     GetBorrowedHistoryUseCase,
 )
+from app.modules.book_borrows.domain.utils.validate_get_borrows_request import (
+    validate_get_borrows_request,
+)
 from app.modules.book_borrows.infra.repositories.book_borrow_repository import (
     BookBorrowRepository,
 )
@@ -160,6 +163,8 @@ class BookBorrowController:
         db: AsyncSession = Depends(get_db),
         params: GetManyBookBorrowRequest = Depends(),
     ) -> PaginatedResponseMany[BookBorrowResponseDTO]:
+        validate_get_borrows_request(request=params)
+
         book_borrow_repository = BookBorrowRepository(db=db)
 
         get_many_borrow_books_with_user_and_book_use_case = (
