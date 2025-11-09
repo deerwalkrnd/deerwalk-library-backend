@@ -10,6 +10,7 @@ from app.core.infra.repositories.repository import Repository
 from app.core.models.book import BookModel
 from app.core.models.book_borrow import BookBorrowModel, FineStatus
 from app.core.models.book_copy import BookCopyModel
+from app.core.models.users import UserModel
 from app.modules.book_borrows.domain.entities.book_borrow import BookBorrow
 from app.modules.book_borrows.domain.repositories.book_borrow_repository_interface import (
     BookBorrowRepositoryInterface,
@@ -63,6 +64,12 @@ class BookBorrowRepository(
             .where(BookBorrowModel.deleted == False)
         )
 
+        query = (
+            query.join(BookCopyModel, BookBorrowModel.book_copy_id == BookCopyModel.id)
+            .join(UserModel, UserModel.uuid == BookBorrowModel.user_id)
+            .join(BookModel, BookModel.id == BookCopyModel.book_id)
+        )
+
         if filter is not None:
             conditions = filter.model_dump(exclude_unset=True)
             for key, value in conditions.items():
@@ -78,11 +85,30 @@ class BookBorrowRepository(
                 query = query.where(date_column <= end_date)
 
         if searchable_key and searchable_value:
-            if not hasattr(self.model, searchable_key):
-                raise ValueError(f"Invalid searchable_key: {searchable_key}")
-            query = query.where(
-                getattr(self.model, searchable_key).like(f"{searchable_value}%")
-            )
+            match searchable_key:
+                case "student_name":
+                    query = query.where(UserModel.name.ilike(f"%{searchable_value}%"))
+                case "book_title":
+                    query = query.where(BookModel.title.ilike(f"%{searchable_value}%"))
+                case "book_copy_id":
+                    try:
+                        book_copy_id = int(searchable_value)
+                    except ValueError as e:
+                        raise e
+
+                    query = query.where(BookCopyModel.id == book_copy_id)
+                case "unique_identifier":
+                    query = query.where(
+                        BookCopyModel.unique_identifier.ilike(f"%{searchable_value}%")
+                    )
+                case _:
+                    if not hasattr(self.model, searchable_key):
+                        raise ValueError(f"Invalid searchable_key: {searchable_key}")
+                    query = query.where(
+                        getattr(self.model, searchable_key).ilike(
+                            f"%{searchable_value}%"
+                        )
+                    )
 
         if not hasattr(self.model, sort_by):
             raise ValueError(f"Invalid sort_by column: {sort_by}")
