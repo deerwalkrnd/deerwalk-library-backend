@@ -12,7 +12,13 @@ class GetManyEventsUseCase:
         self.event_repository = event_repository
 
     async def execute(
-        self, page: int, limit: int, starts: datetime, ends: datetime
+        self,
+        page: int,
+        limit: int,
+        starts: datetime | None,
+        ends: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
     ) -> List[Event]:
         offset = (page - 1) * limit
 
@@ -23,8 +29,8 @@ class GetManyEventsUseCase:
             start_date=starts,
             end_date=ends,
             limit=limit,
-            searchable_key=None,
-            searchable_value=None,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
             filter=None,
         )
         return events

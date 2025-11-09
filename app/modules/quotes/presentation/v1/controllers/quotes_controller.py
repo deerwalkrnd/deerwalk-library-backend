@@ -54,6 +54,8 @@ class QuotesController:
             )
         except Exception as e:
             logger.logger.error(e)
+            if isinstance(e, LibraryException):
+                raise e
             raise LibraryException(
                 status_code=500,
                 code=ErrorCode.UNKOWN_ERROR,
@@ -77,6 +79,8 @@ class QuotesController:
             return new_quote
         except ValueError as e:
             logger.logger.error(e)
+            if isinstance(e, LibraryException):
+                raise e
             raise LibraryException(
                 status_code=409,
                 code=ErrorCode.DUPLICATE_ENTRY,

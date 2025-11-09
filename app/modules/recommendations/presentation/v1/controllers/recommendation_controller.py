@@ -46,6 +46,15 @@ class RecommendationController:
     ) -> PaginatedResponseMany[Recommendation] | None:
         recommendation_repository = RecommendationRepository(db=db)
 
+        if (params.searchable_field and not params.searchable_value) or (
+            params.searchable_value and not params.searchable_field
+        ):
+            raise LibraryException(
+                code=ErrorCode.INVALID_FIELDS,
+                status_code=400,
+                msg="searchable params need both value and key",
+            )
+
         try:
             get_many_recommendation_use_case = GetManyRecommendationUseCase(
                 recommendation_repository=recommendation_repository
@@ -54,7 +63,13 @@ class RecommendationController:
             recommendations = await get_many_recommendation_use_case.execute(
                 page=params.page,
                 limit=params.limit,
+                starts=params.starts,
+                ends=params.ends,
+                searchable_key=params.searchable_field,
+                searchable_value=params.searchable_value,
             )
+
+
             return PaginatedResponseMany(
                 page=params.page,
                 total=len(recommendations),

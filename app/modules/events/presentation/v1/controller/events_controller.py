@@ -117,19 +117,26 @@ class EventsController:
     ) -> PaginatedResponseMany[Event]:
         event_repository = EventRepository(db=db)
 
+        if (params.searchable_field and not params.searchable_value) or (
+            params.searchable_value and not params.searchable_field
+        ):
+            raise LibraryException(
+                code=ErrorCode.INVALID_FIELDS,
+                status_code=400,
+                msg="searchable params need both value and key",
+            )
+
         get_many_events_use_case = GetManyEventsUseCase(
             event_repository=event_repository
         )
-
-        if not params.starts or not params.ends:
-            params.starts = datetime.now() - timedelta(days=30)
-            params.ends = datetime.now() + timedelta(days=5)
 
         events = await get_many_events_use_case.execute(
             params.page,
             params.limit,
             params.starts,
             params.ends,
+            searchable_key=params.searchable_field,
+            searchable_value=params.searchable_value,
         )
 
         return PaginatedResponseMany(
