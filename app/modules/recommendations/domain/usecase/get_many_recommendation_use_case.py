@@ -18,7 +18,7 @@ class GetManyRecommendationUseCase:
         page: int,
         limit: int,
         starts: datetime | None,
-        ends: datetime | None, 
+        ends: datetime | None,
         searchable_key: str | None,
         searchable_value: str | None,
     ) -> List[Recommendation]:
