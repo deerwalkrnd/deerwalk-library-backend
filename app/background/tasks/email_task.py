@@ -20,8 +20,14 @@ from app.modules.auth.domain.templates.welcome_template import get_welcome_templ
 from app.modules.events.domain.templates.new_event_template import (
     get_new_event_template,
 )
+from app.modules.book_borrows.domain.templates.new_borrow_template import (
+    get_new_borrow_template,
+)
 from app.modules.users.domain.usecases.get_all_students_use_case import (
     GetAllStudentsUseCase,
+)
+from app.modules.users.domain.usecases.get_user_by_uuid_use_case import (
+    GetUserByUUIDUseCase,
 )
 
 
@@ -143,3 +149,50 @@ def send_new_event_email_task(
         )
 
         asyncio.run(email_service.send_email(message=email_object))
+
+
+@celery_app.task(bind=True, base=EmailTask, name="send_new_borrow_email")
+def send_new_borrow_email_task(
+    self: EmailTask,
+    borrow_id: int,
+    isbn: str,
+    book_title: str,
+    due_date: datetime,
+    user_id: str,
+    from_email: str = "Deerwalk Library <library@deerwalk.edu.np>",
+):
+    try:
+        email_service = self.get_email_service()
+        db = self.get_db()
+
+        user_repository = UserRepository(db=db)
+
+        get_user_by_uuid_use_case = GetUserByUUIDUseCase(
+            user_repository=user_repository
+        )
+
+        user = get_user_by_uuid_use_case.execute(uuid=user_id)
+
+        new_borrow_template = asyncio.run(
+            get_new_borrow_template(
+                book_title=book_title,
+                isbn=isbn,
+                borrow_id=borrow_id,
+                due_date=due_date,
+            )
+        )
+
+        subject = f"Book Issued"
+        email = user.email
+
+        email_object = asyncio.run(
+            create_email(
+                to=email, subject=subject, html=new_borrow_template, _from=from_email
+            )
+        )
+
+        asyncio.run(email_service.send_email(message=email_object))
+
+    except Exception as e:
+        print(f"Failed to send email to {email}: {str(e)}")
+        self.retry(exc=e, countdown=60 * (2**self.request.retries), max_retries=3)

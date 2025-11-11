@@ -62,6 +62,7 @@ from app.modules.book_borrows.domain.usecases.get_book_recommendations_use_case 
 from app.modules.book_borrows.domain.requests.book_recommendation_params import (
     BookRecommendationParams,
 )
+from app.background.tasks.email_task import send_new_borrow_email_task
 
 
 class BookBorrowController:
@@ -144,6 +145,14 @@ class BookBorrowController:
 
             await update_book_copy_availability_use_case.execute(
                 book_copy_id=book_copy_id, is_available=False
+            )
+
+            send_new_borrow_email_task.delay(
+                isbn=borrow.book_copy.book.isbn,
+                due_date=borrow.due_date,
+                borrow_id=borrow.id,
+                book_title=borrow.book_copy.book.title,
+                user_id=borrow.user_id
             )
 
             return borrow
