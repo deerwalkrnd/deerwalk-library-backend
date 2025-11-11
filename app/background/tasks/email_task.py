@@ -1,5 +1,4 @@
 import asyncio
-from re import sub
 from typing import Any
 
 from celery import Task
@@ -7,9 +6,11 @@ from fastapi.logger import logger
 from datetime import datetime
 
 from app.background.celery_app import celery_app
+from app.background.tasks.modules.events.usecases.send_event_creation_notification import (
+    SendEventCreationNotificationUseCase,
+)
 from app.core.dependencies.database import get_db
 from app.core.dependencies.get_smtp import get_smtp
-from app.core.infra.repositories.user_repository import UserRepository
 from app.core.infra.services.email_notification_service import EmailNotificationService
 from app.core.utils.make_email import create_email
 from app.modules.auth.domain.templates.password_reset_template import (
@@ -17,12 +18,6 @@ from app.modules.auth.domain.templates.password_reset_template import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.auth.domain.templates.welcome_template import get_welcome_template
-from app.modules.events.domain.templates.new_event_template import (
-    get_new_event_template,
-)
-from app.modules.users.domain.usecases.get_all_students_use_case import (
-    GetAllStudentsUseCase,
-)
 
 
 class EmailTask(Task):  # type: ignore
@@ -109,37 +104,10 @@ def send_new_event_email_task(
     event_date: datetime,
     from_email: str = "Deerwalk Library <library@deerwalk.edu.np>",
 ):
-    email_service = self.get_email_service()
+    send_email_creation_notification_use_case = SendEventCreationNotificationUseCase()
 
-    db = self.get_db()
-    user_repository = UserRepository(db=db)
-
-    get_all_students_use_case = GetAllStudentsUseCase(user_repository=user_repository)
-
-    all_students = asyncio.run(get_all_students_use_case.execute())
-
-    for student in all_students:
-        if not student.name:
-            student.name = "Student"
-
-        if not student.email:
-            continue
-
-        new_event_tempelate = asyncio.run(
-            get_new_event_template(
-                event_name=event_name, event_date=event_date, name=student.name
-            )
+    asyncio.run(
+        send_email_creation_notification_use_case.execute(
+            event_name=event_name, event_date=event_date, from_email=from_email
         )
-
-        subject = f"New Event Added | {event_name}"
-
-        email_object = asyncio.run(
-            create_email(
-                to=student.email,
-                subject=subject,
-                html=new_event_tempelate,
-                _from=from_email,
-            )
-        )
-
-        asyncio.run(email_service.send_email(message=email_object))
+    )

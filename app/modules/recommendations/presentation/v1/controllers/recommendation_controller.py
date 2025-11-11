@@ -69,7 +69,6 @@ class RecommendationController:
                 searchable_value=params.searchable_value,
             )
 
-
             return PaginatedResponseMany(
                 page=params.page,
                 total=len(recommendations),
