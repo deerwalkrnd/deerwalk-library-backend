@@ -146,7 +146,7 @@ class ReservesController:
                 status_code=404, code=ErrorCode.NOT_FOUND, msg="reserve was not found"
             )
 
-        if reserve.user_id != user.uuid:
+        if (reserve.user_id != user.uuid and user.role=="STUDENT"):
             raise LibraryException(
                 status_code=403,
                 code=ErrorCode.INSUFFICIENT_PERMISSION,
