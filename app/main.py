@@ -4,6 +4,8 @@ from fastapi.responses import JSONResponse
 
 from app.core.exc.error_code import ErrorCode
 from app.routers.v1.router import v1_router
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI(
     title="Deerwalk Library Backend API",
@@ -12,6 +14,16 @@ app = FastAPI(
 )
 
 app.include_router(v1_router)
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://dss-library.deerwalk.edu.np"],
+    allow_credentials=True,
+    allow_methods=["PUT", "GET", "POST", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["*"],
+)
 
 
 # for missing fields
