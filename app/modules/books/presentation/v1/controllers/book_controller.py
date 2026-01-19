@@ -285,11 +285,25 @@ class BookController:
                 msg="Only CSV files are allowed!",
             )
 
-        book_requests_model = await parse_book_csv_to_create_requests(file=file)
+        # Get all available genre names for validation
+        genre_repository = GenreRepository(db=db)
+        from app.modules.genres.domain.usecases.get_all_genre_names_use_case import (
+            GetAllGenreNamesUseCase,
+        )
+        get_all_genre_names_use_case = GetAllGenreNamesUseCase(
+            genre_repository=genre_repository
+        )
+        available_genres = await get_all_genre_names_use_case.execute()
+
+        # Parse and validate CSV with genre name validation
+        book_requests_model = await parse_book_csv_to_create_requests(
+            file=file,
+            available_genres=available_genres,
+        )
+
         book_repository = BookRepository(db=db)
         books_genre_repository = BooksGenreRepository(db=db)
         book_copy_repository = BookCopyRepository(db=db)
-        genre_repository = GenreRepository(db=db)
 
         book_bulk_upload_service = BookBulkUploadService(
             book_repository=book_repository,

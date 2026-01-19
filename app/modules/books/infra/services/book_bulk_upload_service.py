@@ -16,7 +16,9 @@ from app.modules.books.domain.repositories.book_repository_interface import (
 from app.modules.books.domain.repositories.books_genre_repository_interface import (
     BooksGenreRepositoryInterface,
 )
-from app.modules.books.domain.requests.book_create_request import CreateBookRequest
+from app.modules.books.domain.requests.bulk_book_create_request import (
+    BulkCreateBookRequest,
+)
 from app.modules.books.domain.responses.book_bulk_upload_response import (
     BookBulkUploadRespose,
 )
@@ -41,8 +43,8 @@ from app.modules.books.domain.usecases.get_books_based_on_conditions_use_case im
 from app.modules.genres.domain.repositories.genre_repository_interface import (
     GenreRepositoryInterface,
 )
-from app.modules.genres.domain.usecases.get_genre_by_id_use_case import (
-    GetGenreByIdUseCase,
+from app.modules.genres.domain.usecases.get_genre_by_title_use_case import (
+    GetGenreByTitleUseCase,
 )
 
 
@@ -62,7 +64,7 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
         self.db = db
 
     async def bulk_upload(
-        self, create_book_requests: List[CreateBookRequest]
+        self, create_book_requests: List[BulkCreateBookRequest]
     ) -> BookBulkUploadRespose:
         inserted = 0
         skipped: List[BookBulkUploadSkipResponse] = []
@@ -112,7 +114,9 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
 
         return BookBulkUploadRespose(inserted=inserted, skipped=skipped)
 
-    async def create_book(self, create_book_request: CreateBookRequest) -> Book | None:
+    async def create_book(
+        self, create_book_request: BulkCreateBookRequest
+    ) -> Book | None:
         if not create_book_request.genres or len(create_book_request.genres) < 1:
             raise LibraryException(
                 status_code=400,
@@ -120,18 +124,21 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
                 msg="All Book Creation Requests must have atleast one genre",
             )
 
-        get_genre_by_id_use_case = GetGenreByIdUseCase(
+        # Resolve genre names to IDs
+        get_genre_by_title_use_case = GetGenreByTitleUseCase(
             genre_repository=self.genre_repository
         )
 
-        for genre_id in create_book_request.genres:
-            genre = await get_genre_by_id_use_case.execute(id=genre_id)
-            if not genre:
+        genre_ids: List[int] = []
+        for genre_name in create_book_request.genres:
+            genre = await get_genre_by_title_use_case.execute(title=genre_name)
+            if not genre or not genre.id:
                 raise LibraryException(
                     status_code=404,
                     code=ErrorCode.NOT_FOUND,
-                    msg=f"Genre with id {genre_id} does not exist",
+                    msg=f"Genre with name '{genre_name}' does not exist",
                 )
+            genre_ids.append(genre.id)
 
         get_books_based_on_conditions_use_case = GetBooksBasedOnConditionsUseCase(
             book_repository=self.book_repository
@@ -196,7 +203,7 @@ class BookBulkUploadService(BookBulkUploadServiceInterface):
                     condition=book_copy.condition,
                 )
 
-        for genre_id in create_book_request.genres:
+        for genre_id in genre_ids:
             associate_book_with_genre_use_case = AssociateBookWithGenreUseCase(
                 books_genre_repository=self.books_genre_repository
             )

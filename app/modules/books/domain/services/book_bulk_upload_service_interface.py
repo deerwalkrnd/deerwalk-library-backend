@@ -9,7 +9,9 @@ from app.modules.books.domain.repositories.book_repository_interface import (
 from app.modules.books.domain.repositories.books_genre_repository_interface import (
     BooksGenreRepositoryInterface,
 )
-from app.modules.books.domain.requests.book_create_request import CreateBookRequest
+from app.modules.books.domain.requests.bulk_book_create_request import (
+    BulkCreateBookRequest,
+)
 from app.modules.books.domain.responses.book_bulk_upload_response import (
     BookBulkUploadRespose,
 )
@@ -31,9 +33,11 @@ class BookBulkUploadServiceInterface:
         raise NotImplementedError
 
     async def bulk_upload(
-        self, create_book_requests: List[CreateBookRequest]
+        self, create_book_requests: List[BulkCreateBookRequest]
     ) -> BookBulkUploadRespose:
         raise NotImplementedError
 
-    async def create_book(self, create_book_request: CreateBookRequest) -> Book | None:
+    async def create_book(
+        self, create_book_request: BulkCreateBookRequest
+    ) -> Book | None:
         raise NotImplementedError
