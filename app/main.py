@@ -17,13 +17,15 @@ app.include_router(v1_router)
 
 
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["https://dss-library.deerwalk.edu.np"],
-#     allow_credentials=True,
-#     allow_methods=["PUT", "GET", "POST", "DELETE", "OPTIONS", "PATCH"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://dss-library.deerwalk.edu.np",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # for missing fields
