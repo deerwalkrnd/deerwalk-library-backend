@@ -10,10 +10,8 @@ class Settings(BaseSettings):
     jtw_key: str = "hahahahahahayolobotsharu"
     database_url: str
 
-    s3_access_key_id: str
-    s3_secret_access_key: str
-    s3_bucket_name: str
-    s3_region_name: str
+    upload_dir: str = "media"
+    media_base_url: str = "http://localhost:8000"
 
     smtp_username: str
     smtp_password: str
@@ -28,4 +26,4 @@ class Settings(BaseSettings):
     redis_url: str
     frontend_url: str
 
-    model_config = SettingsConfigDict(env_file=".env.dev.aws")
+    model_config = SettingsConfigDict(env_file=".env.dev")

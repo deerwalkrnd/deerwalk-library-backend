@@ -5,7 +5,9 @@ build/
 dist/
 wheels/
 *.egg-info
-.env.dev.aws
+
+# Locally-stored uploads (book covers, profile images, event banners)
+media/
 
 # Virtual environments
 .venv

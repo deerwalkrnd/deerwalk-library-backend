@@ -6,8 +6,8 @@ from app.core.dependencies.middleware.get_current_librarian import get_current_l
 from app.core.domain.entities.user import User
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
-from app.core.infra.services.s3_file_service import S3FileService
-from app.modules.files.dependencies.get_s3_file_service import get_s3_file_service
+from app.core.domain.services.file_service_interface import FileServiceInterface
+from app.modules.files.dependencies.get_file_service import get_file_service
 from app.modules.files.domain.requests.file_type_enum import LibraryFileType
 from app.modules.files.domain.responses.file_response import FileResponse
 
@@ -23,7 +23,7 @@ class FileController:
         file: UploadFile,
         type: LibraryFileType,
         _: User = Depends(get_current_librarian),
-        file_service: S3FileService = Depends(get_s3_file_service),
+        file_service: FileServiceInterface = Depends(get_file_service),
     ) -> FileResponse:
         try:
             path = ""
