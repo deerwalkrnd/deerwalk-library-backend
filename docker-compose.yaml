@@ -35,3 +35,15 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  # Persistent storage for user-uploaded files (book covers, profile images,
+  # event banners) so they survive container rebuilds. The backend service is
+  # managed separately by devops and is not defined here; mount this volume into
+  # that container at the app's upload_dir (default "media", i.e. /app/media):
+  #   services:
+  #     backend:
+  #       volumes:
+  #         - media_data:/app/media
+  #       environment:
+  #         UPLOAD_DIR: /app/media
+  #         MEDIA_BASE_URL: https://<backend-host>
+  media_data:

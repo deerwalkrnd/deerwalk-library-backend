@@ -5,7 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "aiobotocore>=2.23.2",
     "aiosmtplib>=4.0.1",
     "alembic>=1.16.4",
     "argon2-cffi>=25.1.0",
@@ -21,7 +20,6 @@ dependencies = [
     "python-multipart>=0.0.20",
     "ruff>=0.12.4",
     "sqlalchemy[asyncio]>=2.0.41",
-    "types-aiobotocore[essential]>=2.23.2",
     "uvicorn>=0.35.0",
 ]
 

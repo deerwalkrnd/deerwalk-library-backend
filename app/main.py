@@ -1,7 +1,11 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request, logger
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
+from app.core.dependencies.get_settings import get_settings
 from app.core.exc.error_code import ErrorCode
 from app.routers.v1.router import v1_router
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,6 +18,11 @@ app = FastAPI(
 )
 
 app.include_router(v1_router)
+
+# Serve locally-stored uploads (book covers, profile images, event banners).
+_media_dir = Path(get_settings().upload_dir)
+_media_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/media", StaticFiles(directory=str(_media_dir)), name="media")
 
 
 

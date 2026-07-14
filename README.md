@@ -31,7 +31,7 @@ Presentation → Use Cases → Domain → Infrastructure
 | **Presentation** | FastAPI controllers and routers handling HTTP requests |
 | **Use Cases** | Application-specific business logic |
 | **Domain** | Entities, value objects, interfaces (pure business rules) |
-| **Infra** | External implementations (DB, S3, SMTP, etc.) |
+| **Infra** | External implementations (DB, local file storage, SMTP, etc.) |
 | **Core** | Shared global components like database setup, settings, and reusable interfaces |
 
 ---
