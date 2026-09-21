@@ -118,12 +118,9 @@ class BookBorrowRepository(
 
         query = query.limit(limit).offset(offset)
 
-        print(query)
-
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
 
-        print(data)
 
         return [BookBorrowResponseDTO.model_validate(obj=x) for x in data]
 
@@ -302,8 +299,6 @@ class BookBorrowRepository(
         result = await self.db.execute(recommendations_query)
         recommended_book_ids = [row[0] for row in result.fetchall()]
 
-        print(f"recommended_book_ids: {recommended_book_ids}")
-
         get_books_query = (
             select(BookModel)
             .where(and_(BookModel.id.in_(recommended_book_ids)))
@@ -312,8 +307,6 @@ class BookBorrowRepository(
         )
 
         result = await self.db.execute(get_books_query)
-
-        print(f"\nresult: {result}\n")
         recommendations = result.scalars().unique().all()
 
         recommended_books = [

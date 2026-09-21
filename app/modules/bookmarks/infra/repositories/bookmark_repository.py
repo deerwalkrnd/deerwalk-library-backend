@@ -47,8 +47,6 @@ class BookmarkRepository(
             .where(self.model.deleted == False)
         )
 
-        print(query)
-
         if filter is not None:
             conditions = filter.model_dump(exclude_unset=True)
             for key, value in conditions.items():
