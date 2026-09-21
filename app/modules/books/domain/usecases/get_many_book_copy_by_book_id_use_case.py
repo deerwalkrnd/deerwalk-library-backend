@@ -33,3 +33,19 @@ class GetManyBookCopyByBookIdUseCase:
             filter=BookCopy(book_id=book_id, is_available=True),
         )
         return book_copies
+
+    async def count(
+        self,
+        searchable_field: str | None,
+        searchable_value: str | None,
+        starts: datetime | None,
+        ends: datetime | None,
+        book_id: int,
+    ) -> int:
+        return await self.book_copy_repository.count(
+            end_date=ends,
+            start_date=starts,
+            searchable_key=searchable_field,
+            searchable_value=searchable_value,
+            filter=BookCopy(book_id=book_id, is_available=True),
+        )

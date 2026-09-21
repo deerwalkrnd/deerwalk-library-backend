@@ -71,8 +71,15 @@ class UsersController:
             descending=params.is_descending,
         )
 
-        return PaginatedResponseMany(
-            page=params.page, total=len(users), next=params.page + 1, items=users
+        total = await get_many_users_use_case.count(
+            searchable_field=params.searchable_field,
+            searchable_value=params.searchable_value,
+            starts=params.starts,
+            ends=params.ends,
+        )
+
+        return PaginatedResponseMany.build(
+            page=params.page, limit=params.limit, total=total, items=users
         )
 
     async def list_one_user(

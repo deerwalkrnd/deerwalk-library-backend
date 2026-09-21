@@ -11,6 +11,9 @@ from sqlalchemy import (
     Update,
     delete,
     desc,
+    distinct,
+    func,
+    inspect,
     select,
     text,
     update,
@@ -137,28 +140,25 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
 
         return result.rowcount
 
-    async def filter(
+    def _apply_filter_conditions[Q: Select[Any]](
         self,
+        query: Q,
         filter: BaseModel | None,
-        limit: int,
-        offset: int,
-        sort_by: str,
-        descending: bool,
         start_date: datetime | None,
         end_date: datetime | None,
         searchable_key: str | None,
         searchable_value: str | None,
-    ) -> List[T]:
-        if limit <= 0 or offset < 0:
-            raise ValueError("Invalid limit or offset")
+    ) -> Q:
+        """Apply the WHERE clauses shared by ``filter`` and ``count``.
 
+        Both must narrow rows identically, otherwise a page's ``total`` would
+        not describe the same set the page was drawn from.
+        """
         if start_date and end_date and start_date > end_date:
             raise ValueError("start_date cannot be after end_date")
 
         if searchable_key and not searchable_value:
             raise ValueError("searchable_value required when searchable_key provided")
-
-        query = select(self.model).where(self.model.deleted == False)
 
         if filter is not None:
             conditions = filter.model_dump(exclude_unset=True)
@@ -181,6 +181,33 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
                 getattr(self.model, searchable_key).ilike(f"%{searchable_value}%")
             )
 
+        return query
+
+    async def filter(
+        self,
+        filter: BaseModel | None,
+        limit: int,
+        offset: int,
+        sort_by: str,
+        descending: bool,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> List[T]:
+        if limit <= 0 or offset < 0:
+            raise ValueError("Invalid limit or offset")
+
+        query = select(self.model).where(self.model.deleted == False)
+        query = self._apply_filter_conditions(
+            query,
+            filter=filter,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )
+
         if not hasattr(self.model, sort_by):
             raise ValueError(f"Invalid sort_by column: {sort_by}")
 
@@ -192,6 +219,38 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
         return [self.entity.model_validate(obj=x) for x in data]
+
+    async def count(
+        self,
+        filter: BaseModel | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        searchable_key: str | None = None,
+        searchable_value: str | None = None,
+    ) -> int:
+        """Total rows matching the same predicate ``filter`` would apply.
+
+        Counts distinct primary keys rather than rows: ``filter`` calls
+        ``.unique()`` because eager-loaded relationships can fan a single
+        entity out over several rows, and a plain COUNT(*) would inherit that
+        inflation.
+        """
+        primary_key = inspect(self.model).primary_key[0]
+
+        query = select(func.count(distinct(primary_key))).where(
+            self.model.deleted == False
+        )
+        query = self._apply_filter_conditions(
+            query,
+            filter=filter,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )
+
+        result = await self.db.execute(query)
+        return result.scalar_one()
 
     async def insert_many(self, rows: List[T]) -> tuple[int, int]:
         inserted_count = 0

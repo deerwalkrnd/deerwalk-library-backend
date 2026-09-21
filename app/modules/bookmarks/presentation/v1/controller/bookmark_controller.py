@@ -112,10 +112,18 @@ class BookmarkController:
                 user_id=user.uuid,
             )
 
-            return PaginatedResponseMany(
+            total = await get_bookmark_by_user_id_use_case.count(
+                searchable_field=params.searchable_field,
+                searchable_value=params.searchable_value,
+                starts=params.starts,
+                ends=params.ends,
+                user_id=user.uuid,
+            )
+
+            return PaginatedResponseMany.build(
                 page=params.page,
-                total=len(bookmarks),
-                next=params.page + 1,
+                limit=params.limit,
+                total=total,
                 items=bookmarks,
             )
         except Exception as e:

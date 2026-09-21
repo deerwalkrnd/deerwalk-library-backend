@@ -36,10 +36,18 @@ class BookCopyController:
             )
 
             if book_copies:
-                return PaginatedResponseMany(
+                total = await get_many_book_copy_use_case.count(
+                    searchable_field=params.searchable_field,
+                    searchable_value=params.searchable_value,
+                    ends=params.ends,
+                    starts=params.starts,
+                    book_id=params.book_id,
+                )
+
+                return PaginatedResponseMany.build(
                     page=params.page,
-                    total=len(book_copies),
-                    next=params.page + 1,
+                    limit=params.limit,
+                    total=total,
                     items=book_copies,
                 )
 

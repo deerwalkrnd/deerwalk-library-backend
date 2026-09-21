@@ -74,8 +74,15 @@ class BookController:
                 ends=params.ends,
             )
 
-            return PaginatedResponseMany(
-                page=params.page, total=len(books), next=params.page + 1, items=books
+            total = await get_many_book_use_case.count(
+                searchable_value=params.searchable_value,
+                searchable_field=params.searchable_field,
+                starts=params.starts,
+                ends=params.ends,
+            )
+
+            return PaginatedResponseMany.build(
+                page=params.page, limit=params.limit, total=total, items=books
             )
 
         except Exception as e:

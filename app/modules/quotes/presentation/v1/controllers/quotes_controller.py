@@ -49,8 +49,14 @@ class QuotesController:
                 ends=params.ends,
                 starts=params.starts,
             )
-            return PaginatedResponseMany(
-                page=params.page, total=len(quotes), next=params.page + 1, items=quotes
+            total = await get_many_quotes_use_case.count(
+                searchable_field=params.searchable_field,
+                searchable_value=params.searchable_value,
+                ends=params.ends,
+                starts=params.starts,
+            )
+            return PaginatedResponseMany.build(
+                page=params.page, limit=params.limit, total=total, items=quotes
             )
         except Exception as e:
             logger.logger.error(e)

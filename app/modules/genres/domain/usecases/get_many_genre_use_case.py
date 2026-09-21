@@ -33,3 +33,18 @@ class GetManyGenreUseCase:
             filter=None,
         )
         return genres
+
+    async def count(
+        self,
+        searchable_field: str | None,
+        searchable_value: str | None,
+        starts: datetime | None,
+        ends: datetime | None,
+    ) -> int:
+        return await self.genre_repository.count(
+            filter=None,
+            start_date=starts,
+            end_date=ends,
+            searchable_key=searchable_field,
+            searchable_value=searchable_value,
+        )

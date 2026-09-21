@@ -184,8 +184,16 @@ class BookBorrowController:
             user_id=None,
         )
 
-        return PaginatedResponseMany(
-            page=params.page, total=len(data), next=params.page + 1, items=data
+        total = await get_many_borrow_books_with_user_and_book_use_case.count(
+            end_date=params.ends,
+            searchable_key=params.searchable_field,
+            searchable_value=params.searchable_value,
+            start_date=params.starts,
+            user_id=None,
+        )
+
+        return PaginatedResponseMany.build(
+            page=params.page, limit=params.limit, total=total, items=data
         )
 
     async def renew_book(
@@ -310,10 +318,18 @@ class BookBorrowController:
                 )
             )
 
-            return PaginatedResponseMany(
+            total = await get_currently_borrowed_books_use_case.count(
+                end_date=params.ends,
+                searchable_key=params.searchable_field,
+                searchable_value=params.searchable_value,
+                start_date=params.starts,
+                user_id=user.uuid,
+            )
+
+            return PaginatedResponseMany.build(
                 page=params.page,
-                total=len(currently_reading_books),
-                next=params.page + 1,
+                limit=params.limit,
+                total=total,
                 items=currently_reading_books,
             )
 
@@ -349,11 +365,19 @@ class BookBorrowController:
             user_id=user.uuid,
         )
 
-        return PaginatedResponseMany(
+        total = await get_borrowed_history_use_case.count(
+            ends=params.ends,
+            searchable_key=params.searchable_field,
+            searchable_value=params.searchable_value,
+            starts=params.starts,
+            user_id=user.uuid,
+        )
+
+        return PaginatedResponseMany.build(
             items=borrowed,
-            next=params.page + 1,
             page=params.page,
-            total=len(borrowed),
+            limit=params.limit,
+            total=total,
         )
 
     async def get_book_recommendations(

@@ -93,10 +93,18 @@ class FeedbackController:
                 is_ack=params.is_ack,
             )
 
-            return PaginatedResponseMany(
+            total = await get_many_feedback_use_case.count(
+                searchable_field=params.searchable_field,
+                searchable_value=params.searchable_value,
+                starts=params.starts,
+                ends=params.ends,
+                is_ack=params.is_ack,
+            )
+
+            return PaginatedResponseMany.build(
                 page=params.page,
-                total=len(feedbacks),
-                next=params.page + 1,
+                limit=params.limit,
+                total=total,
                 items=feedbacks,
             )
 

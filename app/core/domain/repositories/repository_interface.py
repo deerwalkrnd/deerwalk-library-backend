@@ -51,5 +51,16 @@ class RepositoryInterface[T](ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def count(
+        self,
+        filter: T | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        searchable_key: str | None = None,
+        searchable_value: str | None = None,
+    ) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
     async def insert_many(self, rows: List[T]) -> tuple[int, int]:
         raise NotImplementedError

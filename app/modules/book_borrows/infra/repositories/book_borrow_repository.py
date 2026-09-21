@@ -32,43 +32,25 @@ class BookBorrowRepository(
     ) -> None:
         super().__init__(db, BookBorrowModel, BookBorrow)
 
-    async def get_borrow_with_user_and_book(
+    def _apply_borrow_conditions[Q](
         self,
+        query: Q,
         filter: BaseModel | None,
-        limit: int,
-        offset: int,
-        sort_by: str,
-        descending: bool,
         start_date: datetime | None,
         end_date: datetime | None,
         searchable_key: str | None,
         searchable_value: str | None,
-    ) -> List[BookBorrowResponseDTO]:
-        if limit <= 0 or offset < 0:
-            raise ValueError("Invalid limit or offset")
+    ) -> Q:
+        """WHERE clauses shared by ``get_borrow_with_user_and_book`` and its count.
 
+        Kept in one place so a page's ``total`` always describes the same set
+        the page itself was drawn from.
+        """
         if start_date and end_date and start_date > end_date:
             raise ValueError("start_date cannot be after end_date")
 
         if searchable_key and not searchable_value:
             raise ValueError("searchable_value required when searchable_key provided")
-
-        query = (
-            select(BookBorrowModel)
-            .options(
-                selectinload(BookBorrowModel.user),
-                selectinload(BookBorrowModel.book_copy).selectinload(
-                    BookCopyModel.book
-                ),
-            )
-            .where(BookBorrowModel.deleted == False)
-        )
-
-        query = (
-            query.join(BookCopyModel, BookBorrowModel.book_copy_id == BookCopyModel.id)
-            .join(UserModel, UserModel.uuid == BookBorrowModel.user_id)
-            .join(BookModel, BookModel.id == BookCopyModel.book_id)
-        )
 
         if filter is not None:
             conditions = filter.model_dump(exclude_unset=True)
@@ -110,6 +92,46 @@ class BookBorrowRepository(
                         )
                     )
 
+        return query
+
+    async def get_borrow_with_user_and_book(
+        self,
+        filter: BaseModel | None,
+        limit: int,
+        offset: int,
+        sort_by: str,
+        descending: bool,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> List[BookBorrowResponseDTO]:
+        if limit <= 0 or offset < 0:
+            raise ValueError("Invalid limit or offset")
+
+        query = (
+            select(BookBorrowModel)
+            .options(
+                selectinload(BookBorrowModel.user),
+                selectinload(BookBorrowModel.book_copy).selectinload(
+                    BookCopyModel.book
+                ),
+            )
+            .where(BookBorrowModel.deleted == False)
+            .join(BookCopyModel, BookBorrowModel.book_copy_id == BookCopyModel.id)
+            .join(UserModel, UserModel.uuid == BookBorrowModel.user_id)
+            .join(BookModel, BookModel.id == BookCopyModel.book_id)
+        )
+
+        query = self._apply_borrow_conditions(
+            query,
+            filter=filter,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )
+
         if not hasattr(self.model, sort_by):
             raise ValueError(f"Invalid sort_by column: {sort_by}")
 
@@ -121,8 +143,36 @@ class BookBorrowRepository(
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
 
-
         return [BookBorrowResponseDTO.model_validate(obj=x) for x in data]
+
+    async def count_borrow_with_user_and_book(
+        self,
+        filter: BaseModel | None,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> int:
+        query = (
+            select(func.count(func.distinct(BookBorrowModel.id)))
+            .select_from(BookBorrowModel)
+            .where(BookBorrowModel.deleted == False)
+            .join(BookCopyModel, BookBorrowModel.book_copy_id == BookCopyModel.id)
+            .join(UserModel, UserModel.uuid == BookBorrowModel.user_id)
+            .join(BookModel, BookModel.id == BookCopyModel.book_id)
+        )
+
+        query = self._apply_borrow_conditions(
+            query,
+            filter=filter,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )
+
+        result = await self.db.execute(query)
+        return result.scalar_one()
 
     async def student_dashboard(self, student_id: str) -> dict[str, int | str]:
         data: dict[str, int | str] = {}

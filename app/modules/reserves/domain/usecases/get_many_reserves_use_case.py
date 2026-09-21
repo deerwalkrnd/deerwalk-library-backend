@@ -38,3 +38,18 @@ class GetManyReservesUseCase:
         )
 
         return reserves
+
+    async def count(
+        self,
+        starts: datetime | None,
+        ends: datetime | None,
+        searchable_field: str | None,
+        searchable_value: str | None,
+    ) -> int:
+        return await self.reserves_repository.count(
+            start_date=starts,
+            end_date=ends,
+            searchable_key=searchable_field,
+            searchable_value=searchable_value,
+            filter=Reserve(state=BookReserveEnum.RESERVED),
+        )

@@ -34,3 +34,22 @@ class GetBorrowedHistoryUseCase:
             searchable_value=searchable_value,
             sort_by="created_at",
         )
+
+    async def count(
+        self,
+        user_id: str,
+        starts: datetime | None,
+        ends: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> int:
+        return await self.book_borrow_repository.count(
+            filter=BookBorrow(
+                user_id=user_id,
+                returned=True,
+            ),
+            start_date=starts,
+            end_date=ends,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )

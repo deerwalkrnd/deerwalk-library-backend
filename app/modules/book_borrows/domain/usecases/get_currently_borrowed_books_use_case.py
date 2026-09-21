@@ -37,3 +37,24 @@ class GetCurrentlyBorrowedBooksUseCase:
             searchable_value=searchable_value,
             sort_by=sort_by,
         )
+
+    async def count(
+        self,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+        user_id: str | None,
+    ) -> int:
+        filter = BookBorrow(user_id=user_id, returned=False)
+
+        if user_id:
+            filter.user_id = user_id
+
+        return await self.book_borrow_repository.count_borrow_with_user_and_book(
+            filter=filter,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )

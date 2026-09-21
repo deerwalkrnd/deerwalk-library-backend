@@ -32,3 +32,12 @@ class GetManyBookReviewsByIdUseCase:
             searchable_key=None,
         )
         return book_reviews
+
+    async def count(self, is_spam: bool, book_id: int) -> int:
+        return await self.book_review_repository.count(
+            filter=BookReview(book_id=book_id, is_spam=is_spam),
+            start_date=None,
+            end_date=None,
+            searchable_value=None,
+            searchable_key=None,
+        )

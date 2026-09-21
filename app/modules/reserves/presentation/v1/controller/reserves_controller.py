@@ -230,8 +230,15 @@ class ReservesController:
             searchable_field=params.searchable_field,
         )
 
-        return PaginatedResponseMany(
-            page=params.page, total=len(reserves), next=params.page + 1, items=reserves
+        total = await get_many_reserves_use_case.count(
+            starts=params.starts,
+            ends=params.ends,
+            searchable_value=params.searchable_value,
+            searchable_field=params.searchable_field,
+        )
+
+        return PaginatedResponseMany.build(
+            page=params.page, limit=params.limit, total=total, items=reserves
         )
 
     async def after_borrow_from_reserve(

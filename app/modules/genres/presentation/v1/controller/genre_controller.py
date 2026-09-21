@@ -48,10 +48,17 @@ class GenreController:
                 ends=params.ends,
             )
 
-            return PaginatedResponseMany(
+            total = await get_many_genre_use_case.count(
+                searchable_value=params.searchable_value,
+                searchable_field=params.searchable_field,
+                starts=params.starts,
+                ends=params.ends,
+            )
+
+            return PaginatedResponseMany.build(
                 page=params.page,
-                total=len(genres),
-                next=params.page + 1,
+                limit=params.limit,
+                total=total,
                 items=genres,
             )
 
