@@ -28,7 +28,6 @@ class GetUserInformationFromCodeUseCase:
             "grant_type": "authorization_code",
             "redirect_uri": self.redirect_url,
         }
-        print("Request data:", data)
 
         try:
             response = await self.client.post(token_url, data=data, timeout=30)
