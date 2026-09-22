@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List
+from typing import List, Sequence
 
 
 class RepositoryInterface[T](ABC):
@@ -21,6 +21,10 @@ class RepositoryInterface[T](ABC):
 
     @abstractmethod
     async def create(self, obj: T) -> T | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def add_many(self, rows: Sequence[T]) -> List[int | None]:
         raise NotImplementedError
 
     @abstractmethod

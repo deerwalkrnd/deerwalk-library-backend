@@ -29,6 +29,17 @@ class BookRepository(Repository[BookModel, Book], BookRepositoryInterface):
             count = 0
         return count
 
+    async def get_identity_fields_of_all_books(self) -> List[Book]:
+        query = select(
+            self.model.id, self.model.isbn, self.model.title, self.model.author
+        ).where(self.model.deleted == False)
+
+        result = await self.db.execute(query)
+        return [
+            Book(id=row.id, isbn=row.isbn, title=row.title, author=row.author)
+            for row in result
+        ]
+
     async def get_top_books_borrowed(self, limit: int) -> List[Book]:
         query = (
             select(self.model)

@@ -252,6 +252,19 @@ class Repository[Model: Base, T: BaseModel](RepositoryInterface[T]):
         result = await self.db.execute(query)
         return result.scalar_one()
 
+    async def add_many(self, rows: Sequence[BaseModel]) -> List[int | None]:
+        """
+        Stage rows in the current transaction and flush them in one batch,
+        without committing, so the caller controls the transaction. Returns
+        each row's new primary key (None for models without an ``id``).
+        """
+        models: List[Model] = [
+            self.model(**row.model_dump(exclude_unset=True)) for row in rows
+        ]
+        self.db.add_all(models)
+        await self.db.flush()
+        return [getattr(model, "id", None) for model in models]
+
     async def insert_many(self, rows: List[T]) -> tuple[int, int]:
         inserted_count = 0
         skipped_count = 0
