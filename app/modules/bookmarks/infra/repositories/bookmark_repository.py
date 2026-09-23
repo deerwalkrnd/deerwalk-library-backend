@@ -19,35 +19,21 @@ class BookmarkRepository(
     def __init__(self, db: AsyncSession) -> None:
         super().__init__(db=db, model=BookmarkModel, entity=Bookmark)
 
-    async def filter_bookmark(
+    def _apply_bookmark_conditions[Q](
         self,
+        query: Q,
         filter: BaseModel | None,
-        limit: int,
-        offset: int,
-        sort_by: str,
-        descending: bool,
         start_date: datetime | None,
         end_date: datetime | None,
         searchable_key: str | None,
         searchable_value: str | None,
-    ) -> List[Bookmark]:
-        if limit <= 0 or offset < 0:
-            raise ValueError("Invalid limit or offset")
-
+    ) -> Q:
+        """WHERE clauses shared by ``filter_bookmark`` and its count."""
         if start_date and end_date and start_date > end_date:
             raise ValueError("start_date cannot be after end_date")
 
         if searchable_key and not searchable_value:
             raise ValueError("searchable_value required when searchable_key provided")
-
-        query = (
-            select(self.model)
-            .join(self.model.user)
-            .join(self.model.book)
-            .where(self.model.deleted == False)
-        )
-
-        print(query)
 
         if filter is not None:
             conditions = filter.model_dump(exclude_unset=True)
@@ -70,6 +56,39 @@ class BookmarkRepository(
                 getattr(self.model, searchable_key).like(f"{searchable_value}%")
             )
 
+        return query
+
+    async def filter_bookmark(
+        self,
+        filter: BaseModel | None,
+        limit: int,
+        offset: int,
+        sort_by: str,
+        descending: bool,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> List[Bookmark]:
+        if limit <= 0 or offset < 0:
+            raise ValueError("Invalid limit or offset")
+
+        query = (
+            select(self.model)
+            .join(self.model.user)
+            .join(self.model.book)
+            .where(self.model.deleted == False)
+        )
+
+        query = self._apply_bookmark_conditions(
+            query,
+            filter=filter,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )
+
         if not hasattr(self.model, sort_by):
             raise ValueError(f"Invalid sort_by column: {sort_by}")
 
@@ -81,6 +100,34 @@ class BookmarkRepository(
         result = await self.db.execute(query)
         data = result.scalars().unique().all()
         return [self.entity.model_validate(obj=x) for x in data]
+
+    async def count_bookmark(
+        self,
+        filter: BaseModel | None,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> int:
+        query = (
+            select(func.count(func.distinct(self.model.id)))
+            .select_from(self.model)
+            .join(self.model.user)
+            .join(self.model.book)
+            .where(self.model.deleted == False)
+        )
+
+        query = self._apply_bookmark_conditions(
+            query,
+            filter=filter,
+            start_date=start_date,
+            end_date=end_date,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )
+
+        result = await self.db.execute(query)
+        return result.scalar_one()
 
     async def get_bookmark_count(self, student_id: str) -> int:
         query = select(func.count(self.model.id)).where(

@@ -34,3 +34,19 @@ class GetManyFeedbackUseCase:
             filter=Feedback(is_acknowledged=is_ack),
         )
         return feedbacks
+
+    async def count(
+        self,
+        searchable_field: str | None,
+        searchable_value: str | None,
+        starts: datetime | None,
+        ends: datetime | None,
+        is_ack: bool,
+    ) -> int:
+        return await self.feedback_repository.count(
+            filter=Feedback(is_acknowledged=is_ack),
+            start_date=starts,
+            end_date=ends,
+            searchable_key=searchable_field,
+            searchable_value=searchable_value,
+        )

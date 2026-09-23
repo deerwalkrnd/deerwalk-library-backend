@@ -29,6 +29,17 @@ class BookBorrowRepositoryInterface(RepositoryInterface[BookBorrow]):
         raise NotImplementedError
 
     @abstractmethod
+    async def count_borrow_with_user_and_book(
+        self,
+        filter: BaseModel | None,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
     async def student_dashboard(self, student_id: str) -> dict[str, int | str]:
         raise NotImplementedError
 

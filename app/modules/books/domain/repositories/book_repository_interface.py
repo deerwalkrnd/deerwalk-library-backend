@@ -12,3 +12,8 @@ class BookRepositoryInterface(RepositoryInterface[Book]):
     @abstractmethod
     async def get_top_books_borrowed(self, limit: int) -> List[Book]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def get_identity_fields_of_all_books(self) -> List[Book]:
+        """id, isbn, title and author of every book, for bulk-import matching."""
+        raise NotImplementedError

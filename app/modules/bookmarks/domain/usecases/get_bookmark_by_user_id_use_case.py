@@ -34,3 +34,19 @@ class GetBookmarkByUserIdUseCase:
             filter=Bookmark(user_id=user_id),
         )
         return bookmarks
+
+    async def count(
+        self,
+        searchable_field: str | None,
+        searchable_value: str | None,
+        starts: datetime | None,
+        ends: datetime | None,
+        user_id: str | None,
+    ) -> int:
+        return await self.bookmark_repository.count_bookmark(
+            end_date=ends,
+            start_date=starts,
+            searchable_key=searchable_field,
+            searchable_value=searchable_value,
+            filter=Bookmark(user_id=user_id),
+        )

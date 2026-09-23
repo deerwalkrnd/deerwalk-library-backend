@@ -69,10 +69,17 @@ class RecommendationController:
                 searchable_value=params.searchable_value,
             )
 
-            return PaginatedResponseMany(
+            total = await get_many_recommendation_use_case.count(
+                starts=params.starts,
+                ends=params.ends,
+                searchable_key=params.searchable_field,
+                searchable_value=params.searchable_value,
+            )
+
+            return PaginatedResponseMany.build(
                 page=params.page,
-                total=len(recommendations),
-                next=params.page + 1,
+                limit=params.limit,
+                total=total,
                 items=recommendations,
             )
 

@@ -1,9 +1,12 @@
-from typing import List
+from typing import List, Literal
 
-from fastapi import Depends, File, UploadFile, logger
+from fastapi import Depends, File, Query, Response, UploadFile, logger
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.concurrency import run_in_threadpool
 
 from app.core.dependencies.database import get_db
+from app.core.dependencies.middleware.get_current_librarian import get_current_librarian
+from app.core.domain.entities.user import User
 from app.core.domain.entities.response.paginated_response import PaginatedResponseMany
 from app.core.exc.error_code import ErrorCode
 from app.core.exc.library_exception import LibraryException
@@ -40,8 +43,12 @@ from app.modules.books.infra.repositories.book_repository import BookRepository
 from app.modules.books.infra.repositories.books_genre_repository import (
     BooksGenreRepository,
 )
-from app.modules.books.utils.parse_book_csv_to_create_requests import (
-    parse_book_csv_to_create_requests,
+from app.modules.books.utils.book_import.parse_book_import_file import (
+    parse_book_import_file,
+)
+from app.modules.books.utils.book_import.template_builder import (
+    build_csv_template,
+    build_xlsx_template,
 )
 from app.modules.genres.domain.entities.genre import Genre
 from app.modules.books.infra.services.book_bulk_upload_service import (
@@ -49,6 +56,9 @@ from app.modules.books.infra.services.book_bulk_upload_service import (
 )
 
 from app.modules.genres.infra.genre_repository import GenreRepository
+
+
+MAX_IMPORT_FILE_BYTES = 20 * 1024 * 1024
 
 
 class BookController:
@@ -74,8 +84,15 @@ class BookController:
                 ends=params.ends,
             )
 
-            return PaginatedResponseMany(
-                page=params.page, total=len(books), next=params.page + 1, items=books
+            total = await get_many_book_use_case.count(
+                searchable_value=params.searchable_value,
+                searchable_field=params.searchable_field,
+                starts=params.starts,
+                ends=params.ends,
+            )
+
+            return PaginatedResponseMany.build(
+                page=params.page, limit=params.limit, total=total, items=books
             )
 
         except Exception as e:
@@ -276,45 +293,67 @@ class BookController:
             )
 
     async def bulk_upload_books(
-        self, file: UploadFile = File(...), db: AsyncSession = Depends(get_db)
+        self,
+        file: UploadFile = File(...),
+        db: AsyncSession = Depends(get_db),
+        _: User = Depends(get_current_librarian),
     ) -> BookBulkUploadRespose:
-        if file.filename and not file.filename.endswith(".csv"):
+        content = await file.read(MAX_IMPORT_FILE_BYTES + 1)
+        if len(content) > MAX_IMPORT_FILE_BYTES:
             raise LibraryException(
-                status_code=400,
+                status_code=413,
                 code=ErrorCode.INVALID_FIELDS,
-                msg="Only CSV files are allowed!",
+                msg=f"File is too large (limit {MAX_IMPORT_FILE_BYTES // (1024 * 1024)} MB).",
             )
 
-        # Get all available genre names for validation
-        genre_repository = GenreRepository(db=db)
-        from app.modules.genres.domain.usecases.get_all_genre_names_use_case import (
-            GetAllGenreNamesUseCase,
+        # Parsing a full register takes a few seconds of CPU; keep it off
+        # the event loop so other requests are not stalled meanwhile.
+        parsed = await run_in_threadpool(
+            parse_book_import_file, file.filename or "", content
         )
-        get_all_genre_names_use_case = GetAllGenreNamesUseCase(
-            genre_repository=genre_repository
-        )
-        available_genres = await get_all_genre_names_use_case.execute()
-
-        # Parse and validate CSV with genre name validation
-        book_requests_model = await parse_book_csv_to_create_requests(
-            file=file,
-            available_genres=available_genres,
-        )
-
-        book_repository = BookRepository(db=db)
-        books_genre_repository = BooksGenreRepository(db=db)
-        book_copy_repository = BookCopyRepository(db=db)
 
         book_bulk_upload_service = BookBulkUploadService(
-            book_repository=book_repository,
-            books_genre_repository=books_genre_repository,
-            book_copy_repository=book_copy_repository,
-            genre_repository=genre_repository,
+            book_repository=BookRepository(db=db),
+            books_genre_repository=BooksGenreRepository(db=db),
+            book_copy_repository=BookCopyRepository(db=db),
+            genre_repository=GenreRepository(db=db),
             db=db,
         )
-
         result = await book_bulk_upload_service.bulk_upload(
-            create_book_requests=book_requests_model
+            create_book_requests=parsed.books
         )
 
-        return result
+        return BookBulkUploadRespose(
+            format=parsed.format,
+            inserted=result.books_created,
+            books_updated=result.books_updated,
+            copies_added=result.copies_added,
+            duplicates_ignored=parsed.duplicates_ignored + result.duplicates_ignored,
+            skipped=parsed.skipped + result.skipped,
+        )
+
+    async def download_import_template(
+        self,
+        format: Literal["xlsx", "csv"] = Query(default="xlsx"),
+        db: AsyncSession = Depends(get_db),
+        _: User = Depends(get_current_librarian),
+    ) -> Response:
+        if format == "csv":
+            return Response(
+                content=build_csv_template(),
+                media_type="text/csv; charset=utf-8",
+                headers={
+                    "Content-Disposition": 'attachment; filename="book_import_template.csv"'
+                },
+            )
+
+        genres = await GenreRepository(db=db).find_many(
+            limit=10_000, offset=0, sort_by="title", descending=False
+        )
+        return Response(
+            content=build_xlsx_template(g.title for g in genres if g.title),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": 'attachment; filename="book_import_template.xlsx"'
+            },
+        )

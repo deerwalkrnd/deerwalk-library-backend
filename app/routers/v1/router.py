@@ -62,5 +62,4 @@ v1_router.include_router(dashboard_router)
 # remove at production
 @v1_router.get("/")
 async def v1_hello_world(db: AsyncSession = Depends(get_db)) -> dict[str, str]:
-    print(f"db is {db}")
     return {"route": "v1"}

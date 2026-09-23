@@ -141,6 +141,7 @@ class AuthController:
 
             data: Dict[str, datetime | str | None] = {
                 "sub": user.uuid,
+                "role": user.role.value if user.role else None,
                 "exp": datetime.now() + timedelta(days=2),
             }
 
@@ -160,6 +161,7 @@ class AuthController:
 
             data: Dict[str, datetime | str | None] = {
                 "sub": created.uuid,
+                "role": created.role.value if created.role else None,
                 "exp": datetime.now() + timedelta(days=2),
             }
 

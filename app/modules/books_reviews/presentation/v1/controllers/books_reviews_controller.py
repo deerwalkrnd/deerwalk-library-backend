@@ -95,10 +95,14 @@ class BooksReviewsController:
                 is_spam=params.is_spam,
                 book_id=params.book_id,
             )
-            return PaginatedResponseMany(
+            total = await get_many_book_reviews_by_id_use_case.count(
+                is_spam=params.is_spam,
+                book_id=params.book_id,
+            )
+            return PaginatedResponseMany.build(
                 page=params.page,
-                total=len(book_reviews),
-                next=params.page + 1,
+                limit=params.limit,
+                total=total,
                 items=book_reviews,
             )
 

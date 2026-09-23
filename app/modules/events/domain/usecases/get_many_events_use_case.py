@@ -34,3 +34,18 @@ class GetManyEventsUseCase:
             filter=None,
         )
         return events
+
+    async def count(
+        self,
+        starts: datetime | None,
+        ends: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> int:
+        return await self.event_repository.count(
+            filter=None,
+            start_date=starts,
+            end_date=ends,
+            searchable_key=searchable_key,
+            searchable_value=searchable_value,
+        )

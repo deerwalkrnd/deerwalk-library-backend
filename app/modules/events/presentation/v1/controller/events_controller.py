@@ -139,8 +139,15 @@ class EventsController:
             searchable_value=params.searchable_value,
         )
 
-        return PaginatedResponseMany(
-            page=params.page, next=params.page + 1, items=events, total=len(events)
+        total = await get_many_events_use_case.count(
+            starts=params.starts,
+            ends=params.ends,
+            searchable_key=params.searchable_field,
+            searchable_value=params.searchable_value,
+        )
+
+        return PaginatedResponseMany.build(
+            page=params.page, limit=params.limit, total=total, items=events
         )
 
     async def update_event(

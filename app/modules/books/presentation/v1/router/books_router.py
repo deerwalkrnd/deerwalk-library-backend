@@ -22,6 +22,15 @@ router.add_api_route(
     status_code=201,
 )
 
+# Registered before the "/{id}" routes so "import-template" is not read as an id.
+router.add_api_route(
+    path="/import-template",
+    endpoint=book_controller.download_import_template,
+    methods=["GET"],
+    description="Downloads the bulk-import template (?format=xlsx or csv)",
+    status_code=200,
+)
+
 router.add_api_route(
     path="/{id}",
     endpoint=book_controller.update_book,
@@ -58,6 +67,6 @@ router.add_api_route(
     path="/bulk-upload",
     endpoint=book_controller.bulk_upload_books,
     methods=["POST"],
-    description="Uploads books in bulk",
+    description="Imports books from a CSV/XLSX file: the import template or the library's accession register",
     status_code=200,
 )

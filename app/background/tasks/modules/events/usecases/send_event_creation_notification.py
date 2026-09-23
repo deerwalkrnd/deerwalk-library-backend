@@ -57,8 +57,6 @@ class SendEventCreationNotificationUseCase:
                 _from=from_email,
             )
 
-            print("sending email to: ", email_object)
-
             t = self.email_service.send_email(message=email_object)
             email_promises.append(t)
 

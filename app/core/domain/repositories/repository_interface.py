@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List
+from typing import List, Sequence
 
 
 class RepositoryInterface[T](ABC):
@@ -21,6 +21,10 @@ class RepositoryInterface[T](ABC):
 
     @abstractmethod
     async def create(self, obj: T) -> T | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def add_many(self, rows: Sequence[T]) -> List[int | None]:
         raise NotImplementedError
 
     @abstractmethod
@@ -48,6 +52,17 @@ class RepositoryInterface[T](ABC):
         searchable_key: str | None,
         searchable_value: str | None,
     ) -> List[T]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def count(
+        self,
+        filter: T | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        searchable_key: str | None = None,
+        searchable_value: str | None = None,
+    ) -> int:
         raise NotImplementedError
 
     @abstractmethod

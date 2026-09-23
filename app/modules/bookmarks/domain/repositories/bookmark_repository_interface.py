@@ -25,5 +25,16 @@ class BookmarkRepositoryInterface(RepositoryInterface[Bookmark]):
         raise NotImplementedError
 
     @abstractmethod
+    async def count_bookmark(
+        self,
+        filter: BaseModel | None,
+        start_date: datetime | None,
+        end_date: datetime | None,
+        searchable_key: str | None,
+        searchable_value: str | None,
+    ) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_bookmark_count(self, student_id: str) -> int:
         raise NotImplementedError

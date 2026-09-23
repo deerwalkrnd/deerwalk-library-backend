@@ -35,7 +35,14 @@ class LoginUseCase:
             raise ValueError("credentials are invalid")
 
         token = await self.token_service.encode(
-            {"sub": user.uuid, "exp": datetime.now() + timedelta(days=2)}
+            {
+                "sub": user.uuid,
+                # Included so the frontend can route by role without a round
+                # trip. Authorization is still enforced per-request from the
+                # database — this claim is for navigation only.
+                "role": user.role.value if user.role else None,
+                "exp": datetime.now() + timedelta(days=2),
+            }
         )
 
         return token

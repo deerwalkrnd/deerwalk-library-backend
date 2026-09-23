@@ -103,8 +103,6 @@ class DashboardController:
         top_borrowed_books = await get_top_borrowed_books_use_case.execute(limit=5)
         top_issued_books = await get_top_issued_books_use_case.execute(limit=5)
 
-        print(top_issued_books)
-
         return LibrarianDashboardTablesResponse(
             top_overdues=top_overdues,
             top_books_borrowed=top_borrowed_books,

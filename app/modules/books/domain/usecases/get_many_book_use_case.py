@@ -33,3 +33,18 @@ class GetManyBookUseCase:
             searchable_key=searchable_field,
         )
         return books
+
+    async def count(
+        self,
+        searchable_value: str | None,
+        searchable_field: str | None,
+        starts: datetime | None,
+        ends: datetime | None,
+    ) -> int:
+        return await self.book_repository.count(
+            filter=None,
+            start_date=starts,
+            end_date=ends,
+            searchable_value=searchable_value,
+            searchable_key=searchable_field,
+        )
