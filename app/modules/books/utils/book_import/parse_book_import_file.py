@@ -30,9 +30,10 @@ def parse_book_import_file(filename: str, content: bytes) -> ParsedBookImport:
                 status_code=400,
                 code=ErrorCode.INVALID_FIELDS,
                 msg=(
-                    "Could not find a book list in this file. Use the import "
-                    f"template (columns: {', '.join(TEMPLATE_HEADERS)}) or the "
-                    "library register layout (ACC NO, AUTHOR1, TITLE, ...)."
+                    "Could not find a book list in this file. Use the library "
+                    "register layout from the import template (ACC NO, AUTHOR1, "
+                    "TITLE, ...), or the older one-row-per-book layout "
+                    f"({', '.join(TEMPLATE_HEADERS)})."
                 ),
             )
         parsed = parse_template_sheets(template_sheets)

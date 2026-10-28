@@ -120,6 +120,7 @@ def parse_register_sheets(sheets: List[Sheet]) -> ParsedBookImport:
     for sheet in sheets:
         if not is_register_sheet(sheet):
             continue
+        _rejoin_split_headers(sheet)
 
         accession_header = _find_header(sheet, ACCESSION_HEADERS) or _find_header(
             sheet, ["acc"]
@@ -223,6 +224,39 @@ def _group_into_books(copies: List[_Copy]) -> List[BulkCreateBookRequest]:
         )
 
     return list(books.values())
+
+
+KNOWN_HEADERS = (
+    ACCESSION_HEADERS
+    + TITLE_HEADERS
+    + ALT_TITLE_HEADERS
+    + AUTHOR_HEADERS
+    + SECOND_AUTHOR_HEADERS
+    + PUBLISHER_HEADERS
+    + ISBN_HEADERS
+    + CONDITION_HEADERS
+    + CATEGORY_HEADERS
+)
+
+
+def _rejoin_split_headers(sheet: Sheet) -> None:
+    """
+    A line break typed inside a header cell ("CATEGO" / "RY") reads as
+    'catego ry'; rename such headers to the spelling the parser looks for.
+    """
+    by_compact = {h.replace(" ", ""): h for h in KNOWN_HEADERS}
+    renames = {
+        header: by_compact[header.replace(" ", "")]
+        for header in sheet.headers
+        if header not in KNOWN_HEADERS and header.replace(" ", "") in by_compact
+    }
+    if not renames:
+        return
+    sheet.headers = [renames.get(h, h) for h in sheet.headers]
+    for row in sheet.rows:
+        for old, new in renames.items():
+            if old in row.values and new not in row.values:
+                row.values[new] = row.values.pop(old)
 
 
 def _find_header(sheet: Sheet, candidates: List[str]) -> Optional[str]:
